@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatovací aplikace</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e0f2fe;
+            max-width: 80%;
+            display: flex;
+            flex-direction: column;
+        }
+        .message .content {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .message .timestamp {
+            font-size: 12px;
+            color: #777;
+            align-self: flex-end;
+        }
+        .message-form {
+            display: flex;
+            margin-top: 20px;
+        }
+        .message-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 16px;
+        }
+        .send-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .send-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chat-container">
+        <div id="chat-messages">
+            <!-- Zde se zobrazí zprávy -->
+        </div>
+        <div class="message-form">
+            <input type="text" id="message-input" class="message-input" placeholder="Napište zprávu...">
+            <button id="send-button" class="send-button">Odeslat</button>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase funkcí
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js';
+        import { getDatabase, ref, push, set, serverTimestamp, onChildAdded } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js';
+
+        // Vaše konfigurační informace Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app", // Aktualizovaný URL
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Inicializace Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        // Funkce pro odeslání zprávy
+        function sendChatMessage(message) {
+            // Vygenerujte jedinečný identifikátor pro zprávu
+            const messageId = push(ref(database, 'messages')).key;
+            
+            // Data zprávy
+            const messageData = {
+                content: message,
+                timestamp: serverTimestamp()
+            };
+            
+            // Uložení zprávy do databáze
+            set(ref(database, 'messages/' + messageId), messageData)
+                .then(() => {
+                    console.log('Zpráva byla úspěšně odeslána.');
+                })
+                .catch((error) => {
+                    console.error('Chyba při odesílání zprávy:', error);
+                });
+        }
+
+        // Přidání události pro odeslání zprávy po kliknutí na tlačítko
+        document.getElementById('send-button').addEventListener('click', function() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            if (message !== '') {
+                sendChatMessage(message);
+                messageInput.value = ''; // Vyprázdnění pole pro zprávy po odeslání
+            }
+        });
+
+        // Funkce pro zobrazení zprávy
+        function displayMessage(messageData) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            const contentElement = document.createElement('div');
+            contentElement.classList.add('content');
+            contentElement.textContent = messageData.content;
+            const timestampElement = document.createElement('div');
+            timestampElement.classList.add('timestamp');
+            const timestamp = new Date(messageData.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            timestampElement.textContent = timestamp;
+            messageElement.appendChild(contentElement);
+            messageElement.appendChild(timestampElement);
+            chatMessages.appendChild(messageElement);
+        }
+
+        // Posluchač pro nové zprávy
+        const messagesRef = ref(database, 'messages');
+        onChildAdded(messagesRef, (data) => {
+            displayMessage(data.val());
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        /* Styly profilu */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .profile-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .profile-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .profile-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .profile-buttons button:hover {
+            background-color: #45a049;
+        }
+        .settings-button {
+            background-color: #4285f4;
+            margin-left: 10px;
+        }
+        .settings-button:hover {
+            background-color: #357ae8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="profile-container">
+    <!-- Obsah profilu -->
+    <div class="profile-buttons">
+        <button>Edit Profile</button>
+        <button class="settings-button" onclick="openSettings()">Settings</button> <!-- Přepracované tlačítko pro otevření nastavení -->
+        <button>Logout</button>
+    </div>
+</div>
+
+<!-- Skript pro otevření nastavení -->
+<script>
+    function openSettings() {
+        window.location.href = 'settings.html'; // Přesměrování na stránku s nastavením
+    }
+</script>
+
+</body>
+</html>
