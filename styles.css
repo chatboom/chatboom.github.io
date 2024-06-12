@@ -27,3 +27,38 @@ body {
     width: 30px;
     height: 30px;
 }
+
+/* Styly pro tlačítko v index.html */
+/* Styly pro tlačítko */
+.rounded-button {
+    display: block; /* Změna na blokové zobrazení */
+    width: 150px; /* Šířka tlačítka */
+    margin: 10px auto; /* Zarovnání tlačítek na střed */
+    padding: 10px 20px;
+    background-color: #555;
+    color: #fff;
+    border-radius: 20px; /* Zaoblené rohy */
+    text-decoration: none; /* Odstranění podtržení */
+    text-align: center; /* Zarovnání textu na střed */
+    transition: transform 0.3s ease, background-color 0.3s ease; /* Plynulý přechod */
+}
+
+.rounded-button:hover {
+    background-color: #777; /* Zvýraznění při najetí myší */
+    transform: scale(1.1); /* Zvětšení tlačítka */
+}
+
+/* Styly pro nadpis */
+h1 {
+    text-align: center;
+    margin-top: 100px; /* Úprava horního okraje nadpisu */
+}
+
+/* Styly pro kontejner tlačítek */
+.button-container {
+    text-align: center; /* Zarovnání na střed */
+    position: fixed; /* Fixní pozice na dolní části okna */
+    bottom: 20px; /* Vzdálenost od spodního okraje okna */
+    left: 0;
+    right: 0;
+}
