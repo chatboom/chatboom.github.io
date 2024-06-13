@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>ChatBoom</title>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-bg"></div>
+            <img src="https://via.placeholder.com/100" alt="Profile Picture" id="profile-picture">
+        </div>
+        <div class="profile-details">
+            <h2 contenteditable="true" id="profile-name">Jméno a Přijmení</h2>
+            <p contenteditable="true" id="profile-nickname">Přezdívka</p>
+        </div>
+        <div class="profile-stats">
+            <div>
+                <p contenteditable="true">0</p>
+                <span>Přátelé</span>
+            </div>
+            <div>
+                <p contenteditable="true">0</p>
+                <span>Příspěvky</span>
+            </div>
+            <div>
+                <p contenteditable="true">0</p>
+                <span>Líbí se</span>
+            </div>
+        </div>
+        <div class="profile-edit">
+            <button onclick="editProfile()">Upravit Profil</button>
+        </div>
+
+    <script>
+        function editProfile() {
+            const profileName = document.getElementById('profile-name');
+            const profileNickname = document.getElementById('profile-nickname');
+            const profilePicture = document.getElementById('profile-picture');
+            
+            const newName = prompt("Enter new name:", profileName.innerText);
+            if (newName !== null) profileName.innerText = newName;
+            
+            const newNickname = prompt("Enter new nickname:", profileNickname.innerText);
+            if (newNickname !== null) profileNickname.innerText = newNickname;
+            
+            const newPicture = prompt("Enter new profile picture URL:", profilePicture.src);
+            if (newPicture !== null) profilePicture.src = newPicture;
+        }
+    </script>
+</body>
+</html>
