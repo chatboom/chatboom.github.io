@@ -22,7 +22,8 @@ const database = getDatabase(app); // Inicializace Realtime Database
 // Funkce pro odeslání zprávy
 function sendChatMessage(message) {
   // Vygenerujte jedinečný identifikátor pro zprávu
-  const messageId = push(ref(database, 'messages')).key;
+  const messagesRef = ref(database, 'messages');
+  const newMessageRef = push(messagesRef);
   
   // Data zprávy
   const messageData = {
@@ -31,7 +32,7 @@ function sendChatMessage(message) {
   };
   
   // Uložení zprávy do databáze
-  set(ref(database, 'messages/' + messageId), messageData)
+  set(newMessageRef, messageData)
     .then(() => {
       console.log('Zpráva byla úspěšně odeslána.');
     })
