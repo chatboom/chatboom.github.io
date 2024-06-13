@@ -53,6 +53,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -68,19 +69,30 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        function register() {
+        async function register() {
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    alert("Registrace úspěšná! Přesměrování na přihlašovací stránku...");
-                    window.location.href = "login.html"; // Přesměrování na přihlašovací stránku
-                })
-                .catch((error) => {
-                    alert(error.message);
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Uložit uživatele do Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email
                 });
+
+                alert("Registrace úspěšná! Přesměrování na přihlašovací stránku...");
+                window.location.href = "login.html"; // Přesměrování na přihlašovací stránku
+            } catch (error) {
+                alert(error.message);
+            }
         }
 
         // Přidání posluchače události pomocí JavaScriptu
@@ -93,6 +105,8 @@
 <body>
     <div class="register-container">
         <h1>Registrace</h1>
+        <input type="text" id="firstName" placeholder="Jméno">
+        <input type="text" id="lastName" placeholder="Příjmení">
         <input type="email" id="email" placeholder="Email">
         <input type="password" id="password" placeholder="Heslo">
         <button id="registerButton">Registrovat</button>
