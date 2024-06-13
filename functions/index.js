@@ -22,20 +22,26 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
-exports.deleteOldMessages = functions.pubsub.schedule('every 24 hours').onRun(async (context) => {
+exports.deleteOldMessages = functions.pubsub.schedule('every 2 minutes').onRun(async (context) => {
     const messagesRef = admin.database().ref('messages');
     const currentTime = Date.now();
-    const twentyFourHoursAgo = currentTime - (24 * 60 * 60 * 1000); // 24 hodin v milisekundách
+    const twoMinutesAgo = currentTime - (2 * 60 * 1000); // 2 minuty v milisekundách
 
     try {
-        // Získání zpráv starších než 24 hodin
-        const snapshot = await messagesRef.orderByChild('timestamp').endAt(twentyFourHoursAgo).once('value');
+        // Získání zpráv starších než 2 minuty
+        const snapshot = await messagesRef.orderByChild('timestamp').endAt(twoMinutesAgo).once('value');
         
-        // Smazání starých zpráv
+        // Příprava na Batch mazání
+        const batch = admin.database().batch();
+
+        // Přidání operací mazání do batche
         snapshot.forEach((childSnapshot) => {
             const messageId = childSnapshot.key;
-            admin.database().ref(`messages/${messageId}`).remove();
+            batch.delete(messagesRef.child(messageId));
         });
+
+        // Provedení batch operace
+        await batch.commit();
 
         return null;
     } catch (error) {
