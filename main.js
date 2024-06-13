@@ -1,11 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getDatabase, ref, push, set, serverTimestamp, goOffline } from "firebase/database"; // Přidání importů pro Realtime Database
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
   authDomain: "chatboom-95647.firebaseapp.com",
@@ -19,23 +17,21 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-
-// Reference na Realtime Database
-const database = firebase.database();
+const database = getDatabase(app); // Inicializace Realtime Database
 
 // Funkce pro odeslání zprávy
 function sendChatMessage(message) {
   // Vygenerujte jedinečný identifikátor pro zprávu
-  const messageId = database.ref().child('messages').push().key;
+  const messageId = push(ref(database, 'messages')).key;
   
   // Data zprávy
   const messageData = {
     content: message,
-    timestamp: firebase.database.ServerValue.TIMESTAMP
+    timestamp: serverTimestamp()
   };
   
   // Uložení zprávy do databáze
-  database.ref('messages/' + messageId).set(messageData)
+  set(ref(database, 'messages/' + messageId), messageData)
     .then(() => {
       console.log('Zpráva byla úspěšně odeslána.');
     })
@@ -44,6 +40,7 @@ function sendChatMessage(message) {
     });
 }
 
+// Přidání event listeneru na tlačítko pro odesílání zpráv
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 
@@ -53,4 +50,15 @@ sendButton.addEventListener('click', () => {
     sendChatMessage(message);
     messageInput.value = ''; // Vyprázdnění pole pro zprávy po odeslání
   }
+});
+
+// Funkce pro ukončení připojení k Realtime Database
+function disconnectDatabase() {
+  goOffline(database);
+  console.log('Připojení k databázi bylo ukončeno.');
+}
+
+// Příklad použití funkce pro ukončení připojení
+window.addEventListener('beforeunload', () => {
+  disconnectDatabase();
 });
