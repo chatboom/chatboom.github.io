@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <title>ChatBoom</title>
+    <title>Registrace</title>
     <style>
         body {
             display: flex;
@@ -53,7 +52,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -69,30 +67,19 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
 
-        async function register() {
-            const firstName = document.getElementById("firstName").value;
-            const lastName = document.getElementById("lastName").value;
+        function register() {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // Uložit uživatele do Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    firstName: firstName,
-                    lastName: lastName,
-                    email: email
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    alert("Registrace úspěšná! Přesměrování na přihlašovací stránku...");
+                    window.location.href = "dum.html"; // Přesměrování na přihlašovací stránku
+                })
+                .catch((error) => {
+                    alert(error.message);
                 });
-
-                alert("Registrace úspěšná! Přesměrování na domovskou stránku...");
-                window.location.href = "dum.html"; // Přesměrování na domovskou stránku
-            } catch (error) {
-                alert(error.message);
-            }
         }
 
         // Přidání posluchače události pomocí JavaScriptu
