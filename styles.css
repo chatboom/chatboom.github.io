@@ -29,7 +29,6 @@ body {
 }
 
 /* Styly pro tlačítko v index.html */
-/* Styly pro tlačítko */
 .rounded-button {
     display: block; /* Změna na blokové zobrazení */
     width: 150px; /* Šířka tlačítka */
@@ -181,4 +180,4 @@ margin-top: 100px; /* Zvýšení této hodnoty pro přesunutí detailů dolů */
 
 .edit-profile-button {
 margin-top: 20px;
-}
+}                                       
