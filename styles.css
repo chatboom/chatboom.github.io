@@ -183,128 +183,155 @@ margin-top: 20px;
 }                                       
 
 
-/* přihlášení*/
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+/*vyhledávaci pole*/
+* {
+	border: 0;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
+body, button, input {
+	font: 1em Hind, sans-serif;
+	line-height: 1.5em;
+}
 
-        body {
-            background-color: #c9d6ff;
-            background: linear-gradient(to right, #e2e2e2, #c9d6ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
+body, .bar {
+	display: flex;
+}
+body {
+	background: #f1f1f1;
+	height: 100vh;
+}
+.bar input,
+.search-btn, 
+.search-btn:before, 
+.search-btn:after {
+	transition: all 0.25s ease-out;
+}
+.bar input,
+.search-btn {
+	width: 3em;
+	height: 3em;
+}
+.bar input:invalid:not(:focus),
+.search-btn {
+	cursor: pointer;
+}
+.bar,
+.bar input:focus,
+.bar input:valid  {
+	width: 100%;
+}
+.bar input:focus,
+.bar input:not(:focus) + .search-btn:focus {
+	outline: transparent;
+}
+.bar {
+	margin: auto;
+	padding: 1.5em;
+	justify-content: center;
+	max-width: 30em;
 
-        .container {
-            background-color: #fff;
-            border-radius: 0; /* Remove the border radius */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-            position: relative;
-            overflow: hidden;
-            width: 384px;
-            max-width: 100%;
-            height: 100vh; /* Set the height to 100vh */
-        }
+}
+.bar input {
+	background: transparent;
+	border-radius: 1.5em;
+	box-shadow: 0 0 0 0.4em #171717 inset;
+	padding: 0.75em;
+	transform: translate(0.5em,0.5em) scale(0.5);
+	transform-origin: 100% 0;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+.bar input::-webkit-search-decoration {
+	-webkit-appearance: none;
+}
+.bar input:focus,
+.bar input:valid {
+	background: #fff;
+	border-radius: 0.375em 0 0 0.375em;
+	box-shadow: 0 0 0 0.1em #d9d9d9 inset;
+	transform: scale(1);
+}
+.search-btn {
+	background: #171717;
+	border-radius: 0 0.75em 0.75em 0 / 0 1.5em 1.5em 0;
+	padding: 0.75em;
+	position: relative;
+	transform: translate(0.25em,0.25em) rotate(45deg) scale(0.25,0.125);
+	transform-origin: 0 50%;
+}
+.search-btn:before, 
+.search-btn:after {
+	content: "";
+	display: block;
+	opacity: 0;
+	position: absolute;
+}
+.search-btn:before {
+	border-radius: 50%;
+	box-shadow: 0 0 0 0.2em #f1f1f1 inset;
+	top: 0.75em;
+	left: 0.75em;
+	width: 1.2em;
+	height: 1.2em;
+}
+.search-btn:after {
+	background: #f1f1f1;
+	border-radius: 0 0.25em 0.25em 0;
+	top: 51%;
+	left: 51%;
+	width: 0.75em;
+	height: 0.25em;
+	transform: translate(0.2em,0) rotate(45deg);
+	transform-origin: 0 50%;
+}
+.search-btn span {
+	display: inline-block;
+	overflow: hidden;
+	width: 1px;
+	height: 1px;
+}
+.bar input:focus + .search-btn,
+.bar input:valid + .search-btn {
+	background: #7e7e7e;
+	border-radius: 0 0.375em 0.375em 0;
+	transform: scale(1);
+}
+.bar input:focus + .search-btn:before, 
+.bar input:focus + .search-btn:after,
+.bar input:valid + .search-btn:before, 
+.bar input:valid + .search-btn:after {
+	opacity: 1;
+}
+.bar input:focus + .search-btn:hover,
+.bar input:valid + .search-btn:hover,
+.bar input:valid:not(:focus) + .search-btn:focus {
+	background: #7e7e7e;
+}
+.bar input:focus + .search-btn:active,
+.bar input:valid + .search-btn:active {
+	transform: translateY(1px);
+}
 
-        .container p {
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.3px;
-            margin: 20px 0;
-        }
-
-        .container span {
-            font-size: 12px;
-        }
-
-        .container a {
-            color: #333;
-            font-size: 13px;
-            text-decoration: none;
-            margin: 15px 0 10px;
-        }
-
-        .container button {
-            background-color: #13d420;
-            color: #fff;
-            font-size: 12px;
-            padding: 10px 45px;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        .container button.hidden {
-            background-color: transparent;
-            border-color: #fff;
-        }
-
-        .container form {
-            background-color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 0 40px;
-            height: 100%;
-        }
-
-        .container input {
-            background-color: #eee;
-            border: none;
-            margin: 8px 0;
-            padding: 10px 15px;
-            font-size: 13px;
-            border-radius: 8px;
-            width: 100%;
-            outline: none;
-        }
-
-        .form-container {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            width: 100%;
-            transition: all 0.6s ease-in-out;
-        }
-
-        .sign-in {
-            left: 0;
-            width: 100%;
-            z-index: 2;
-        }
-
-        .container.active .sign-in {
-            transform: translateX(100%);
-        }
-
-        .social-icons {
-            margin: 20px 0;
-        }
-
-        .social-icons a {
-            border: 1px solid #ccc;
-            border-radius: 20%;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 3px;
-            width: 40px;
-            height: 40px;
-        }
-
-        .toggle-container {
-            display: none;
-        }
+@media screen and (prefers-color-scheme: dark) {
+	body, input {
+		color: #f1f1f1;
+	}
+	body {
+		background: #171717;
+	}
+	.bar input {
+		box-shadow: 0 0 0 0.4em #f1f1f1 inset;
+	}
+	.bar input:focus,
+	.bar input:valid {
+		background: #3d3d3d;
+		box-shadow: 0 0 0 0.1em #3d3d3d inset;
+	}
+	.search-btn {
+		background: #f1f1f1;
+	}
+}
