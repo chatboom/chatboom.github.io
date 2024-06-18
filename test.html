@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social App</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .post {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #fff;
+        }
+
+        .post-description {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .post-media img, .post-media video {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .post-actions button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div id="post-form" class="mb-4">
+            <div class="form-group">
+                <input type="text" id="post-description" class="form-control" placeholder="Napište popisek...">
+            </div>
+            <div class="form-group">
+                <input type="file" id="post-media" class="form-control-file" accept="image/*,video/*">
+            </div>
+            <button class="btn btn-primary" onclick="createPost()">Přidat příspěvek</button>
+        </div>
+        <div id="posts-container">
+            <!-- Příspěvky budou přidávány sem -->
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function createPost() {
+            const description = document.getElementById('post-description').value;
+            const mediaFile = document.getElementById('post-media').files[0];
+
+            const formData = new FormData();
+            formData.append('description', description);
+            formData.append('media', mediaFile);
+
+            fetch('http://localhost:3000/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Úspěšně odesláno:', data);
+            })
+            .catch(error => {
+                console.error('Chyba při odesílání požadavku:', error);
+            });
+        }
+    </script>
+</body>
+</html>
