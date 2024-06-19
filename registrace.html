@@ -187,7 +187,8 @@
                     var user = userCredential.user;
                     console.log('User registered:', user);
                     alert('Registrace úspěšná');
-                    // Here you can add additional code to save the user's name or redirect to another page
+                    // Přesměrování na dum.html
+            window.location.href = 'dum.html';
                 })
                 .catch((error) => {
                     console.error('Error registering:', error);

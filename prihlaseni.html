@@ -182,6 +182,8 @@
                     var user = userCredential.user;
                     console.log('User logged in:', user);
                     alert('Přihlášení úspěšné');
+                    // Přesměrování na dum.html
+            window.location.href = 'dum.html';
                 })
                 .catch((error) => {
                     console.error('Error logging in:', error);
