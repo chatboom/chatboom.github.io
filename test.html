@@ -69,15 +69,39 @@
 
             fetch('http://localhost:3000/upload', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'same-origin' // Přidání credentials pro správné cookies
             })
             .then(response => response.json())
             .then(data => {
                 console.log('Úspěšně odesláno:', data);
+                // Přidání nového příspěvku do stránky
+                addPostToPage(description, URL.createObjectURL(mediaFile));
             })
             .catch(error => {
                 console.error('Chyba při odesílání požadavku:', error);
             });
+        }
+
+        function addPostToPage(description, mediaSrc) {
+            const postsContainer = document.getElementById('posts-container');
+            const postElement = document.createElement('div');
+            postElement.classList.add('post');
+
+            postElement.innerHTML = `
+                <div class="post-description">${description}</div>
+                <div class="post-media">
+                    ${mediaSrc.endsWith('.mp4') ? 
+                        `<video controls>
+                            <source src="${mediaSrc}" type="video/mp4">
+                            Váš prohlížeč nepodporuje přehrávání videa.
+                        </video>` : 
+                        `<img src="${mediaSrc}" alt="media">`
+                    }
+                </div>
+            `;
+
+            postsContainer.prepend(postElement);
         }
     </script>
 </body>
