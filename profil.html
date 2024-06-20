@@ -18,15 +18,15 @@
         </div>
         <div class="profile-stats">
             <div>
-                <p contenteditable="false">0</p>
+                <p contenteditable="false" id="profile-friends">0</p>
                 <span>Přátelé</span>
             </div>
             <div>
-                <p contenteditable="false">0</p>
+                <p contenteditable="false" id="profile-posts">0</p>
                 <span>Příspěvky</span>
             </div>
             <div>
-                <p contenteditable="false">0</p>
+                <p contenteditable="false" id="profile-likes">0</p>
                 <span>Líbí se</span>
             </div>
         </div>
@@ -34,18 +34,61 @@
             <button onclick="editProfile()">Upravit Profil</button>
         </div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <script>
+        // Konfigurace Firebase vaší webové aplikace
+        var firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            databaseURL: "your-database-url",
+            projectId: "your-project-id",
+            storageBucket: "your-storage-bucket",
+            messagingSenderId: "your-messaging-sender-id",
+            appId: "your-app-id",
+            measurementId: "your-measurement-id"
+        };
+
+        // Inicializace Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const database = firebase.database();
+
+        // Načtení informací o uživateli po načtení stránky
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                var userId = user.uid;
+                database.ref('users/' + userId).once('value')
+                    .then((snapshot) => {
+                        const userData = snapshot.val();
+                        document.getElementById('profile-name').innerText = userData.name;
+                        document.getElementById('profile-nickname').innerText = userData.nickname;
+                        document.getElementById('profile-picture').src = userData.profilePicture;
+                        document.getElementById('profile-friends').innerText = userData.friends;
+                        document.getElementById('profile-posts').innerText = userData.posts;
+                        document.getElementById('profile-likes').innerText = userData.likes;
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching user data:', error);
+                    });
+            } else {
+                console.log('User is not logged in.');
+            }
+        });
+
         function editProfile() {
             const profileName = document.getElementById('profile-name');
             const profileNickname = document.getElementById('profile-nickname');
             const profilePicture = document.getElementById('profile-picture');
-            
+
             const newName = prompt("Enter new name:", profileName.innerText);
             if (newName !== null) profileName.innerText = newName;
-            
+
             const newNickname = prompt("Enter new nickname:", profileNickname.innerText);
             if (newNickname !== null) profileNickname.innerText = newNickname;
-            
+
             const newPicture = prompt("Enter new profile picture URL:", profilePicture.src);
             if (newPicture !== null) profilePicture.src = newPicture;
         }
