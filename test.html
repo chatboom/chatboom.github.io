@@ -48,7 +48,7 @@
             <div class="form-group">
                 <input type="file" id="post-media" class="form-control-file" accept="image/*,video/*">
             </div>
-            <button class="btn btn-primary" onclick="createPost()">Přidat příspěvek</button>
+            <button class="btn btn-primary" onclick="preparePost()">Přidat příspěvek</button>
         </div>
         <div id="posts-container">
             <!-- Příspěvky budou přidávány sem -->
@@ -59,50 +59,66 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        function createPost() {
-            const description = document.getElementById('post-description').value;
-            const mediaFile = document.getElementById('post-media').files[0];
+        function preparePost() {
+    const description = document.getElementById('post-description').value;
+    const mediaFile = document.getElementById('post-media').files[0];
+    if (description && mediaFile) {
+        createPost(description, mediaFile);
+    } else {
+        alert("Vyplňte prosím všechny pole.");
+    }
+}
 
-            const formData = new FormData();
-            formData.append('description', description);
-            formData.append('media', mediaFile);
+function createPost(description, mediaFile) {
+    const formData = new FormData();
+    formData.append('description', description);
+    formData.append('media', mediaFile);
 
-            fetch('http://localhost:3000/upload', {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin' // Přidání credentials pro správné cookies
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Úspěšně odesláno:', data);
-                // Přidání nového příspěvku do stránky
-                addPostToPage(description, URL.createObjectURL(mediaFile));
-            })
-            .catch(error => {
-                console.error('Chyba při odesílání požadavku:', error);
-            });
+    console.log("Příprava odeslání dat...");
+    console.log("URL: ", URL.createObjectURL(mediaFile));
+    console.log("Form Data: ", formData);
+
+    fetch('https://example.com/api/posts', { // Změň na skutečnou URL tvého serveru
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin' // Přidání credentials pro správné cookies
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
         }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Úspěšně odesláno:', data);
+        // Přidání nového příspěvku do stránky
+        addPostToPage(description, URL.createObjectURL(mediaFile));
+    })
+    .catch(error => {
+        console.error('Chyba při odesílání požadavku:', error);
+    });
+}
 
-        function addPostToPage(description, mediaSrc) {
-            const postsContainer = document.getElementById('posts-container');
-            const postElement = document.createElement('div');
-            postElement.classList.add('post');
+function addPostToPage(description, mediaSrc) {
+    const postsContainer = document.getElementById('posts-container');
+    const postElement = document.createElement('div');
+    postElement.classList.add('post');
 
-            postElement.innerHTML = `
-                <div class="post-description">${description}</div>
-                <div class="post-media">
-                    ${mediaSrc.endsWith('.mp4') ? 
-                        `<video controls>
-                            <source src="${mediaSrc}" type="video/mp4">
-                            Váš prohlížeč nepodporuje přehrávání videa.
-                        </video>` : 
-                        `<img src="${mediaSrc}" alt="media">`
-                    }
-                </div>
-            `;
+    postElement.innerHTML = `
+        <div class="post-description">${description}</div>
+        <div class="post-media">
+            ${mediaSrc.endsWith('.mp4') ? 
+                `<video controls>
+                    <source src="${mediaSrc}" type="video/mp4">
+                    Váš prohlížeč nepodporuje přehrávání videa.
+                </video>` : 
+                `<img src="${mediaSrc}" alt="media">`
+            }
+        </div>
+    `;
 
-            postsContainer.prepend(postElement);
-        }
+    postsContainer.prepend(postElement);
+}
     </script>
 </body>
 </html>
