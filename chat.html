@@ -1,170 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <title>ChatBoom</title>
-    <style>* {
-        border: 0;
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-    
-    body, button, input {
-        font: 1em Hind, sans-serif;
-        line-height: 1.5em;
-    }
-    
-    body, .bar {
-        display: flex;
-    }
-    body {
-        background: #f1f1f1;
-        height: 100vh;
-    }
-    .bar input,
-    .search-btn, 
-    .search-btn:before, 
-    .search-btn:after {
-        transition: all 0.25s ease-out;
-    }
-    .bar input,
-    .search-btn {
-        width: 3em;
-        height: 3em;
-    }
-    .bar input:invalid:not(:focus),
-    .search-btn {
-        cursor: pointer;
-    }
-    .bar,
-    .bar input:focus,
-    .bar input:valid  {
-        width: 100%;
-    }
-    .bar input:focus,
-    .bar input:not(:focus) + .search-btn:focus {
-        outline: transparent;
-    }
-    .bar {
-        margin: auto;
-        padding: 1.5em;
-        justify-content: center;
-        max-width: 30em;
-    
-    }
-    .bar input {
-        background: transparent;
-        border-radius: 1.5em;
-        box-shadow: 0 0 0 0.4em #171717 inset;
-        padding: 0.75em;
-        transform: translate(0.5em,0.5em) scale(0.5);
-        transform-origin: 100% 0;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-    }
-    .bar input::-webkit-search-decoration {
-        -webkit-appearance: none;
-    }
-    .bar input:focus,
-    .bar input:valid {
-        background: #fff;
-        border-radius: 0.375em 0 0 0.375em;
-        box-shadow: 0 0 0 0.1em #d9d9d9 inset;
-        transform: scale(1);
-    }
-    .search-btn {
-        background: #171717;
-        border-radius: 0 0.75em 0.75em 0 / 0 1.5em 1.5em 0;
-        padding: 0.75em;
-        position: relative;
-        transform: translate(0.25em,0.25em) rotate(45deg) scale(0.25,0.125);
-        transform-origin: 0 50%;
-    }
-    .search-btn:before, 
-    .search-btn:after {
-        content: "";
-        display: block;
-        opacity: 0;
-        position: absolute;
-    }
-    .search-btn:before {
-        border-radius: 50%;
-        box-shadow: 0 0 0 0.2em #f1f1f1 inset;
-        top: 0.75em;
-        left: 0.75em;
-        width: 1.2em;
-        height: 1.2em;
-    }
-    .search-btn:after {
-        background: #f1f1f1;
-        border-radius: 0 0.25em 0.25em 0;
-        top: 51%;
-        left: 51%;
-        width: 0.75em;
-        height: 0.25em;
-        transform: translate(0.2em,0) rotate(45deg);
-        transform-origin: 0 50%;
-    }
-    .search-btn span {
-        display: inline-block;
-        overflow: hidden;
-        width: 1px;
-        height: 1px;
-    }
-    .bar input:focus + .search-btn,
-    .bar input:valid + .search-btn {
-        background: #7e7e7e;
-        border-radius: 0 0.375em 0.375em 0;
-        transform: scale(1);
-    }
-    .bar input:focus + .search-btn:before, 
-    .bar input:focus + .search-btn:after,
-    .bar input:valid + .search-btn:before, 
-    .bar input:valid + .search-btn:after {
-        opacity: 1;
-    }
-    .bar input:focus + .search-btn:hover,
-    .bar input:valid + .search-btn:hover,
-    .bar input:valid:not(:focus) + .search-btn:focus {
-        background: #7e7e7e;
-    }
-    .bar input:focus + .search-btn:active,
-    .bar input:valid + .search-btn:active {
-        transform: translateY(1px);
-    }
-    
-    @media screen and (prefers-color-scheme: dark) {
-        body, input {
-            color: #f1f1f1;
-        }
+    <style>
+        /* Vaše styly zde */
         body {
-            background: #171717;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
-        .bar input {
-            box-shadow: 0 0 0 0.4em #f1f1f1 inset;
+        #chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .bar input:focus,
-        .bar input:valid {
-            background: #3d3d3d;
-            box-shadow: 0 0 0 0.1em #3d3d3d inset;
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e0f2fe; 
+            max-width: 80%;
+            display: flex;
+            flex-direction: column;
         }
-        .search-btn {
-            background: #f1f1f1;
+        .message .content {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
-    }
+        .message .timestamp {
+            font-size: 12px;
+            color: #777; 
+            align-self: flex-end;
+        }
+        .message-form {
+            display: flex;
+            margin-top: 20px;
+        }
+        .message-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            font-size: 16px;
+        }
+        .send-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: #4CAF50;
+            color: white; 
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .send-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
-<body style="display: flex; justify-content:center ; align-items: center;height: 100vh;overflow: hidden;">
-    <form  class="bar">
-      <input type="search" name="search" pattern=".*\S.*" required autocomplete="off">
-      <button class="search-btn" type="submit">
-        <span>Search</span>
-      </button>
-    </form>
-    
+<body>
+    <div id="chat-container">
+        <div id="chat-messages">
+            <!-- Zde se zobrazí zprávy -->
+        </div>
+        <div class="message-form">
+            <input type="text" id="message-input" class="message-input" placeholder="Napište zprávu...">
+            <button id="send-button" class="send-button">Odeslat</button>
+        </div>
+    </div>
+
+    <!-- Načtení Firebase SDK pomocí modulů -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+        import { getDatabase, ref, push, set, serverTimestamp, onChildAdded } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+
+        // Vaše konfigurace Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
+
+        // Inicializace Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Funkce pro odeslání zprávy
+        function sendChatMessage(message) {
+            // Vygenerujte jedinečný identifikátor pro zprávu
+            const messageId = push(ref(database, 'messages')).key;
+
+            // Data zprávy
+            const messageData = {
+                content: message,
+                timestamp: serverTimestamp()
+            };
+
+            // Uložení zprávy do databáze
+            set(ref(database, 'messages/' + messageId), messageData)
+                .then(() => {
+                    console.log('Zpráva byla úspěšně odeslána.');
+                })
+                .catch((error) => {
+                    console.error('Chyba při odesílání zprávy:', error);
+                });
+        }
+
+        // Přidání události pro odeslání zprávy po kliknutí na tlačítko
+        document.getElementById('send-button').addEventListener('click', function() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            if (message !== '') {
+                sendChatMessage(message);
+                messageInput.value = ''; // Vyprázdnění pole pro zprávy po odeslání
+            }
+        });
+
+        // Funkce pro zobrazení zprávy
+        function displayMessage(messageData) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            const contentElement = document.createElement('div');
+            contentElement.classList.add('content');
+            contentElement.textContent = messageData.content;
+            const timestampElement = document.createElement('div');
+            timestampElement.classList.add('timestamp');
+            const timestamp = new Date(messageData.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            timestampElement.textContent = timestamp;
+            messageElement.appendChild(contentElement);
+            messageElement.appendChild(timestampElement);
+            chatMessages.appendChild(messageElement);
+        }
+
+        // Posluchač pro nové zprávy
+        const messagesRef = ref(database, 'messages');
+        onChildAdded(messagesRef, (data) => {
+            displayMessage(data.val());
+        });
+    </script>
 </body>
-</html> 
+</html>
