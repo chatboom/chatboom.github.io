@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="cs">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
     <title>ChatBoom</title>
+    <style> @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-    <style>
-       @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-
-       * {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -144,8 +140,7 @@
 
         .toggle-container {
             display: none;
-        }
-    </style>
+        }</style>
 </head>
 
 <body>
@@ -174,11 +169,21 @@
                 <button type="submit">Dokončit registraci</button>
             </form>
         </div>
+
+        <!-- Profil -->
+        <div id="profile" style="display: none;">
+            <h1>Váš profil</h1>
+            <p id="profileName"></p>
+            <p id="profileEmail"></p>
+            <p id="profileNickname"></p>
+            <button onclick="editProfile()">Upravit profil</button>
+        </div>
     </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <!-- JavaScript -->
     <script>
@@ -186,6 +191,7 @@
         var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "chatboom-95647",
             storageBucket: "chatboom-95647.appspot.com",
             messagingSenderId: "458271134858",
@@ -197,6 +203,7 @@
         firebase.initializeApp(firebaseConfig);
 
         const auth = firebase.auth();
+        const database = firebase.database();
 
         function register(event) {
             event.preventDefault();
@@ -224,8 +231,63 @@
 
         function completeRegistration(event) {
             event.preventDefault();
-            // Přesměrování na dum.html s parametrem success
-            window.location.href = 'dum.html';
+
+            const user = auth.currentUser;
+            if (user) {
+                const userId = user.uid;
+                const firstName = document.getElementById('firstname').value;
+                const lastName = document.getElementById('lastname').value;
+                const nickname = document.getElementById('nickname').value;
+
+                const userDetails = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    nickname: nickname
+                };
+
+                database.ref('users/' + userId).set(userDetails)
+                    .then(() => {
+                        console.log('User details saved successfully.');
+                        alert('Registrace dokončena');
+
+                        // Přesměrování na domovskou stránku po dokončení registrace
+                        window.location.href = 'dum.html'; // Změňte na požadovanou cílovou stránku
+                    })
+                    .catch((error) => {
+                        console.error('Error saving user details:', error);
+                    });
+            } else {
+                console.error('No user is signed in.');
+            }
+        }
+
+        function displayUserProfile(user) {
+            const userId = user.uid;
+            const profileNameElem = document.getElementById('profileName');
+            const profileEmailElem = document.getElementById('profileEmail');
+            const profileNicknameElem = document.getElementById('profileNickname');
+
+            database.ref('users/' + userId).once('value')
+                .then((snapshot) => {
+                    const userDetails = snapshot.val();
+                    if (userDetails) {
+                        profileNameElem.textContent = `Jméno: ${userDetails.firstName} ${userDetails.lastName}`;
+                        profileEmailElem.textContent = `Email: ${user.email}`;
+                        profileNicknameElem.textContent = `Přezdívka: ${userDetails.nickname}`;
+                        document.getElementById('profile').style.display = 'block';
+                    } else {
+                        console.error('User details not found.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching user details:', error);
+                });
+        }
+
+        function editProfile() {
+            // Tady můžete implementovat funkcionalitu pro úpravu profilu
+            // Například přesměrování na stránku s formulářem pro úpravu
+            alert('Implementujte funkci pro úpravu profilu.');
         }
     </script>
 </body>
