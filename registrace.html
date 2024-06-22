@@ -5,144 +5,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>ChatBoom</title>
-    <style> @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+    <style>
+         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
 
-        body {
-            background-color: #c9d6ff;
-            background: linear-gradient(to right, #e2e2e2, #c9d6ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
+body {
+    background-color: #c9d6ff;
+    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
 
-        .container {
-            background-color: #fff;
-            border-radius: 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-            position: relative;
-            overflow: hidden;
-            width: 384px;
-            max-width: 100%;
-            height: 100vh;
-        }
+.container {
+    background-color: #fff;
+    border-radius: 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+    width: 384px;
+    max-width: 100%;
+    height: 100vh;
+}
 
-        .container p {
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: 0.3px;
-            margin: 20px 0;
-        }
+.container p {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.3px;
+    margin: 20px 0;
+}
 
-        .container span {
-            font-size: 12px;
-        }
+.container span {
+    font-size: 12px;
+}
 
-        .container a {
-            color: #333;
-            font-size: 13px;
-            text-decoration: none;
-            margin: 15px 0 10px;
-        }
+.container a {
+    color: #333;
+    font-size: 13px;
+    text-decoration: none;
+    margin: 15px 0 10px;
+}
 
-        .container button {
-            background-color: #13d420;
-            color: #fff;
-            font-size: 12px;
-            padding: 10px 45px;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-top: 10px;
-            cursor: pointer;
-        }
+.container button {
+    background-color: #13d420;
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+}
 
-        .container button.hidden {
-            background-color: transparent;
-            border-color: #fff;
-        }
+.container button.hidden {
+    background-color: transparent;
+    border-color: #fff;
+}
 
-        .container form {
-            background-color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 0 40px;
-            height: 100%;
-        }
+.container form {
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    height: 100%;
+}
 
-        .container input {
-            background-color: #eee;
-            border: none;
-            margin: 8px 0;
-            padding: 10px 15px;
-            font-size: 13px;
-            border-radius: 8px;
-            width: 100%;
-            outline: none;
-        }
+.container input {
+    background-color: #eee;
+    border: none;
+    margin: 8px 0;
+    padding: 10px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
 
-        .form-container {
-            position: absolute;
-            top: 0;
-            height: 100%;
-            width: 100%;
-            transition: all 0.6s ease-in-out;
-        }
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    transition: all 0.6s ease-in-out;
+}
 
-        .form-container.hidden {
-            display: none;
-        }
+.form-container.hidden {
+    display: none;
+}
 
-        .slide-in {
-            transform: translateX(100%);
-        }
+.slide-in {
+    transform: translateX(100%);
+}
 
-        .slide-out {
-            transform: translateX(-100%);
-        }
+.slide-out {
+    transform: translateX(-100%);
+}
 
-        .sign-up {
-            left: 0;
-            width: 100%;
-            z-index: 2;
-        }
+.sign-up {
+    left: 0;
+    width: 100%;
+    z-index: 2;
+}
 
-        .container.active .sign-up {
-            transform: translateX(100%);
-        }
+.container.active .sign-up {
+    transform: translateX(100%);
+}
 
-        .social-icons {
-            margin: 20px 0;
-        }
+.social-icons {
+    margin: 20px 0;
+}
 
-        .social-icons a {
-            border: 1px solid #ccc;
-            border-radius: 20%;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 3px;
-            width: 40px;
-            height: 40px;
-        }
+.social-icons a {
+    border: 1px solid #ccc;
+    border-radius: 20%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 3px;
+    width: 40px;
+    height: 40px;
+}
 
-        .toggle-container {
-            display: none;
-        }</style>
+.toggle-container {
+    display: none;
+}
+    </style>
 </head>
-
 <body>
     <div class="container" id="container">
         <div class="form-container sign-up">
@@ -158,52 +159,45 @@
             </form>
         </div>
 
-        <!-- Druhý formulář -->
         <div class="form-container slide-in hidden" id="step2">
             <form onsubmit="completeRegistration(event)">
                 <h1>Dokončení registrace</h1>
                 <input type="text" id="firstname" name="firstname" placeholder="Jméno" required>
                 <input type="text" id="lastname" name="lastname" placeholder="Příjmení" required>
                 <input type="text" id="nickname" name="nickname" placeholder="Přezdívka">
-                <!-- Další pole pro registraci -->
                 <button type="submit">Dokončit registraci</button>
             </form>
         </div>
-
-        <!-- Profil -->
-        <div id="profile" style="display: none;">
-            <h1>Váš profil</h1>
-            <p id="profileName"></p>
-            <p id="profileEmail"></p>
-            <p id="profileNickname"></p>
-            <button onclick="editProfile()">Upravit profil</button>
-        </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-    <!-- JavaScript -->
     <script>
-        // Konfigurace Firebase vaší webové aplikace
         var firebaseConfig = {
-            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
-            authDomain: "chatboom-95647.firebaseapp.com",
-            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "chatboom-95647",
-            storageBucket: "chatboom-95647.appspot.com",
-            messagingSenderId: "458271134858",
-            appId: "1:458271134858:web:5e09d3329ba81626830973",
-            measurementId: "G-KS97KKQ3EH"
-        };
+    apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+    authDomain: "chatboom-95647.firebaseapp.com",
+    databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app", // Upravte tuto URL
+    projectId: "chatboom-95647",
+    storageBucket: "chatboom-95647.appspot.com",
+    messagingSenderId: "458271134858",
+    appId: "1:458271134858:web:5e09d3329ba81626830973",
+    measurementId: "G-KS97KKQ3EH"
+};
 
-        // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
 
         const auth = firebase.auth();
         const database = firebase.database();
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                console.log('User is signed in:', user.uid);
+            } else {
+                console.log('No user is signed in.');
+            }
+        });
 
         function register(event) {
             event.preventDefault();
@@ -215,13 +209,12 @@
                     var user = userCredential.user;
                     console.log('User registered:', user);
                     alert('Registrace úspěšná');
-                    // Přepnutí na druhý formulář
                     document.querySelector('.sign-up').classList.add('slide-out');
                     setTimeout(() => {
                         document.querySelector('.sign-up').classList.add('hidden');
                         document.getElementById('step2').classList.remove('hidden');
                         document.getElementById('step2').classList.remove('slide-in');
-                    }, 300); // Čas musí odpovídat době trvání přechodu (0.3s)
+                    }, 300);
                 })
                 .catch((error) => {
                     console.error('Error registering:', error);
@@ -232,62 +225,33 @@
         function completeRegistration(event) {
             event.preventDefault();
 
-            const user = auth.currentUser;
-            if (user) {
-                const userId = user.uid;
-                const firstName = document.getElementById('firstname').value;
-                const lastName = document.getElementById('lastname').value;
-                const nickname = document.getElementById('nickname').value;
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const firstName = document.getElementById('firstname').value;
+                    const lastName = document.getElementById('lastname').value;
+                    const nickname = document.getElementById('nickname').value;
 
-                const userDetails = {
-                    firstName: firstName,
-                    lastName: lastName,
-                    nickname: nickname
-                };
+                    const userDetails = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        nickname: nickname
+                    };
 
-                database.ref('users/' + userId).set(userDetails)
-                    .then(() => {
-                        console.log('User details saved successfully.');
-                        alert('Registrace dokončena');
-
-                        // Přesměrování na domovskou stránku po dokončení registrace
-                        window.location.href = 'dum.html'; // Změňte na požadovanou cílovou stránku
-                    })
-                    .catch((error) => {
-                        console.error('Error saving user details:', error);
-                    });
-            } else {
-                console.error('No user is signed in.');
-            }
-        }
-
-        function displayUserProfile(user) {
-            const userId = user.uid;
-            const profileNameElem = document.getElementById('profileName');
-            const profileEmailElem = document.getElementById('profileEmail');
-            const profileNicknameElem = document.getElementById('profileNickname');
-
-            database.ref('users/' + userId).once('value')
-                .then((snapshot) => {
-                    const userDetails = snapshot.val();
-                    if (userDetails) {
-                        profileNameElem.textContent = `Jméno: ${userDetails.firstName} ${userDetails.lastName}`;
-                        profileEmailElem.textContent = `Email: ${user.email}`;
-                        profileNicknameElem.textContent = `Přezdívka: ${userDetails.nickname}`;
-                        document.getElementById('profile').style.display = 'block';
-                    } else {
-                        console.error('User details not found.');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error fetching user details:', error);
-                });
-        }
-
-        function editProfile() {
-            // Tady můžete implementovat funkcionalitu pro úpravu profilu
-            // Například přesměrování na stránku s formulářem pro úpravu
-            alert('Implementujte funkci pro úpravu profilu.');
+                    database.ref('users/' + userId).set(userDetails)
+                        .then(() => {
+                            console.log('User details saved successfully.');
+                            alert('Registrace dokončena');
+                            window.location.href = 'dum.html';
+                        })
+                        .catch((error) => {
+                            console.error('Error saving user details:', error);
+                        });
+                } else {
+                    console.error('No user is signed in.');
+                    alert('Žádný uživatel není přihlášen. Zkuste to prosím znovu.');
+                }
+            });
         }
     </script>
 </body>
