@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>Vyhledávání uživatelů</title>
+    <style>
+        /* Styly můžete upravit podle vašich potřeb */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .search-container {
+            text-align: center;
+        }
+
+        .search-input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <h1>Vyhledávání uživatelů</h1>
+        <form onsubmit="searchUsers(event)">
+            <input type="text" id="searchInput" class="search-input" placeholder="Zadejte jméno, příjmení nebo přezdívku">
+            <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+        </form>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <!-- Konfigurace Firebase -->
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
+
+        // Inicializace Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function searchUsers(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            if (searchTerm === '') {
+                alert('Zadejte prosím jméno, příjmení nebo přezdívku pro vyhledání uživatele.');
+                return;
+            }
+
+            // Příklad vyhledávacího dotazu
+            database.ref('users')
+                .orderByChild('nickname_lowercase')
+                .startAt(searchTerm)
+                .endAt(searchTerm + '\uf8ff')
+                .once('value')
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const users = snapshot.val();
+                        console.log('Nalezení uživatelé:', users);
+                        // Zde můžete implementovat zobrazení nalezených uživatelů ve vaší aplikaci
+                        // Například výpis do konzole nebo do HTML
+                        // Pro jednoduchost vypíšeme do konzole
+                        for (let userId in users) {
+                            console.log(users[userId].nickname);
+                        }
+                    } else {
+                        console.log('Uživatel nenalezen.');
+                        alert('Uživatel nenalezen.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Chyba při vyhledávání:', error);
+                    alert('Chyba při vyhledávání uživatele: ' + error.message);
+                });
+        }
+    </script>
+</body>
+</html>
