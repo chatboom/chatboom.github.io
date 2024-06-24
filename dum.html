@@ -5,19 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="styles.css">
     <title>ChatBoom</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .top-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+        }
+
+        .top-bar-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .top-bar-item:first-child {
+            margin-right: auto;
+        }
+
+        .top-bar-item:last-child {
+            margin-left: auto;
+            padding-right: 40px; /* Přidání většího odsazení napravo */
+        }
+
+        .top-bar-item img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+        }
+
+        .bottom-bar-item {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .bottom-bar-item img {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Styly pro tlačítko v index.html */
+        .rounded-button {
+            display: block; /* Změna na blokové zobrazení */
+            width: 150px; /* Šířka tlačítka */
+            margin: 10px auto; /* Zarovnání tlačítek na střed */
+            padding: 10px 20px;
+            background-color: #505050;
+            color: #fff;
+            border-radius: 20px; /* Zaoblené rohy */
+            text-decoration: none; /* Odstranění podtržení */
+            text-align: center; /* Zarovnání textu na střed */
+            transition: transform 0.3s ease, background-color 0.3s ease; /* Plynulý přechod */
+        }
+
+        .rounded-button:hover {
+            background-color: #777; /* Zvýraznění při najetí myší */
+            transform: scale(1.1); /* Zvětšení tlačítka */
+        }
+
+        /* Styly pro nadpis */
+        h1 {
+            text-align: center;
+            margin-top: 100px; /* Úprava horního okraje nadpisu */
+        }
+
+        /* Styly pro kontejner tlačítek */
+        .button-container {
+            text-align: center; /* Zarovnání na střed */
+            position: fixed; /* Fixní pozice na dolní části okna */
+            bottom: 20px; /* Vzdálenost od spodního okraje okna */
+            left: 0;
+            right: 0;
+        }
+    </style>
 </head>
 <body>
-
-
-    <div class="bottom-bar">
+        <div class="top-bar">
+        <div class="top-bar-item">
+            <a href="profil.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/user.png" alt="Profil">
+            </a>
+        </div>
+        <div class="bottom-bar">
         <div class="bottom-bar-item">
             <a href="dum.html">
                 <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Domovská Stránka">
-            </a>
-        </div>
-        <div class="bottom-bar-item">
-            <a href="profil.html">
-                <img src="https://img.icons8.com/ios-filled/50/000000/user.png" alt="Profil">
             </a>
         </div>
         <div class="bottom-bar-item">
