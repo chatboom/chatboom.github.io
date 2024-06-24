@@ -1,151 +1,50 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <title>ChatBoom</title>
+    <title>Document</title>
     <style>
-        /* Vaše styly zde */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        #chat-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .message {
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #e0f2fe; 
-            max-width: 80%;
-            display: flex;
-            flex-direction: column;
-        }
-        .message .content {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .message .timestamp {
-            font-size: 12px;
-            color: #777; 
-            align-self: flex-end;
-        }
-        .message-form {
-            display: flex;
-            margin-top: 20px;
-        }
-        .message-input {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 5px 0 0 5px;
-            font-size: 16px;
-        }
-        .send-button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 0 5px 5px 0;
-            background-color: #4CAF50;
-            color: white; 
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .send-button:hover {
-            background-color: #45a049;
-        }
+    .top-bar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: #ffffff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+        padding: 10px 20px;
+    }
+    
+    .top-bar-item {
+        display: flex;
+        align-items: center;
+    }
+    
+    .top-bar-item:last-child {
+    margin-left: auto;
+    margin-right: 20px; /* Přidání odsazení zprava */
+}
+
+.top-bar-item:last-child img {
+    width: 30px;
+    height: 30px;
+}
+    
+    .top-bar-item img {
+        width: 30px;
+        height: 30px;
+    }
     </style>
 </head>
 <body>
-    <div id="chat-container">
-        <div id="chat-messages">
-            <!-- Zde se zobrazí zprávy -->
-        </div>
-        <div class="message-form">
-            <input type="text" id="message-input" class="message-input" placeholder="Napište zprávu...">
-            <button id="send-button" class="send-button">Odeslat</button>
-        </div>
+    <div class="top-bar-item">
+        <a href="pridat_pratele.html">
+            <img src="https://img.icons8.com/ios-filled/50/000000/add-user-male.png" alt="Přidat Přátele">
+        </a>
     </div>
-
-    <!-- Načtení Firebase SDK pomocí modulů -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-        import { getDatabase, ref, push, set, serverTimestamp, onChildAdded } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
-
-        // Vaše konfigurace Firebase
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "chatboom-95647.firebaseapp.com",
-            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "chatboom-95647",
-            storageBucket: "chatboom-95647.appspot.com",
-            messagingSenderId: "458271134858",
-            appId: "1:458271134858:web:5e09d3329ba81626830973",
-            measurementId: "G-KS97KKQ3EH"
-        };
-
-        // Inicializace Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        // Funkce pro odeslání zprávy
-        function sendChatMessage(message) {
-            // Vygenerujte jedinečný identifikátor pro zprávu
-            const messageId = push(ref(database, 'messages')).key;
-
-            // Data zprávy
-            const messageData = {
-                content: message,
-                timestamp: serverTimestamp()
-            };
-
-            // Uložení zprávy do databáze
-            set(ref(database, 'messages/' + messageId), messageData)
-                .then(() => {
-                    console.log('Zpráva byla úspěšně odeslána.');
-                })
-                .catch((error) => {
-                    console.error('Chyba při odesílání zprávy:', error);
-                });
-        }
-
-        // Přidání události pro odeslání zprávy po kliknutí na tlačítko
-        document.getElementById('send-button').addEventListener('click', function() {
-            const messageInput = document.getElementById('message-input');
-            const message = messageInput.value.trim();
-            if (message !== '') {
-                sendChatMessage(message);
-                messageInput.value = ''; // Vyprázdnění pole pro zprávy po odeslání
-            }
-        });
-
-        // Funkce pro zobrazení zprávy
-        function displayMessage(messageData) {
-            const chatMessages = document.getElementById('chat-messages');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            const contentElement = document.createElement('div');
-            contentElement.classList.add('content');
-            contentElement.textContent = messageData.content;
-            const timestampElement = document.createElement('div');
-            timestampElement.classList.add('timestamp');
-            const timestamp = new Date(messageData.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            timestampElement.textContent = timestamp;
-            messageElement.appendChild(contentElement);
-            messageElement.appendChild(timestampElement);
-            chatMessages.appendChild(messageElement);
-        }
-
-        // Posluchač pro nové zprávy
-        const messagesRef = ref(database, 'messages');
-        onChildAdded(messagesRef, (data) => {
-            displayMessage(data.val());
-        });
-    </script>
+</div>
+    
 </body>
 </html>
