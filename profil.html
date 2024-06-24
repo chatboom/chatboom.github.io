@@ -3,34 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil</title>
+    <title>ChatBoom</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .profile-card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        .profile-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #4a90e2;
+            object-fit: cover;
+        }
+        .profile-card h2 {
+            margin: 1rem 0 0.5rem;
+            color: #333333;
+            font-size: 1.5rem;
+        }
+        .profile-card p {
+            color: #666666;
+            font-size: 1rem;
+            margin: 0.5rem 0 1.5rem;
+        }
+        .profile-card input[type="text"], .profile-card textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .profile-card textarea {
+            resize: none;
+        }
+        .profile-card input[type="submit"] {
+            background: #4a90e2;
+            color: #ffffff;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+        .profile-card input[type="submit"]:hover {
+            background: #357ab8;
+        }
+
+        #fullName {
+    font-size: 1.5rem; /*velikost Jména*/
+}
+
+#nickname {
+    font-size: 1.1rem; /* Změň hodnotu podle potřeby */
+}
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Váš profil</h1>
-        <div>
-            <p><strong>Jméno:</strong> <span id="firstName">Načítám...</span></p>
-            <p><strong>Příjmení:</strong> <span id="lastName">Načítám...</span></p>
-            <p><strong>Přezdívka:</strong> <span id="nickname">Načítám...</span></p>
-        </div>
-        <!-- Další obsah profilu -->
-    </div>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        var firebaseConfig = {
-            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
-            authDomain: "chatboom-95647.firebaseapp.com",
-            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "chatboom-95647",
-            storageBucket: "chatboom-95647.appspot.com",
-            messagingSenderId: "458271134858",
-            appId: "1:458271134858:web:5e09d3329ba81626830973",
-            measurementId: "G-KS97KKQ3EH"
-        };
+          const firebaseConfig = {
+  apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+  authDomain: "chatboom-95647.firebaseapp.com",
+  databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "chatboom-95647",
+  storageBucket: "chatboom-95647.appspot.com",
+  messagingSenderId: "458271134858",
+  appId: "1:458271134858:web:5e09d3329ba81626830973",
+  measurementId: "G-KS97KKQ3EH"
+};
 
         firebase.initializeApp(firebaseConfig);
 
@@ -44,8 +106,8 @@
                     .then((snapshot) => {
                         const userDetails = snapshot.val();
                         if (userDetails) {
-                            document.getElementById('firstName').textContent = userDetails.firstName || 'Není vyplněno';
-                            document.getElementById('lastName').textContent = userDetails.lastName || 'Není vyplněno';
+                            const fullName = (userDetails.firstName || 'Není vyplněno') + ' ' + (userDetails.lastName || 'Není vyplněno');
+                            document.getElementById('fullName').textContent = fullName;
                             document.getElementById('nickname').textContent = userDetails.nickname || 'Není vyplněno';
                         }
                     })
@@ -58,5 +120,15 @@
             }
         });
     </script>
+    <div class="profile-card">
+        <img src="https://via.placeholder.com/120" alt="Profilová fotka">
+        <div class="container">
+            <div>
+                <p><span id="fullName">Načítám...</span></p>
+                <p><span id="nickname">Načítám...</span></p>
+            </div>
+        <textarea placeholder="Popis profilu" id="profile-description" rows="4"></textarea>
+        <input type="submit" value="Uložit změny">
+    </div>
 </body>
 </html>
