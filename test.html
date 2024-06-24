@@ -47,7 +47,6 @@
             <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
         </form>
     </div>
-    
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -56,15 +55,15 @@
     <!-- Konfigurace Firebase -->
     <script>
         var firebaseConfig = {
-    apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
-    authDomain: "chatboom-95647.firebaseapp.com",
-    databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app", 
-    projectId: "chatboom-95647",
-    storageBucket: "chatboom-95647.appspot.com",
-    messagingSenderId: "458271134858",
-    appId: "1:458271134858:web:5e09d3329ba81626830973",
-    measurementId: "G-KS97KKQ3EH"
-};
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
 
         // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
@@ -80,13 +79,21 @@
             }
 
             // Příklad vyhledávacího dotazu
-            database.ref('users').orderByChild('nickname_lowercase').startAt(searchTerm).endAt(searchTerm + '\uf8ff')
+            database.ref('users')
+                .orderByChild('nickname_lowercase')
+                .startAt(searchTerm)
+                .endAt(searchTerm + '\uf8ff')
                 .once('value')
                 .then((snapshot) => {
                     if (snapshot.exists()) {
-                        console.log('Nalezení uživatelé:', snapshot.val());
-                        // Zde můžete implementovat zpracování výsledků, např. zobrazení seznamu nalezených uživatelů
-                        // Nebo přesměrování na jejich profily
+                        const users = snapshot.val();
+                        console.log('Nalezení uživatelé:', users);
+                        // Zde můžete implementovat zobrazení nalezených uživatelů ve vaší aplikaci
+                        // Například výpis do konzole nebo do HTML
+                        // Pro jednoduchost vypíšeme do konzole
+                        for (let userId in users) {
+                            console.log(users[userId].nickname);
+                        }
                     } else {
                         console.log('Uživatel nenalezen.');
                         alert('Uživatel nenalezen.');
