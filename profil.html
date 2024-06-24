@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatBoom</title>
+    <title>Váš profil</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -41,6 +41,16 @@
             color: #666666;
             font-size: 1rem;
             margin: 0.5rem 0 1.5rem;
+            text-align: left; /* Adjusted to align text to the left */
+        }
+        .profile-card .name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+        .profile-card .nickname {
+            font-size: 1.1rem;
+            color: #888888;
         }
         .profile-card input[type="text"], .profile-card textarea {
             width: 100%;
@@ -67,32 +77,34 @@
         .profile-card input[type="submit"]:hover {
             background: #357ab8;
         }
-
-        #fullName {
-    font-size: 1.5rem; /*velikost Jména*/
-}
-
-#nickname {
-    font-size: 1.1rem; /* Změň hodnotu podle potřeby */
-}
     </style>
 </head>
 <body>
+    <div class="profile-card">
+        <img src="https://via.placeholder.com/120" alt="Profilová fotka">
+        <div class="profile-info">
+            <p class="name"><span id="fullName">Načítám...</span></p>
+            <p class="nickname"><span id="nickname">Načítám...</span></p>
+        </div>
+        <textarea placeholder="Popis profilu" id="profile-description" rows="4"></textarea>
+        <input type="submit" value="Uložit" onclick="saveProfile()">
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-          const firebaseConfig = {
-  apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
-  authDomain: "chatboom-95647.firebaseapp.com",
-  databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "chatboom-95647",
-  storageBucket: "chatboom-95647.appspot.com",
-  messagingSenderId: "458271134858",
-  appId: "1:458271134858:web:5e09d3329ba81626830973",
-  measurementId: "G-KS97KKQ3EH"
-};
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
 
         firebase.initializeApp(firebaseConfig);
 
@@ -106,9 +118,12 @@
                     .then((snapshot) => {
                         const userDetails = snapshot.val();
                         if (userDetails) {
-                            const fullName = (userDetails.firstName || 'Není vyplněno') + ' ' + (userDetails.lastName || 'Není vyplněno');
-                            document.getElementById('fullName').textContent = fullName;
-                            document.getElementById('nickname').textContent = userDetails.nickname || 'Není vyplněno';
+                            const fullName = userDetails.firstName + ' ' + userDetails.lastName;
+                            document.getElementById('fullName').textContent = fullName || 'Není vyplněno';
+                            document.getElementById('nickname').textContent = userDetails.nickname || 'Není vyplňeno';
+
+                            // Fill profile inputs with user details if available
+                            document.getElementById('profile-description').value = userDetails.description || '';
                         }
                     })
                     .catch((error) => {
@@ -116,19 +131,39 @@
                     });
             } else {
                 console.log('No user is signed in.');
-                // Zde můžete přidat přesměrování nebo jinou logiku pro nepřihlášené uživatele
+                // Handle no user signed in state if needed
             }
         });
+
+        function saveProfile() {
+            const user = auth.currentUser;
+            if (user) {
+                const userId = user.uid;
+                const firstName = document.getElementById('first-name').value;
+                const lastName = document.getElementById('last-name').value;
+                const nickname = document.getElementById('nickname').value;
+                const description = document.getElementById('profile-description').value;
+
+                const fullName = firstName + ' ' + lastName;
+
+                database.ref('users/' + userId).set({
+                    firstName: firstName,
+                    lastName: lastName,
+                    nickname: nickname,
+                    description: description
+                }).then(() => {
+                    console.log('Profile updated successfully.');
+                    // Optionally update displayed profile info on save
+                    document.getElementById('fullName').textContent = fullName || 'Není vyplňeno';
+                    document.getElementById('nickname').textContent = nickname || 'Není vyplňeno';
+                }).catch((error) => {
+                    console.error('Error updating profile:', error);
+                });
+            } else {
+                console.log('No user is signed in.');
+                // Handle no user signed in state if needed
+            }
+        }
     </script>
-    <div class="profile-card">
-        <img src="https://via.placeholder.com/120" alt="Profilová fotka">
-        <div class="container">
-            <div>
-                <p><span id="fullName">Načítám...</span></p>
-                <p><span id="nickname">Načítám...</span></p>
-            </div>
-        <textarea placeholder="Popis profilu" id="profile-description" rows="4"></textarea>
-        <input type="submit" value="Uložit změny">
-    </div>
 </body>
 </html>
