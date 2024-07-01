@@ -24,6 +24,7 @@
             width: 90%;
             max-width: 400px;
             box-sizing: border-box;
+            position: relative;
         }
         .profile-card img {
             width: 120px;
@@ -31,38 +32,32 @@
             border-radius: 50%;
             border: 3px solid #4a90e2;
             object-fit: cover;
+            cursor: pointer;
+            margin-bottom: 1rem;
         }
-        .profile-card h2 {
-            margin: 1rem 0 0.5rem;
-            color: #333333;
-            font-size: 1.5rem;
-        }
-        .profile-card p {
-            color: #666666;
-            font-size: 1rem;
-            margin: 0.5rem 0 1.5rem;
-            text-align: left; /* Adjusted to align text to the left */
+        .profile-card h2, .profile-card p {
+            margin: 0.5rem 0;
         }
         .profile-card .name {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: bold;
-            margin-bottom: 0.2rem;
+            margin: 0.5rem 0;
         }
         .profile-card .nickname {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             color: #888888;
         }
-        .profile-card input[type="text"], .profile-card textarea {
-            width: 100%;
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            border: 1px solid #cccccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 1rem;
+        .profile-card .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1rem;
         }
-        .profile-card textarea {
-            resize: none;
+        .profile-card .stat {
+            text-align: center;
+        }
+        .profile-card .stat p {
+            margin: 0.25rem 0;
+            font-size: 1rem;
         }
         .profile-card input[type="submit"] {
             background: #4a90e2;
@@ -81,12 +76,23 @@
 </head>
 <body>
     <div class="profile-card">
-        <img src="https://via.placeholder.com/120" alt="Profilová fotka">
-        <div class="profile-info">
-            <p class="name"><span id="fullName">Načítám...</span></p>
-            <p class="nickname"><span id="nickname">Načítám...</span></p>
+        <img src="https://via.placeholder.com/120" alt="Profilová fotka" id="profile-pic" onclick="uploadProfilePic()">
+        <h2 class="name" id="fullName">Načítám...</h2>
+        <p class="nickname" id="nickname">Načítám...</p>
+        <div class="stats">
+            <div class="stat">
+                <p id="likes">0</p>
+                <p>Lajků</p>
+            </div>
+            <div class="stat">
+                <p id="posts">0</p>
+                <p>Příspěvků</p>
+            </div>
+            <div class="stat">
+                <p id="followers">0</p>
+                <p>Sledujících</p>
+            </div>
         </div>
-        <textarea placeholder="Popis profilu" id="profile-description" rows="4"></textarea>
         <input type="submit" value="Uložit" onclick="saveProfile()">
     </div>
 
@@ -120,10 +126,13 @@
                         if (userDetails) {
                             const fullName = userDetails.firstName + ' ' + userDetails.lastName;
                             document.getElementById('fullName').textContent = fullName || 'Není vyplněno';
-                            document.getElementById('nickname').textContent = userDetails.nickname || 'Není vyplňeno';
+                            document.getElementById('nickname').textContent = userDetails.nickname || 'Není vyplněno';
 
                             // Fill profile inputs with user details if available
                             document.getElementById('profile-description').value = userDetails.description || '';
+                            document.getElementById('likes').textContent = userDetails.likes || '0';
+                            document.getElementById('posts').textContent = userDetails.posts || '0';
+                            document.getElementById('followers').textContent = userDetails.followers || '0';
                         }
                     })
                     .catch((error) => {
@@ -139,23 +148,25 @@
             const user = auth.currentUser;
             if (user) {
                 const userId = user.uid;
-                const firstName = document.getElementById('first-name').value;
-                const lastName = document.getElementById('last-name').value;
-                const nickname = document.getElementById('nickname').value;
+                const fullName = document.getElementById('fullName').textContent.split(' ');
+                const firstName = fullName[0];
+                const lastName = fullName[1];
+                const nickname = document.getElementById('nickname').textContent;
                 const description = document.getElementById('profile-description').value;
-
-                const fullName = firstName + ' ' + lastName;
+                const likes = document.getElementById('likes').textContent;
+                const posts = document.getElementById('posts').textContent;
+                const followers = document.getElementById('followers').textContent;
 
                 database.ref('users/' + userId).set({
                     firstName: firstName,
                     lastName: lastName,
                     nickname: nickname,
-                    description: description
+                    description: description,
+                    likes: likes,
+                    posts: posts,
+                    followers: followers
                 }).then(() => {
                     console.log('Profile updated successfully.');
-                    // Optionally update displayed profile info on save
-                    document.getElementById('fullName').textContent = fullName || 'Není vyplňeno';
-                    document.getElementById('nickname').textContent = nickname || 'Není vyplňeno';
                 }).catch((error) => {
                     console.error('Error updating profile:', error);
                 });
@@ -163,6 +174,11 @@
                 console.log('No user is signed in.');
                 // Handle no user signed in state if needed
             }
+        }
+
+        function uploadProfilePic() {
+            // Placeholder function for profile pic upload
+            alert('Profile picture upload not implemented yet.');
         }
     </script>
 </body>
