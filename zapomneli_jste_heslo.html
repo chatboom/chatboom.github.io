@@ -17,17 +17,25 @@
         }
         .reset-card {
             background: #ffffff;
-            padding: 2rem;
+            padding: 1rem;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             text-align: center;
-            width: 90%;
-            max-width: 400px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             box-sizing: border-box;
         }
         .reset-card h2 {
             margin-bottom: 1rem;
             color: #333333;
+        }
+        .reset-card form {
+            width: 100%;
+            max-width: 400px; /* Adjust form width */
         }
         .reset-card input[type="email"] {
             width: 100%;
@@ -47,9 +55,21 @@
             cursor: pointer;
             font-size: 1rem;
             margin-top: 1rem;
+            width: 100%;
         }
         .reset-card input[type="submit"]:hover {
             background: #357ab8;
+        }
+        @media (max-width: 600px) {
+            .reset-card {
+                padding: 0.5rem;
+                border-radius: 0;
+            }
+            .reset-card input[type="email"],
+            .reset-card input[type="submit"] {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>

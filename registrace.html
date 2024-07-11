@@ -146,6 +146,12 @@
         .toggle-container {
             display: none;
         }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -170,6 +176,7 @@
                 <input type="text" id="firstname" name="firstname" placeholder="Jméno" required>
                 <input type="text" id="lastname" name="lastname" placeholder="Příjmení" required>
                 <input type="text" id="nickname" name="nickname" placeholder="Přezdívka">
+                <span id="nicknameError" class="error-message"></span>
                 <button type="submit">Dokončit registraci</button>
             </form>
         </div>
@@ -244,21 +251,37 @@
                     const lastName = document.getElementById('lastname').value;
                     const nickname = document.getElementById('nickname').value;
 
-                    const userDetails = {
-                        firstName: firstName,
-                        lastName: lastName,
-                        nickname: nickname
-                    };
+                    // Kontrola existence přezdívky
+                    if (nickname.trim() !== '') {
+                        database.ref('users').orderByChild('nickname').equalTo(nickname).once('value')
+                            .then(snapshot => {
+                                if (snapshot.exists()) {
+                                    document.getElementById('nicknameError').textContent = 'Tato přezdívka již existuje. Zvolte prosím jinou.';
+                                } else {
+                                    document.getElementById('nicknameError').textContent = '';
+                                    const userDetails = {
+                                        firstName: firstName,
+                                        lastName: lastName,
+                                        nickname: nickname
+                                    };
 
-                    database.ref('users/' + userId).set(userDetails)
-                        .then(() => {
-                            console.log('User details saved successfully.');
-                            alert('Registrace dokončena');
-                            window.location.href = 'dum.html';
-                        })
-                        .catch((error) => {
-                            console.error('Error saving user details:', error);
-                        });
+                                    database.ref('users/' + userId).set(userDetails)
+                                        .then(() => {
+                                            console.log('User details saved successfully.');
+                                            alert('Registrace dokončena');
+                                            window.location.href = 'dum.html';
+                                        })
+                                        .catch((error) => {
+                                            console.error('Error saving user details:', error);
+                                        });
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error checking nickname:', error);
+                            });
+                    } else {
+                        document.getElementById('nicknameError').textContent = 'Vyplňte prosím přezdívku.';
+                    }
                 } else {
                     console.error('No user is signed in.');
                     alert('Žádný uživatel není přihlášen. Zkuste to prosím znovu.');
