@@ -22,6 +22,7 @@
             <button onclick="searchUsers()">Search</button>
         </div>
         <div id="searchResults"></div>
+        <div id="userNames"></div> <!-- Element pro zobrazení jmen uživatelů -->
     </div>
 
     <!-- Firebase App (nutné) -->
@@ -36,18 +37,17 @@
     <script>
         // Konfigurace Firebase
         const firebaseConfig = {
-  apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
-  authDomain: "chatboom-95647.firebaseapp.com",
-  projectId: "chatboom-95647",
-  storageBucket: "chatboom-95647.appspot.com",
-  messagingSenderId: "458271134858",
-  appId: "1:458271134858:web:5e09d3329ba81626830973",
-  measurementId: "G-KS97KKQ3EH"
-};
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
 
         // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
 
         async function searchUsers() {
@@ -61,6 +61,8 @@
             }
 
             let resultsHTML = '';
+            let userNamesHTML = ''; // Nová proměnná pro zobrazení jmen uživatelů
+
             snapshot.forEach(doc => {
                 const user = doc.data();
                 resultsHTML += `<div class="profile">
@@ -68,9 +70,11 @@
                                     <p>Name: ${user.first_name} ${user.last_name}</p>
                                     <p><a href="#" onclick="viewProfile('${doc.id}')">View Profile</a></p>
                                 </div>`;
+                userNamesHTML += `<p>Name: ${user.first_name} ${user.last_name}</p>`; // Přidání jména do HTML pro zobrazení
             });
 
             document.getElementById('searchResults').innerHTML = resultsHTML;
+            document.getElementById('userNames').innerHTML = userNamesHTML; // Vložení HTML s jmény do stránky
         }
 
         async function viewProfile(userId) {
@@ -92,14 +96,8 @@
         }
 
         async function sendFriendRequest(receiverId) {
-            const senderId = auth.currentUser.uid;
-            await db.collection('friendRequests').add({
-                senderId: senderId,
-                receiverId: receiverId,
-                status: 'pending'
-            });
-
-            alert('Friend request sent!');
+            // Implementace odeslání žádosti o přátelství
+            console.log('Sending friend request to user:', receiverId);
         }
     </script>
 </body>
