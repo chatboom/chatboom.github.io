@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nastavení webu</title>
+  <title id="title">Nastavení webu</title>
   <style>
-    /* Styling for the sections */
+    /* Stylování sekcí */
     .section {
       margin-bottom: 20px;
       border: 1px solid #ccc;
@@ -14,85 +14,94 @@
     .section h2 {
       font-size: 20px;
       color: #333;
-      cursor: pointer; /* Cursor pointer to indicate clickable */
+      cursor: pointer; /* Ukazatel myši jako ukazatel na kliknutí */
     }
     .section a {
-      text-decoration: none; /* Remove underline from links */
-      color: #333; /* Set link color to black */
+      text-decoration: none; /* Odstranění podtržení u odkazů */
+      color: #333; /* Nastavení barvy odkazu na černou */
     }
     .section a:hover {
-      text-decoration: underline; /* Add underline on hover */
+      text-decoration: underline; /* Přidání podtržení při najetí myší */
     }
     .section ul {
       list-style-type: none;
       padding: 0;
-      display: none; /* Initially hide the list */
+      display: none; /* Skrytí seznamu na začátku */
     }
     .section ul li {
       margin-bottom: 5px;
+      cursor: pointer; /* Ukazatel myši jako ukazatel na kliknutí */
+    }
+
+    /* Stylování pro režimy vzhledu */
+    body.dark-mode {
+      background-color: #333; /* Tmavé pozadí */
+      color: #f4f4f4; /* Světlý text */
+    }
+    body.dark-mode .section {
+      border-color: #444; /* Trochu světlejší barva rámečku */
+    }
+    body.dark-mode .section h2 {
+      color: #f4f4f4; /* Světlá barva textu pro nadpisy sekcí */
+    }
+    body.dark-mode .section a {
+      color: #f4f4f4; /* Světlá barva textu pro odkazy */
+    }
+    body.dark-mode .section ul li {
+      color: #f4f4f4; /* Světlá barva textu pro položky seznamu */
+    }
+    body.light-mode {
+      background-color: #f4f4f4; /* Světlé pozadí */
+      color: #333; /* Temný text */
+    }
+
+    /* Stylování pro barevný režim */
+    .color-picker {
+      display: none; /* Skrytí na začátku */
+      margin-top: 10px;
+    }
+    .color-picker label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .color-picker input[type="color"] {
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
   <div class="section">
-    <h2 onclick="toggleList('language')">Jazyk</h2>
+    <h2 id="language-header" onclick="toggleList('language')">Jazyk</h2>
     <ul id="language">
-      <li>Čeština</li>
-      <li>Angličtina</li>
-      <li>Portugalština</li>
-      <li>Francouzština</li>
-      <li>Italština</li>
-      <li>Němčina</li>
-      <li>Polština</li>
-      <li>Slovenština</li>
+      <li id="cz" onclick="setLanguage('cz')">Čeština</li>
+      <li id="sk" onclick="setLanguage('sk')">Slovenština</li>
+      <li id="en" onclick="setLanguage('en')">Angličtina</li>
+      <li id="pt" onclick="setLanguage('pt')">Portugalština</li>
+      <li id="fr" onclick="setLanguage('fr')">Francouzština</li>
+      <li id="it" onclick="setLanguage('it')">Italština</li>
+      <li id="de" onclick="setLanguage('de')">Němčina</li>
+      <li id="pl" onclick="setLanguage('pl')">Polština</li>
     </ul>
   </div>
-
+  
   <div class="section">
-    <h2 onclick="toggleList('appearance')">Vzhled</h2>
+    <h2 id="appearance-header" onclick="toggleList('appearance')">Vzhled</h2>
     <ul id="appearance">
-      <li>Tmavé</li>
-      <li>Světlé</li>
-      <li>Barevné</li>
+      <li id="darkMode" onclick="changeAppearance('dark')">Tmavé</li>
+      <li id="lightMode" onclick="changeAppearance('light')">Světlé</li>
+      <li id="colorfulMode" onclick="showColorPicker()">Barevné</li>
     </ul>
+    <div id="color-picker" class="color-picker">
+      <label for="background-color">Vyberte barvu pozadí:</label>
+      <input type="color" id="background-color" name="background-color" onchange="changeBackgroundColor(event)">
+    </div>
   </div>
 
   <div class="section">
-    <h2><a href="podpora.html">Podpora</a></h2>
+    <h2><a id="support-link" href="Zde bude URL adresa na můj web na stránku s podporou.">Podpora</a></h2>
   </div>
 
-  <div class="section">
-    <h2><a href="ucet.html">Účet</a></h2>
-  </div>
+  <script src="scripts.js"></script>
 
-  <script>
-    function toggleSection(sectionId) {
-      var section = document.getElementById(sectionId);
-      if (section.style.display === "block") {
-        section.style.display = "none";
-      } else {
-        // Hide all paragraphs except the one clicked
-        var allSections = document.querySelectorAll('.section p');
-        allSections.forEach(function(sec) {
-          sec.style.display = 'none';
-        });
-        section.style.display = "block";
-      }
-    }
-
-    function toggleList(listId) {
-      var list = document.getElementById(listId);
-      if (list.style.display === "block") {
-        list.style.display = "none";
-      } else {
-        // Hide all lists except the one clicked
-        var allLists = document.querySelectorAll('.section ul');
-        allLists.forEach(function(lst) {
-          lst.style.display = 'none';
-        });
-        list.style.display = "block";
-      }
-    }
-  </script>
 </body>
 </html>
