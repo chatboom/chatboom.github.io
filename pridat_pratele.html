@@ -1,44 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Network</title>
+    <title>Přidat Přátele</title>
     <style>
-        /* Základní styly */
-        body { font-family: Arial, sans-serif; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; }
-        .form-group button { padding: 10px 20px; }
-        .profile { border: 1px solid #ccc; padding: 10px; margin-top: 20px; }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #c9d6ff;
+            background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .user-list {
+            font-size: 18px;
+            margin: 0;
+            text-align: left;
+        }
+
+        .user-list div {
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e2e2;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .user-list div:hover {
+            background-color: #f0f0f0;
+        }
+
+        @media (max-width: 600px) {
+            .user-list {
+                font-size: 16px;
+            }
+
+            .user-list div {
+                padding: 8px 0;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Search Users</h2>
-        <div class="form-group">
-            <input type="text" id="searchQuery" placeholder="Search by username or name">
-            <button onclick="searchUsers()">Search</button>
-        </div>
-        <div id="searchResults"></div>
-        <div id="userNames"></div> <!-- Element pro zobrazení jmen uživatelů -->
+        <div class="user-list" id="user-list"></div>
     </div>
 
-    <!-- Firebase App (nutné) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-
-    <!-- Firebase Authentication -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-
-    <!-- Cloud Firestore -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // Konfigurace Firebase
-        const firebaseConfig = {
+        var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "chatboom-95647",
             storageBucket: "chatboom-95647.appspot.com",
             messagingSenderId: "458271134858",
@@ -46,59 +87,47 @@
             measurementId: "G-KS97KKQ3EH"
         };
 
-        // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
 
-        async function searchUsers() {
-            const searchQuery = document.getElementById('searchQuery').value;
-            const usersRef = db.collection('users');
-            const snapshot = await usersRef.where('username', '==', searchQuery).get();
+        const auth = firebase.auth();
+        const database = firebase.database();
 
-            if (snapshot.empty) {
-                document.getElementById('searchResults').innerHTML = 'No matching users found.';
-                return;
+        function loadUsers() {
+            database.ref('users').once('value')
+                .then(snapshot => {
+                    const users = snapshot.val();
+                    const userListElement = document.getElementById('user-list');
+                    userListElement.innerHTML = '';
+
+                    if (users) {
+                        for (const userId in users) {
+                            if (users.hasOwnProperty(userId)) {
+                                const user = users[userId];
+                                const userDiv = document.createElement('div');
+                                userDiv.textContent = `${user.firstName} ${user.lastName}`;
+                                userDiv.dataset.userId = userId; // Přidáme userId jako data atribut
+                                userDiv.onclick = function() {
+                                    window.location.href = `profil.html?userId=${userId}`;
+                                };
+                                userListElement.appendChild(userDiv);
+                            }
+                        }
+                    } else {
+                        userListElement.textContent = 'Žádní uživatelé nebyli nalezeni.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading users:', error);
+                });
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadUsers();
+            } else {
+                console.log('No user is signed in.');
             }
-
-            let resultsHTML = '';
-            let userNamesHTML = ''; // Nová proměnná pro zobrazení jmen uživatelů
-
-            snapshot.forEach(doc => {
-                const user = doc.data();
-                resultsHTML += `<div class="profile">
-                                    <p>Username: ${user.username}</p>
-                                    <p>Name: ${user.first_name} ${user.last_name}</p>
-                                    <p><a href="#" onclick="viewProfile('${doc.id}')">View Profile</a></p>
-                                </div>`;
-                userNamesHTML += `<p>Name: ${user.first_name} ${user.last_name}</p>`; // Přidání jména do HTML pro zobrazení
-            });
-
-            document.getElementById('searchResults').innerHTML = resultsHTML;
-            document.getElementById('userNames').innerHTML = userNamesHTML; // Vložení HTML s jmény do stránky
-        }
-
-        async function viewProfile(userId) {
-            const userRef = db.collection('users').doc(userId);
-            const doc = await userRef.get();
-
-            if (!doc.exists) {
-                alert('No such user!');
-                return;
-            }
-
-            const user = doc.data();
-            document.getElementById('searchResults').innerHTML = `<div class="profile">
-                                                                    <h2>${user.username}</h2>
-                                                                    <p>Name: ${user.first_name} ${user.last_name}</p>
-                                                                    <p>Description: ${user.profile_description}</p>
-                                                                    <button onclick="sendFriendRequest('${doc.id}')">Send Friend Request</button>
-                                                                </div>`;
-        }
-
-        async function sendFriendRequest(receiverId) {
-            // Implementace odeslání žádosti o přátelství
-            console.log('Sending friend request to user:', receiverId);
-        }
+        });
     </script>
 </body>
 </html>
