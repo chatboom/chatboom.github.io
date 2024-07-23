@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatBoom</title>
+    <title>Profil</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -72,6 +72,23 @@
         .profile-card input[type="submit"]:hover {
             background: #357ab8;
         }
+        .profile-card .action-buttons {
+            margin-top: 1rem;
+        }
+        .profile-card .action-buttons button {
+            background: #4a90e2;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 0.75rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+            width: 100%;
+        }
+        .profile-card .action-buttons button:hover {
+            background: #357ab8;
+        }
     </style>
 </head>
 <body>
@@ -93,7 +110,9 @@
                 <p>Sledujících</p>
             </div>
         </div>
-        <input type="submit" value="Uložit" onclick="saveProfile()">
+        <div class="action-buttons">
+            <button onclick="addFriend()">Přidat do přátel</button>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -117,68 +136,46 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                const userId = user.uid;
-                database.ref('users/' + userId).once('value')
-                    .then((snapshot) => {
-                        const userDetails = snapshot.val();
-                        if (userDetails) {
-                            const fullName = userDetails.firstName + ' ' + userDetails.lastName;
-                            document.getElementById('fullName').textContent = fullName || 'Není vyplněno';
-                            document.getElementById('nickname').textContent = userDetails.nickname || 'Není vyplněno';
-
-                            // Fill profile inputs with user details if available
-                            document.getElementById('profile-description').value = userDetails.description || '';
-                            document.getElementById('likes').textContent = userDetails.likes || '0';
-                            document.getElementById('posts').textContent = userDetails.posts || '0';
-                            document.getElementById('followers').textContent = userDetails.followers || '0';
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error fetching user details:', error);
-                    });
-            } else {
-                console.log('No user is signed in.');
-                // Handle no user signed in state if needed
-            }
-        });
-
-        function saveProfile() {
-            const user = auth.currentUser;
-            if (user) {
-                const userId = user.uid;
-                const fullName = document.getElementById('fullName').textContent.split(' ');
-                const firstName = fullName[0];
-                const lastName = fullName[1];
-                const nickname = document.getElementById('nickname').textContent;
-                const description = document.getElementById('profile-description').value;
-                const likes = document.getElementById('likes').textContent;
-                const posts = document.getElementById('posts').textContent;
-                const followers = document.getElementById('followers').textContent;
-
-                database.ref('users/' + userId).set({
-                    firstName: firstName,
-                    lastName: lastName,
-                    nickname: nickname,
-                    description: description,
-                    likes: likes,
-                    posts: posts,
-                    followers: followers
-                }).then(() => {
-                    console.log('Profile updated successfully.');
-                }).catch((error) => {
-                    console.error('Error updating profile:', error);
+        function loadProfile(userId) {
+            database.ref('users/' + userId).once('value')
+                .then(snapshot => {
+                    const userDetails = snapshot.val();
+                    if (userDetails) {
+                        const fullName = userDetails.firstName + ' ' + userDetails.lastName;
+                        document.getElementById('fullName').textContent = fullName || 'Není vyplněno';
+                        document.getElementById('nickname').textContent = userDetails.nickname || 'Není vyplněno';
+                        document.getElementById('likes').textContent = userDetails.likes || '0';
+                        document.getElementById('posts').textContent = userDetails.posts || '0';
+                        document.getElementById('followers').textContent = userDetails.followers || '0';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user profile:', error);
                 });
-            } else {
-                console.log('No user is signed in.');
-                // Handle no user signed in state if needed
-            }
+        }
+
+        function addFriend() {
+            alert('Přidání do přátel není ještě implementováno.');
+            // Implement the logic for adding a friend here
         }
 
         function uploadProfilePic() {
-            // Placeholder function for profile pic upload
-            alert('Profile picture upload not implemented yet.');
+            alert('Upload of profile picture not yet implemented.');
+        }
+
+        // Example usage
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('userId');
+        if (userId) {
+            loadProfile(userId);
+        } else {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    loadProfile(user.uid);
+                } else {
+                    console.log('No user is signed in.');
+                }
+            });
         }
     </script>
 </body>
