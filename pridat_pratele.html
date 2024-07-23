@@ -33,33 +33,43 @@
             max-width: 600px;
             padding: 20px;
             box-sizing: border-box;
+            text-align: center;
+            overflow-y: auto;
+            max-height: 100vh;
         }
 
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
+        .user-list {
+            font-size: 18px;
+            margin: 0;
+            text-align: left;
+        }
+
+        .user-list div {
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e2e2;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .user-list div:hover {
+            background-color: #f0f0f0;
         }
 
         .friend-request {
-            background-color: #eaf9e5;
-            border: 1px solid #d4e8d0;
-            border-radius: 4px;
+            background-color: #e0ffe0;
             padding: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .friend-request p {
-            margin: 0;
         }
 
         .friend-request button {
             background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             padding: 5px 10px;
             cursor: pointer;
         }
@@ -68,27 +78,21 @@
             background-color: #45a049;
         }
 
-        .search-bar {
-            margin-bottom: 20px;
-        }
+        @media (max-width: 600px) {
+            .user-list {
+                font-size: 16px;
+            }
 
-        .search-bar input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
+            .user-list div {
+                padding: 8px 0;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Žádosti o přátelství</h1>
-        <div class="search-bar">
-            <input type="text" placeholder="Vyhledat...">
-        </div>
-        <div id="friend-requests">
-            <!-- Žádosti o přátelství budou načteny sem -->
-        </div>
+        <div id="friend-requests"></div>
+        <div class="user-list" id="user-list"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -112,70 +116,99 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
-        function loadFriendRequests() {
-            const currentUser = auth.currentUser;
+        function loadUsers() {
+            database.ref('users').once('value')
+                .then(snapshot => {
+                    const users = snapshot.val();
+                    const userListElement = document.getElementById('user-list');
+                    userListElement.innerHTML = '';
 
-            if (currentUser) {
-                const userId = currentUser.uid;
+                    if (users) {
+                        for (const userId in users) {
+                            if (users.hasOwnProperty(userId)) {
+                                const user = users[userId];
+                                const userDiv = document.createElement('div');
+                                userDiv.textContent = `${user.firstName} ${user.lastName}`;
+                                userDiv.dataset.userId = userId; // Přidáme userId jako data atribut
+                                userDiv.onclick = function() {
+                                    window.location.href = `profil.html?userId=${userId}`;
+                                };
+                                userListElement.appendChild(userDiv);
+                            }
+                        }
+                    } else {
+                        userListElement.textContent = 'Žádní uživatelé nebyli nalezeni.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading users:', error);
+                });
+        }
 
-                // Listen for friend requests
-                database.ref('friendRequests').orderByChild('to').equalTo(userId).on('value', snapshot => {
+        function loadFriendRequests(userId) {
+            database.ref('friendRequests/' + userId).once('value')
+                .then(snapshot => {
                     const requests = snapshot.val();
-                    const requestsContainer = document.getElementById('friend-requests');
-                    requestsContainer.innerHTML = ''; // Clear previous requests
+                    const friendRequestsElement = document.getElementById('friend-requests');
+                    friendRequestsElement.innerHTML = '';
 
                     if (requests) {
-                        Object.keys(requests).forEach(requestId => {
-                            const request = requests[requestId];
-                            const requestElement = document.createElement('div');
-                            requestElement.className = 'friend-request';
-                            requestElement.innerHTML = `
-                                <p>Uživatel ${request.from} si vás přidal do přátel.</p>
-                                <button onclick="acceptFriendRequest('${requestId}')">Přijmout</button>
-                            `;
-                            requestsContainer.appendChild(requestElement);
-                        });
-                    } else {
-                        requestsContainer.innerHTML = '<p>Nemáte žádné nové žádosti o přátelství.</p>';
+                        for (const requestId in requests) {
+                            if (requests.hasOwnProperty(requestId)) {
+                                const requesterId = requests[requestId];
+                                // Získat detaily o žadateli
+                                database.ref('users/' + requesterId).once('value')
+                                    .then(userSnapshot => {
+                                        const requester = userSnapshot.val();
+                                        const requesterName = `${requester.firstName} ${requester.lastName}`;
+
+                                        const requestDiv = document.createElement('div');
+                                        requestDiv.className = 'friend-request';
+                                        requestDiv.innerHTML = `
+                                            <span>${requesterName} si vás přidal do přátel</span>
+                                            <button onclick="acceptFriendRequest('${requesterId}')">Přidat do přátel</button>
+                                        `;
+                                        friendRequestsElement.appendChild(requestDiv);
+                                    });
+                            }
+                        }
                     }
+                })
+                .catch(error => {
+                    console.error('Error loading friend requests:', error);
                 });
+        }
+
+        function acceptFriendRequest(requesterId) {
+            const user = auth.currentUser;
+            if (user) {
+                const userId = user.uid;
+                const updates = {};
+                updates['friends/' + userId + '/' + requesterId] = true;
+                updates['friends/' + requesterId + '/' + userId] = true;
+                updates['friendRequests/' + userId + '/' + requesterId] = null; // Odstranit žádost po přijetí
+
+                database.ref().update(updates)
+                    .then(() => {
+                        console.log('Friend request accepted');
+                        loadFriendRequests(userId); // Reload friend requests
+                    })
+                    .catch(error => {
+                        console.error('Error accepting friend request:', error);
+                    });
             } else {
                 console.log('No user is signed in.');
             }
         }
 
-        function acceptFriendRequest(requestId) {
-            const currentUser = auth.currentUser;
-
-            if (currentUser) {
-                const userId = currentUser.uid;
-
-                // Get the request data
-                database.ref('friendRequests/' + requestId).once('value').then(snapshot => {
-                    const request = snapshot.val();
-
-                    if (request) {
-                        // Add friend to both users
-                        database.ref('users/' + userId + '/friends').push(request.from);
-                        database.ref('users/' + request.from + '/friends').push(userId);
-
-                        // Remove the request
-                        database.ref('friendRequests/' + requestId).remove().then(() => {
-                            alert('Přátelství bylo přijato.');
-                        }).catch(error => {
-                            console.error('Error removing friend request:', error);
-                        });
-                    }
-                }).catch(error => {
-                    console.error('Error fetching friend request:', error);
-                });
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadUsers();
+                loadFriendRequests(user.uid);
             } else {
                 console.log('No user is signed in.');
             }
-        }
-
-        // Load friend requests when the page loads
-        window.onload = loadFriendRequests;
+        });
     </script>
 </body>
 </html>
