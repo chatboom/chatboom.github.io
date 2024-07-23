@@ -1,50 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Chat</title>
     <style>
-    .top-bar {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        background-color: #ffffff;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-        padding: 10px 20px;
-    }
-    
-    .top-bar-item {
-        display: flex;
-        align-items: center;
-    }
-    
-    .top-bar-item:last-child {
-    margin-left: auto;
-    margin-right: 20px; /* Přidání odsazení zprava */
-}
-
-.top-bar-item:last-child img {
-    width: 30px;
-    height: 30px;
-}
-    
-    .top-bar-item img {
-        width: 30px;
-        height: 30px;
-    }
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f0f0f0;
+        }
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin: 5px 0;
+        }
+        .message.from-me {
+            text-align: right;
+        }
+        .message.from-me .message-content {
+            background: #e1f5fe;
+        }
+        .message-content {
+            display: inline-block;
+            padding: 10px;
+            border-radius: 8px;
+            background: #eeeeee;
+        }
+        .message-input {
+            display: flex;
+        }
+        .message-input input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .message-input button {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #4a90e2;
+            color: #fff;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .message-input button:hover {
+            background: #357ab8;
+        }
     </style>
 </head>
 <body>
-    <div class="top-bar-item">
-        <a href="pridat_pratele.html">
-            <img src="https://img.icons8.com/ios-filled/50/000000/add-user-male.png" alt="Přidat Přátele">
-        </a>
+    <div class="chat-container">
+        <div class="messages" id="messages"></div>
+        <div class="message-input">
+            <input type="text" id="message" placeholder="Napište zprávu...">
+            <button onclick="sendMessage()">Odeslat</button>
+        </div>
     </div>
-</div>
-    
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const database = firebase.database();
+        const messagesRef = database.ref('chats/');
+        const chatId = new URLSearchParams(window.location.search).get('chatId');
+        const messagesContainer = document.getElementById('messages');
+
+        function loadMessages() {
+            messagesRef.child(chatId).child('messages').on('child_added', (snapshot) => {
+                const message = snapshot.val();
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                if (message.senderId === auth.currentUser.uid) {
+                    messageElement.classList.add('from-me');
+                }
+                messageElement.innerHTML = `<div class="message-content">${message.text}</div>`;
+                messagesContainer.appendChild(messageElement);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+        }
+
+        function sendMessage() {
+            const messageText = document.getElementById('message').value;
+            if (messageText) {
+                const user = auth.currentUser;
+                if (user) {
+                    database.ref(`chats/${chatId}/messages`).push({
+                        text: messageText,
+                        senderId: user.uid,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    }).then(() => {
+                        document.getElementById('message').value = '';
+                    }).catch(error => {
+                        console.error('Error sending message:', error);
+                    });
+                }
+            }
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadMessages();
+            } else {
+                console.log('No user is signed in.');
+            }
+        });
+    </script>
 </body>
 </html>
