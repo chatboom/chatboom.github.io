@@ -3,128 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverzace</title>
+    <title>Vytvořit Konverzaci</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
+            align-items: flex-start;
             height: 100vh;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
         .create-conversation {
-            background: #ffffff;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-            margin-top: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-        }
-        .create-conversation span {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-right: 0.5rem;
-        }
-        .friends-list {
             background: #ffffff;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            padding: 0.75rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             text-align: center;
-            width: 90%;
-            max-width: 400px;
+            width: 85%;
+            max-width: 350px;
             margin-top: 1rem;
-            display: none;
-        }
-        .friend-item {
-            padding: 0.5rem;
-            border-bottom: 1px solid #ddd;
+            box-sizing: border-box;
             cursor: pointer;
+            transition: background 0.3s ease;
         }
-        .friend-item:last-child {
-            border-bottom: none;
+        .create-conversation:hover {
+            background: #f0f0f0;
+        }
+        .create-conversation .icon {
+            font-size: 1.75rem;
+            margin-right: 0.75rem;
+            color: #4a90e2;
+        }
+        .create-conversation .text {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #4a90e2;
         }
     </style>
 </head>
 <body>
-    <div class="create-conversation" onclick="toggleFriendsList()">
-        <span>+</span>
-        <span>Vytvořit konverzaci</span>
+    <div class="create-conversation" onclick="createConversation()">
+        <span class="icon">+</span>
+        <span class="text">Vytvořit konverzaci</span>
     </div>
-    <div class="friends-list" id="friends-list">
-        <h3>Přátelé</h3>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        var firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID",
-            measurementId: "YOUR_MEASUREMENT_ID"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-
-        const auth = firebase.auth();
-        const database = firebase.database();
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                const userId = user.uid;
-                loadFriends(userId);
-            } else {
-                console.log('No user is signed in.');
-            }
-        });
-
-        function loadFriends(userId) {
-            const friendsRef = database.ref('friends/' + userId);
-            friendsRef.on('value', snapshot => {
-                const friends = snapshot.val();
-                const friendsListElement = document.getElementById('friends-list');
-
-                friendsListElement.innerHTML = '<h3>Přátelé</h3>';
-                if (friends) {
-                    for (const friendId in friends) {
-                        database.ref('users/' + friendId).once('value')
-                            .then(userSnapshot => {
-                                const friend = userSnapshot.val();
-                                const friendItem = document.createElement('div');
-                                friendItem.className = 'friend-item';
-                                friendItem.textContent = `${friend.firstName} ${friend.lastName}`;
-                                friendItem.onclick = () => {
-                                    const chatId = [userId, friendId].sort().join('_');
-                                    window.location.href = `chat.html?chatId=${chatId}`;
-                                };
-                                friendsListElement.appendChild(friendItem);
-                            });
-                    }
-                } else {
-                    friendsListElement.innerHTML += '<p>Žádní přátelé.</p>';
-                }
-            });
-        }
-
-        function toggleFriendsList() {
-            const friendsListElement = document.getElementById('friends-list');
-            friendsListElement.style.display = friendsListElement.style.display === 'none' || friendsListElement.style.display === '' ? 'block' : 'none';
+        function createConversation() {
+            alert('Funkce pro vytvoření konverzace zatím není implementována.');
         }
     </script>
 </body>
