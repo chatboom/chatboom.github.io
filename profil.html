@@ -232,28 +232,29 @@
                 updates['friends/' + requesterId + '/' + userId] = true;
                 updates['friendRequests/' + userId + '/' + requesterId] = null;
 
-                // Uložit informace o příteli do seznamu konverzací
+                // Uložit informace o příteli do seznamu konverzací pro oba uživatele
                 database.ref('users/' + requesterId).once('value')
                     .then(userSnapshot => {
                         const requester = userSnapshot.val();
                         const requesterName = `${requester.firstName} ${requester.lastName}`;
 
-                        const newConversationKey = database.ref('conversations/' + userId).push().key;
-                        const conversationData = {
+                        const newConversationKey = database.ref().child('conversations').push().key;
+                        const conversationDataForUser = {
                             name: requesterName,
                             id: requesterId
                         };
-
-                        updates['conversations/' + userId + '/' + newConversationKey] = conversationData;
-                        updates['conversations/' + requesterId + '/' + newConversationKey] = {
+                        const conversationDataForRequester = {
                             name: user.displayName || 'Unknown User',
                             id: userId
                         };
 
+                        updates['conversations/' + userId + '/' + newConversationKey] = conversationDataForUser;
+                        updates['conversations/' + requesterId + '/' + newConversationKey] = conversationDataForRequester;
+
                         return database.ref().update(updates);
                     })
                     .then(() => {
-                        console.log('Friend request accepted and conversation created');
+                        console.log('Friend request accepted and conversation created for both users');
                         loadFriendRequests(user.uid);  // Reload friend requests after acceptance
                     })
                     .catch(error => {
