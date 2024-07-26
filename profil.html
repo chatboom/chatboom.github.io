@@ -232,10 +232,29 @@
                 updates['friends/' + requesterId + '/' + userId] = true;
                 updates['friendRequests/' + userId + '/' + requesterId] = null;
 
-                database.ref().update(updates)
+                // Uložit informace o příteli do seznamu konverzací
+                database.ref('users/' + requesterId).once('value')
+                    .then(userSnapshot => {
+                        const requester = userSnapshot.val();
+                        const requesterName = `${requester.firstName} ${requester.lastName}`;
+
+                        const newConversationKey = database.ref('conversations/' + userId).push().key;
+                        const conversationData = {
+                            name: requesterName,
+                            id: requesterId
+                        };
+
+                        updates['conversations/' + userId + '/' + newConversationKey] = conversationData;
+                        updates['conversations/' + requesterId + '/' + newConversationKey] = {
+                            name: user.displayName || 'Unknown User',
+                            id: userId
+                        };
+
+                        return database.ref().update(updates);
+                    })
                     .then(() => {
-                        console.log('Friend request accepted');
-                        loadFriendRequests(userId);
+                        console.log('Friend request accepted and conversation created');
+                        loadFriendRequests(user.uid);  // Reload friend requests after acceptance
                     })
                     .catch(error => {
                         console.error('Error accepting friend request:', error);
@@ -245,21 +264,35 @@
             }
         }
 
-        function uploadProfilePic() {
-            alert('Upload of profile picture not yet implemented.');
-        }
-
         auth.onAuthStateChanged(user => {
             if (user) {
-                const userId = user.uid;
-                loadProfile(userId);
-                loadFriendRequests(userId);
+                loadProfile(user.uid);
+                loadFriendRequests(user.uid);
             } else {
                 console.log('No user is signed in.');
             }
         });
+
+        function uploadProfilePic() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const user = auth.currentUser;
+                    const storageRef = firebase.storage().ref();
+                    const profilePicRef = storageRef.child('profilePics/' + user.uid + '.jpg');
+                    profilePicRef.put(file).then(() => {
+                        profilePicRef.getDownloadURL().then(url => {
+                            document.getElementById('profile-pic').src = url;
+                            database.ref('users/' + user.uid).update({ profilePic: url });
+                        });
+                    });
+                }
+            };
+            input.click();
+        }
     </script>
 </body>
 </html>
-
-
