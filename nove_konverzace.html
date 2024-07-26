@@ -3,58 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nové Konverzace</title>
+    <title>Konverzace</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             height: 100vh;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
-        .conversation-list {
+        .conversations-card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
             width: 90%;
-            max-width: 500px;
-            margin-top: 1rem;
+            max-width: 400px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .conversations-card h2 {
+            margin-bottom: 1rem;
         }
         .conversation {
-            display: flex;
-            align-items: center;
-            background: #ffffff;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: background 0.3s ease;
+            background-color: #e0ffe0;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
         }
-        .conversation:hover {
-            background: #f0f0f0;
-        }
-        .conversation .icon {
-            font-size: 1.75rem;
-            margin-right: 0.75rem;
-            color: #4a90e2;
-        }
-        .conversation .name {
-            font-size: 1.25rem;
-            font-weight: bold;
+        .conversation a {
+            text-decoration: none;
             color: #4a90e2;
         }
     </style>
 </head>
 <body>
-    <h1>Nové Konverzace</h1>
-    <div class="conversation-list" id="conversation-list">
-        <!-- Seznam konverzací bude zde -->
+    <div class="conversations-card">
+        <h2>Vaše konverzace</h2>
+        <div id="conversations-list"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <script>
         var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
@@ -72,48 +68,37 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
-        function loadConversations() {
-            const user = auth.currentUser;
-            if (user) {
-                const userId = user.uid;
-                const conversationList = document.getElementById('conversation-list');
-                conversationList.innerHTML = '';
+        function loadConversations(userId) {
+            database.ref('conversations/' + userId).once('value')
+                .then(snapshot => {
+                    const conversations = snapshot.val();
+                    const conversationsListElement = document.getElementById('conversations-list');
+                    conversationsListElement.innerHTML = '';
 
-                database.ref('conversations/' + userId).once('value')
-                    .then(snapshot => {
-                        const conversations = snapshot.val();
-                        if (conversations) {
-                            for (const convKey in conversations) {
-                                if (conversations.hasOwnProperty(convKey)) {
-                                    const conversation = conversations[convKey];
-                                    const conversationDiv = document.createElement('div');
-                                    conversationDiv.className = 'conversation';
-                                    conversationDiv.innerHTML = `
-                                        <span class="icon">+</span>
-                                        <span class="name">${conversation.name}</span>
-                                    `;
-                                    conversationDiv.onclick = () => {
-                                        // Zde můžete přidat funkci pro otevření konverzace
-                                        alert('Otevírám konverzaci s ' + conversation.name);
-                                    };
-                                    conversationList.appendChild(conversationDiv);
-                                }
+                    if (conversations) {
+                        for (const convKey in conversations) {
+                            if (conversations.hasOwnProperty(convKey)) {
+                                const conversation = conversations[convKey];
+                                const conversationElement = document.createElement('div');
+                                conversationElement.className = 'conversation';
+                                conversationElement.innerHTML = `
+                                    <a href="chat.html?conversationId=${convKey}&friendId=${conversation.id}">${conversation.name}</a>
+                                `;
+                                conversationsListElement.appendChild(conversationElement);
                             }
-                        } else {
-                            conversationList.innerHTML = '<p>Žádné konverzace.</p>';
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error loading conversations:', error);
-                    });
-            } else {
-                console.log('No user is signed in.');
-            }
+                    } else {
+                        conversationsListElement.textContent = 'Žádné konverzace.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading conversations:', error);
+                });
         }
 
         auth.onAuthStateChanged(user => {
             if (user) {
-                loadConversations();
+                loadConversations(user.uid);
             } else {
                 console.log('No user is signed in.');
             }
@@ -121,3 +106,4 @@
     </script>
 </body>
 </html>
+

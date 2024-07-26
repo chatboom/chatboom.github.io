@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vytvořit Konverzaci</title>
+    <title>Chat</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -11,51 +11,178 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             height: 100vh;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
-        .create-conversation {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .chat-card {
             background: #ffffff;
-            padding: 0.75rem;
+            padding: 2rem;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             text-align: center;
-            width: 85%;
-            max-width: 350px;
-            margin-top: 1rem;
+            width: 90%;
+            max-width: 600px;
             box-sizing: border-box;
-            cursor: pointer;
-            transition: background 0.3s ease;
+            position: relative;
         }
-        .create-conversation:hover {
-            background: #f0f0f0;
+        .chat-card h2 {
+            margin-bottom: 1rem;
         }
-        .create-conversation .icon {
-            font-size: 1.75rem;
-            margin-right: 0.75rem;
-            color: #4a90e2;
+        .messages {
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
-        .create-conversation .text {
-            font-size: 1.25rem;
+        .message {
+            margin-bottom: 1rem;
+        }
+        .message span {
             font-weight: bold;
-            color: #4a90e2;
+        }
+        .send-message {
+            display: flex;
+        }
+        .send-message input {
+            flex: 1;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .send-message button {
+            background: #4a90e2;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 0.75rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+        }
+        .send-message button:hover {
+            background: #357ab8;
         }
     </style>
 </head>
 <body>
-    <div class="create-conversation" onclick="createConversation()">
-        <span class="icon">+</span>
-        <span class="text">Vytvořit konverzaci</span>
+    <div class="chat-card">
+        <h2 id="chatWith">Chat s: Načítám...</h2>
+        <div class="messages" id="messages"></div>
+        <div class="send-message">
+            <input type="text" id="messageInput" placeholder="Napište zprávu...">
+            <button onclick="sendMessage()">Odeslat</button>
+        </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <script>
-        function createConversation() {
-            window.location.href = 'nove_konverzace.html';
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let conversationId;
+        let friendId;
+
+        function loadChat() {
+            const urlParams = new URLSearchParams(window.location.search);
+            conversationId = urlParams.get('conversationId');
+            friendId = urlParams.get('friendId');
+
+            if (conversationId && friendId) {
+                database.ref('users/' + friendId).once('value')
+                    .then(snapshot => {
+                        const friendDetails = snapshot.val();
+                        const friendName = `${friendDetails.firstName} ${friendDetails.lastName}`;
+                        document.getElementById('chatWith').textContent = `Chat s: ${friendName}`;
+                    })
+                    .catch(error => {
+                        console.error('Error loading friend details:', error);
+                    });
+
+                loadMessages();
+            } else {
+                console.error('No conversationId or friendId specified in the URL.');
+            }
         }
+
+        function loadMessages() {
+            const messagesElement = document.getElementById('messages');
+            database.ref('messages/' + conversationId).on('value', snapshot => {
+                const messages = snapshot.val();
+                messagesElement.innerHTML = '';
+
+                if (messages) {
+                    for (const msgKey in messages) {
+                        if (messages.hasOwnProperty(msgKey)) {
+                            const message = messages[msgKey];
+                            const messageElement = document.createElement('div');
+                            messageElement.className = 'message';
+                            messageElement.innerHTML = `
+                                <span>${message.senderName}: </span>${message.text}
+                            `;
+                            messagesElement.appendChild(messageElement);
+                        }
+                    }
+                } else {
+                    messagesElement.textContent = 'Žádné zprávy.';
+                }
+            });
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const text = messageInput.value.trim();
+            if (text) {
+                const user = auth.currentUser;
+                if (user) {
+                    const newMessageKey = database.ref('messages/' + conversationId).push().key;
+                    const messageData = {
+                        senderId: user.uid,
+                        senderName: user.displayName || 'Unknown User',
+                        text: text,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    };
+
+                    database.ref('messages/' + conversationId + '/' + newMessageKey).set(messageData)
+                        .then(() => {
+                            messageInput.value = '';
+                        })
+                        .catch(error => {
+                            console.error('Error sending message:', error);
+                        });
+                } else {
+                    console.log('No user is signed in.');
+                }
+            }
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadChat();
+            } else {
+                console.log('No user is signed in.');
+            }
+        });
     </script>
 </body>
 </html>
