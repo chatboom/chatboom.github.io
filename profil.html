@@ -129,6 +129,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
     <script>
         var firebaseConfig = {
@@ -146,8 +147,19 @@
 
         const auth = firebase.auth();
         const database = firebase.database();
+        const storage = firebase.storage();
+
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
 
         function loadProfile(userId) {
+            if (!userId) {
+                console.error('User ID is missing');
+                return;
+            }
+
             database.ref('users/' + userId).once('value')
                 .then(snapshot => {
                     const userDetails = snapshot.val();
@@ -158,6 +170,13 @@
                         document.getElementById('likes').textContent = userDetails.likes || '0';
                         document.getElementById('posts').textContent = userDetails.posts || '0';
                         document.getElementById('followers').textContent = userDetails.followers || '0';
+                        if (userDetails.profilePic) {
+                            document.getElementById('profile-pic').src = userDetails.profilePic;
+                        }
+                    } else {
+                        console.error('User details not found');
+                        document.getElementById('fullName').textContent = 'Profil nenalezen';
+                        document.getElementById('nickname').textContent = '';
                     }
                 })
                 .catch(error => {
@@ -185,7 +204,7 @@
                                         requestDiv.className = 'friend-request';
                                         requestDiv.innerHTML = `
                                             <span>${requesterName} si vás přidal do přátel</span>
-                                            <button onclick="acceptFriendRequest('${requesterId}')">Přidat do přátel</button>
+                                            <button onclick="acceptFriendRequest('${requesterId}')">Přijmout</button>
                                         `;
                                         friendRequestsElement.appendChild(requestDiv);
                                     });
@@ -204,8 +223,7 @@
             const user = auth.currentUser;
             if (user) {
                 const userId = user.uid;
-                const urlParams = new URLSearchParams(window.location.search);
-                const friendId = urlParams.get('userId');
+                const friendId = getUrlParameter('userId');
 
                 if (friendId) {
                     database.ref('friendRequests/' + friendId + '/' + userId).set(userId)
@@ -267,8 +285,15 @@
 
         auth.onAuthStateChanged(user => {
             if (user) {
-                loadProfile(user.uid);
-                loadFriendRequests(user.uid);
+                const userId = getUrlParameter('userId');
+                if (userId) {
+                    loadProfile(userId);
+                    loadFriendRequests(userId);
+                } else {
+                    // Load profile of the currently signed-in user if no userId parameter is in URL
+                    loadProfile(user.uid);
+                    loadFriendRequests(user.uid);
+                }
             } else {
                 console.log('No user is signed in.');
             }
@@ -282,7 +307,7 @@
                 const file = e.target.files[0];
                 if (file) {
                     const user = auth.currentUser;
-                    const storageRef = firebase.storage().ref();
+                    const storageRef = storage.ref();
                     const profilePicRef = storageRef.child('profilePics/' + user.uid + '.jpg');
                     profilePicRef.put(file).then(() => {
                         profilePicRef.getDownloadURL().then(url => {
@@ -297,3 +322,7 @@
     </script>
 </body>
 </html>
+
+
+
+
