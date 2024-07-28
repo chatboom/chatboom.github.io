@@ -43,6 +43,32 @@
       font-family: "Arial", sans-serif; /* Ensure password field displays dots */
     }
 
+    /* Button styling */
+    .action-buttons {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .action-buttons button {
+      background-color: #4a90e2;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 48%;
+    }
+    .action-buttons button:hover {
+      background-color: #357ab8;
+    }
+    .action-buttons .delete {
+      background-color: #e74c3c;
+    }
+    .action-buttons .delete:hover {
+      background-color: #c0392b;
+    }
+
     /* Responsive adjustments */
     @media screen and (max-width: 600px) {
       .container {
@@ -50,6 +76,16 @@
       }
       .form-group input {
         padding: 8px;
+      }
+      .action-buttons {
+        flex-direction: column;
+      }
+      .action-buttons button {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .action-buttons button:last-child {
+        margin-bottom: 0;
       }
     }
   </style>
@@ -72,6 +108,56 @@
       <label for="password">Heslo:</label>
       <input type="password" id="password" name="password" value="heslo" disabled>
     </div>
+    <div class="action-buttons">
+      <button onclick="logout()">Odhlásit se</button>
+      <button class="delete" onclick="deleteAccount()">Smazat účet</button>
+    </div>
   </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script>
+    // Your Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+      authDomain: "chatboom-95647.firebaseapp.com",
+      projectId: "chatboom-95647",
+      storageBucket: "chatboom-95647.appspot.com",
+      messagingSenderId: "458271134858",
+      appId: "1:458271134858:web:5e09d3329ba81626830973",
+      measurementId: "G-KS97KKQ3EH"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+
+    function logout() {
+      auth.signOut().then(() => {
+        window.location.href = 'login.html'; // Redirect to login page
+      }).catch((error) => {
+        console.error('Error signing out:', error);
+      });
+    }
+
+    function deleteAccount() {
+      const user = auth.currentUser;
+      if (user) {
+        const confirmDelete = confirm('Oprávněně chcete smazat svůj účet? Tuto akci nelze vrátit zpět.');
+        if (confirmDelete) {
+          user.delete().then(() => {
+            alert('Účet byl úspěšně smazán.');
+            window.location.href = 'login.html'; // Redirect to login page
+          }).catch((error) => {
+            console.error('Error deleting account:', error);
+          });
+        }
+      } else {
+        alert('Musíte být přihlášeni.');
+      }
+    }
+  </script>
 </body>
 </html>
+
