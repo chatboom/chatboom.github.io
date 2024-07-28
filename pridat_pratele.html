@@ -38,6 +38,19 @@
             max-height: 100vh;
         }
 
+        .search-bar {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-bar input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
         .user-list {
             font-size: 18px;
             margin: 0;
@@ -91,6 +104,9 @@
 </head>
 <body>
     <div class="container">
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Vyhledávat jména a příjmení..." oninput="filterUsers()">
+        </div>
         <div id="friend-requests"></div>
         <div class="user-list" id="user-list"></div>
     </div>
@@ -201,6 +217,21 @@
             }
         }
 
+        function filterUsers() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const userListElement = document.getElementById('user-list');
+            const users = userListElement.getElementsByTagName('div');
+
+            Array.from(users).forEach(userDiv => {
+                const userName = userDiv.textContent.toLowerCase();
+                if (userName.includes(searchInput)) {
+                    userDiv.style.display = '';
+                } else {
+                    userDiv.style.display = 'none';
+                }
+            });
+        }
+
         auth.onAuthStateChanged(user => {
             if (user) {
                 loadUsers();
@@ -212,3 +243,4 @@
     </script>
 </body>
 </html>
+
