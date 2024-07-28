@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBoom</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .conversations-card {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .conversations-card h2 {
+            margin-bottom: 1rem;
+        }
+        .conversation {
+            background-color: #e0ffe0;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .conversation a {
+            text-decoration: none;
+            color: #4a90e2;
+        }
+    </style>
+</head>
+<body>
+    <div class="conversations-card">
+        <h2>Vaše Komunikace</h2>
+        <div id="conversations-list"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        function loadConversations(userId) {
+            database.ref('conversations/' + userId).once('value')
+                .then(snapshot => {
+                    const conversations = snapshot.val();
+                    const conversationsListElement = document.getElementById('conversations-list');
+                    conversationsListElement.innerHTML = '';
+
+                    if (conversations) {
+                        for (const convKey in conversations) {
+                            if (conversations.hasOwnProperty(convKey)) {
+                                const conversation = conversations[convKey];
+                                const friendId = conversation.id;
+
+                                // Fetch friend's name from the database
+                                database.ref('users/' + friendId).once('value')
+                                    .then(userSnapshot => {
+                                        const friend = userSnapshot.val();
+                                        const friendName = friend ? `${friend.firstName} ${friend.lastName}` : 'Unknown user';
+
+                                        const conversationElement = document.createElement('div');
+                                        conversationElement.className = 'conversation';
+                                        conversationElement.innerHTML = `
+                                            <a href="chat.html?conversationId=${convKey}&friendId=${friendId}">${friendName}</a>
+                                        `;
+                                        conversationsListElement.appendChild(conversationElement);
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching user data:', error);
+                                    });
+                            }
+                        }
+                    } else {
+                        conversationsListElement.textContent = 'Žádné konverzace.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading conversations:', error);
+                });
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadConversations(user.uid);
+            } else {
+                console.log('No user is signed in.');
+            }
+        });
+    </script>
+</body>
+</html>
+
+
