@@ -99,6 +99,19 @@
         .friend-request button:hover {
             background-color: #45a049;
         }
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .status-active {
+            background-color: #4CAF50;
+        }
+        .status-inactive {
+            background-color: #888888;
+        }
     </style>
 </head>
 <body>
@@ -106,6 +119,7 @@
         <img src="https://via.placeholder.com/120" alt="Profilová fotka" id="profile-pic" onclick="uploadProfilePic()">
         <h2 class="name" id="fullName">Načítám...</h2>
         <p class="nickname" id="nickname">Načítám...</p>
+        <p>Status: <span id="status-indicator" class="status-indicator status-inactive"></span> <span id="status-text">Neaktivní</span></p>
         <div class="stats">
             <div class="stat">
                 <p id="likes">0</p>
@@ -172,6 +186,18 @@
                         document.getElementById('followers').textContent = userDetails.followers || '0';
                         if (userDetails.profilePic) {
                             document.getElementById('profile-pic').src = userDetails.profilePic;
+                        }
+                        // Update status indicator
+                        const statusIndicator = document.getElementById('status-indicator');
+                        const statusText = document.getElementById('status-text');
+                        if (userDetails.isActive) {
+                            statusIndicator.classList.remove('status-inactive');
+                            statusIndicator.classList.add('status-active');
+                            statusText.textContent = 'Aktivní';
+                        } else {
+                            statusIndicator.classList.remove('status-active');
+                            statusIndicator.classList.add('status-inactive');
+                            statusText.textContent = 'Neaktivní';
                         }
                     } else {
                         console.error('User details not found');
@@ -322,7 +348,3 @@
     </script>
 </body>
 </html>
-
-
-
-
