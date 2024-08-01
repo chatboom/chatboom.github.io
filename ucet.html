@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ChatBoom</title>
   <style>
-    /* General styling */
+    /* Obecné stylování */
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f0f0;
@@ -13,7 +13,7 @@
       padding: 0;
     }
 
-    /* Container for the form */
+    /* Kontejner pro formulář */
     .container {
       max-width: 90%;
       margin: 20px auto;
@@ -23,7 +23,7 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
-    /* Form group styling */
+    /* Stylování pro form-group */
     .form-group {
       margin-bottom: 15px;
     }
@@ -33,17 +33,17 @@
       font-weight: bold;
     }
     .form-group input {
-      width: calc(100% - 20px); /* Subtract padding from width */
+      width: calc(100% - 20px); /* Odečtení paddingu od šířky */
       padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
     .form-group input[type="password"] {
-      font-family: "Arial", sans-serif; /* Ensure password field displays dots */
+      font-family: "Arial", sans-serif; /* Zajištění zobrazení teček u pole pro heslo */
     }
 
-    /* Button styling */
+    /* Stylování tlačítek */
     .action-buttons {
       margin-top: 20px;
       display: flex;
@@ -69,7 +69,7 @@
       background-color: #c0392b;
     }
 
-    /* Responsive adjustments */
+    /* Úpravy pro responzivní zobrazení */
     @media screen and (max-width: 600px) {
       .container {
         padding: 10px;
@@ -117,7 +117,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script>
-    // Your Firebase configuration
+    // Vaše konfigurace Firebase
     var firebaseConfig = {
       apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
       authDomain: "chatboom-95647.firebaseapp.com",
@@ -128,29 +128,31 @@
       measurementId: "G-KS97KKQ3EH"
     };
 
-    // Initialize Firebase
+    // Inicializace Firebase
     firebase.initializeApp(firebaseConfig);
 
     const auth = firebase.auth();
 
+    // Funkce pro odhlášení uživatele
     function logout() {
       auth.signOut().then(() => {
-        window.location.href = 'login.html'; // Redirect to login page
+        window.location.href = 'prihlaseni.html'; // Přesměrování na stránku pro přihlášení
       }).catch((error) => {
-        console.error('Error signing out:', error);
+        console.error('Chyba při odhlašování:', error);
       });
     }
 
+    // Funkce pro smazání účtu uživatele
     function deleteAccount() {
       const user = auth.currentUser;
       if (user) {
-        const confirmDelete = confirm('Oprávněně chcete smazat svůj účet? Tuto akci nelze vrátit zpět.');
+        const confirmDelete = confirm('Opravdu chcete smazat svůj účet? Tuto akci nelze vrátit zpět.');
         if (confirmDelete) {
           user.delete().then(() => {
             alert('Účet byl úspěšně smazán.');
-            window.location.href = 'login.html'; // Redirect to login page
+            window.location.href = 'prihlaseni.html'; // Přesměrování na stránku pro přihlášení
           }).catch((error) => {
-            console.error('Error deleting account:', error);
+            console.error('Chyba při mazání účtu:', error);
           });
         }
       } else {
@@ -160,4 +162,5 @@
   </script>
 </body>
 </html>
+
 
