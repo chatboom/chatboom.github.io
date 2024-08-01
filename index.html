@@ -3,19 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="styles.css">
     <title>ChatBoom</title>
+    <style>
+        /* Resetování základních stylů */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Stylování těla stránky */
+        body {
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 0 20px;
+            overflow: hidden;
+        }
+
+        /* Hlavní kontejner */
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px; /* Zmenšení maximální šířky pro lepší vzhled na mobilu */
+        }
+
+        /* Stylování nadpisu */
+        h1 {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Stylování kontejneru tlačítek */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Zmenšení mezery mezi tlačítky */
+        }
+
+        /* Stylování tlačítek */
+        .rounded-button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 15px 20px; /* Nastavení paddingu pro přizpůsobení mobilním zařízením */
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            position: relative;
+        }
+
+        /* Efekty pro tlačítka */
+        .rounded-button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .rounded-button:active {
+            background-color: #004080;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Média queries pro mobilní zařízení */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+
+            .rounded-button {
+                padding: 12px 18px;
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
-    
-
-    <h1>Vítej na našem webu</h1>
-    
-    <!-- Kontejner tlačítek -->
-    <div class="button-container">
-        <!-- Zaoblené tlačítko -->
-        <a href="prihlaseni.html" class="rounded-button">Přihlášení</a>
-        <a href="registrace.html" class="rounded-button">Registrace</a>
+    <div class="container">
+        <h1>Vítej na našem webu</h1>
+        <!-- Kontejner tlačítek -->
+        <div class="button-container">
+            <!-- Zaoblené tlačítko -->
+            <a href="prihlaseni.html" class="rounded-button">Přihlášení</a>
+            <a href="registrace.html" class="rounded-button">Registrace</a>
+        </div>
     </div>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
