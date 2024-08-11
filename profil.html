@@ -134,7 +134,7 @@
                 <p>Sledujících</p>
             </div>
         </div>
-        <div class="action-buttons">
+        <div class="action-buttons" id="friend-request-button">
             <button onclick="sendFriendRequest()">Přidat do přátel</button>
         </div>
         <div class="friend-requests" id="friend-requests"></div>
@@ -237,7 +237,7 @@
                             }
                         }
                     } else {
-                        friendRequestsElement.textContent = 'Žádné žádosti o přátelství.';
+                        friendRequestsElement.innerHTML = '<p>Žádné nové žádosti o přátelství</p>';
                     }
                 })
                 .catch(error => {
@@ -246,67 +246,80 @@
         }
 
         function sendFriendRequest() {
-            const user = auth.currentUser;
-            if (user) {
-                const userId = user.uid;
-                const friendId = getUrlParameter('userId');
-
-                if (friendId) {
-                    database.ref('friendRequests/' + friendId + '/' + userId).set(userId)
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = getUrlParameter('userId');
+                    if (!userId || userId === user.uid) {
+                        console.error('Invalid target user ID');
+                        return;
+                    }
+                    const friendRequestRef = database.ref('friendRequests/' + userId);
+                    friendRequestRef.push(user.uid)
                         .then(() => {
+                            console.log('Friend request sent');
                             alert('Žádost o přátelství odeslána.');
                         })
                         .catch(error => {
                             console.error('Error sending friend request:', error);
                         });
                 } else {
-                    console.log('No userId specified in the URL.');
+                    console.error('No user is signed in');
                 }
-            } else {
-                console.log('No user is signed in.');
-            }
+            });
         }
 
         function acceptFriendRequest(requesterId) {
-            const user = auth.currentUser;
-            if (user) {
-                const userId = user.uid;
-                const updates = {};
-                updates['friends/' + userId + '/' + requesterId] = true;
-                updates['friends/' + requesterId + '/' + userId] = true;
-                updates['friendRequests/' + userId + '/' + requesterId] = null;
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const myId = user.uid;
 
-                // Uložit informace o příteli do seznamu konverzací pro oba uživatele
-                database.ref('users/' + requesterId).once('value')
-                    .then(userSnapshot => {
-                        const requester = userSnapshot.val();
-                        const requesterName = `${requester.firstName} ${requester.lastName}`;
+                    const myFriendsRef = database.ref('friends/' + myId);
+                    const theirFriendsRef = database.ref('friends/' + requesterId);
 
-                        const newConversationKey = database.ref().child('conversations').push().key;
-                        const conversationDataForUser = {
-                            name: requesterName,
-                            id: requesterId
-                        };
-                        const conversationDataForRequester = {
-                            name: user.displayName || 'Unknown User',
-                            id: userId
-                        };
+                    myFriendsRef.push(requesterId)
+                        .then(() => theirFriendsRef.push(myId))
+                        .then(() => database.ref('friendRequests/' + myId + '/' + requesterId).remove())
+                        .then(() => {
+                            console.log('Friend request accepted');
+                            alert('Žádost o přátelství přijata.');
+                            loadFriendRequests(myId);
+                        })
+                        .catch(error => {
+                            console.error('Error accepting friend request:', error);
+                        });
+                } else {
+                    console.error('No user is signed in');
+                }
+            });
+        }
 
-                        updates['conversations/' + userId + '/' + newConversationKey] = conversationDataForUser;
-                        updates['conversations/' + requesterId + '/' + newConversationKey] = conversationDataForRequester;
+        function uploadProfilePic() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.onchange = function(event) {
+                        const file = event.target.files[0];
+                        if (!file) return;
 
-                        return database.ref().update(updates);
-                    })
-                    .then(() => {
-                        console.log('Friend request accepted and conversation created for both users');
-                        loadFriendRequests(user.uid);  // Reload friend requests after acceptance
-                    })
-                    .catch(error => {
-                        console.error('Error accepting friend request:', error);
-                    });
-            } else {
-                console.log('No user is signed in.');
-            }
+                        const storageRef = storage.ref('profilePictures/' + user.uid);
+                        storageRef.put(file)
+                            .then(() => storageRef.getDownloadURL())
+                            .then(url => database.ref('users/' + user.uid).update({ profilePic: url }))
+                            .then(() => {
+                                document.getElementById('profile-pic').src = url;
+                                alert('Profilová fotka byla úspěšně nahrána.');
+                            })
+                            .catch(error => {
+                                console.error('Error uploading profile picture:', error);
+                            });
+                    };
+                    fileInput.click();
+                } else {
+                    console.error('No user is signed in');
+                }
+            });
         }
 
         auth.onAuthStateChanged(user => {
@@ -315,36 +328,21 @@
                 if (userId) {
                     loadProfile(userId);
                     loadFriendRequests(userId);
+
+                    // Kontrola, jestli se jedná o tvůj vlastní profil
+                    if (userId === user.uid) {
+                        document.getElementById('friend-request-button').style.display = 'none';
+                    }
                 } else {
-                    // Load profile of the currently signed-in user if no userId parameter is in URL
+                    // Pokud není userId v URL, zobrazí se tvůj vlastní profil
                     loadProfile(user.uid);
                     loadFriendRequests(user.uid);
+                    document.getElementById('friend-request-button').style.display = 'none'; // Schovat tlačítko, pokud se jedná o tvůj profil
                 }
             } else {
                 console.log('No user is signed in.');
             }
         });
-
-        function uploadProfilePic() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const user = auth.currentUser;
-                    const storageRef = storage.ref();
-                    const profilePicRef = storageRef.child('profilePics/' + user.uid + '.jpg');
-                    profilePicRef.put(file).then(() => {
-                        profilePicRef.getDownloadURL().then(url => {
-                            document.getElementById('profile-pic').src = url;
-                            database.ref('users/' + user.uid).update({ profilePic: url });
-                        });
-                    });
-                }
-            };
-            input.click();
-        }
     </script>
 </body>
 </html>
