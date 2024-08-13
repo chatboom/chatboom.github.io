@@ -92,6 +92,21 @@
         .social-icons a.icon i.fa-google { color: #db4437; }
         .toggle-container { display: none; }
         .error-message { color: red; font-size: 0.9em; margin-top: 5px; }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .checkbox-container input {
+            width: auto;
+            margin-right: 10px;
+        }
+        .checkbox-container a {
+            margin-left: 10px;
+            color: #0066cc;
+            text-decoration: underline;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -106,6 +121,14 @@
                 <input type="email" id="email-register" placeholder="Email" required>
                 <input type="password" id="password-register" placeholder="Heslo" required>
                 <input type="password" id="confirm-password-register" placeholder="Potvrdit heslo" required>
+
+                <!-- Zaškrtávací políčko s podmínkami -->
+                <div class="checkbox-container">
+                    <input type="checkbox" id="terms-checkbox" required>
+                    <label for="terms-checkbox">Souhlasím s podmínkami</label>
+                    <a href="podminky.html" target="_blank">Více</a> <!-- Odkaz na podmínky -->
+                </div>
+
                 <button type="submit">Registrovat se</button>
             </form>
         </div>
@@ -150,6 +173,13 @@
             const password = document.getElementById('password-register').value;
             const confirmPassword = document.getElementById('confirm-password-register').value;
 
+            // Kontrola zaškrtnutí políčka podmínek
+            const termsCheckbox = document.getElementById('terms-checkbox');
+            if (!termsCheckbox.checked) {
+                alert('Pro registraci musíte souhlasit s podmínkami.');
+                return;
+            }
+
             if (password !== confirmPassword) {
                 alert('Hesla se neshodují. Zkuste to prosím znovu.');
                 return;
@@ -172,14 +202,14 @@
                 })
                 .catch((error) => {
                     console.error('Error:', error);
-                    alert('Chyba: ' + error.message);
+                    alert('Chyba při registraci: ' + error.message);
                 });
         }
 
         function completeRegistration(event) {
             event.preventDefault();
+            const user = auth.currentUser;
 
-            const user = auth.currentUser; // Získat aktuálně přihlášeného uživatele
             if (user) {
                 const userId = user.uid;
                 const firstName = document.getElementById('firstname').value;
@@ -228,7 +258,6 @@
                     var user = result.user;
                     console.log('Přihlášení pomocí Google:', user);
                     alert('Úspěšné přihlášení pomocí Google');
-                    // Zde můžeš přidat další zpracování po přihlášení
                 })
                 .catch((error) => {
                     console.error('Chyba přihlášení pomocí Google:', error);
