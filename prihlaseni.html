@@ -1,150 +1,131 @@
 <!DOCTYPE html>
 <html lang="cs">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>ChatBoom</title>
 
-<style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Montserrat', sans-serif;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
 
-    body {
-        background-color: #c9d6ff;
-        background: linear-gradient(to right, #e2e2e2, #c9d6ff);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-    }
+        body {
+            background-color: #c9d6ff;
+            background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-    .container {
-        background-color: #fff;
-        border-radius: 0; /* Remove the border radius */
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-        position: relative;
-        overflow: hidden;
-        width: 384px;
-        max-width: 100%;
-        height: 100vh; /* Set the height to 100vh */
-    }
+        .container {
+            background-color: #fff;
+            border-radius: 0; /* Remove the border radius */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+            position: relative;
+            overflow: hidden;
+            width: 384px;
+            max-width: 100%;
+            height: 100vh; /* Set the height to 100vh */
+        }
 
-    .container p {
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: 0.3px;
-        margin: 20px 0;
-    }
+        .container p {
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.3px;
+            margin: 20px 0;
+        }
 
-    .container span {
-        font-size: 12px;
-    }
+        .container span {
+            font-size: 12px;
+        }
 
-    .container a {
-        color: #333;
-        font-size: 13px;
-        text-decoration: none;
-        margin: 15px 0 10px;
-    }
+        .container a {
+            color: #333;
+            font-size: 13px;
+            text-decoration: none;
+            margin: 15px 0 10px;
+        }
 
-    .container button {
-        background-color: #13d420;
-        color: #fff;
-        font-size: 12px;
-        padding: 10px 45px;
-        border: 1px solid transparent;
-        border-radius: 8px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        margin-top: 10px;
-        cursor: pointer;
-    }
+        .container button {
+            background-color: #13d420;
+            color: #fff;
+            font-size: 12px;
+            padding: 10px 45px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            cursor: pointer;
+        }
 
-    .container button.hidden {
-        background-color: transparent;
-        border-color: #fff;
-    }
+        .container button.hidden {
+            background-color: transparent;
+            border-color: #fff;
+        }
 
-    .container form {
-        background-color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        padding: 0 40px;
-        height: 100%;
-    }
+        .container form {
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            height: 100%;
+        }
 
-    .container input {
-        background-color: #eee;
-        border: none;
-        margin: 8px 0;
-        padding: 10px 15px;
-        font-size: 13px;
-        border-radius: 8px;
-        width: 100%;
-        outline: none;
-    }
+        .container input {
+            background-color: #eee;
+            border: none;
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 13px;
+            border-radius: 8px;
+            width: 100%;
+            outline: none;
+        }
 
-    .form-container {
-        position: absolute;
-        top: 0;
-        height: 100%;
-        width: 100%;
-        transition: all 0.6s ease-in-out;
-    }
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            transition: all 0.6s ease-in-out;
+        }
 
-    .sign-in {
-        left: 0;
-        width: 100%;
-        z-index: 2;
-    }
+        .sign-in {
+            left: 0;
+            width: 100%;
+            z-index: 2;
+        }
 
-    .container.active .sign-in {
-        transform: translateX(100%);
-    }
+        .container.active .sign-in {
+            transform: translateX(100%);
+        }
 
-    .social-icons {
-        margin: 20px 0;
-    }
-
-    .social-icons a {
-        border: 1px solid #ccc;
-        border-radius: 20%;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 3px;
-        width: 40px;
-        height: 40px;
-    }
-
-    .toggle-container {
-        display: none;
-    }</style>
+        .toggle-container {
+            display: none;
+        }
+    </style>
 </head>
-
 <body>
     <div class="container" id="container">
         <div class="form-container sign-in">
             <form onsubmit="login(event)">
-                <h1>Přihlášeni</h1>
-                <div class="social-icons">
-                    <a href="#" onclick="signInWithGoogle()" class="icon"><i class="fab fa-google"></i></a>
-                </div>
-                <span>nebo použijte svůj e-mail pro přihlášení</span>
+                <h1>Přihlášení</h1>
                 <input type="email" id="email-login" placeholder="Email" required>
                 <input type="password" id="password-login" placeholder="Heslo" required>
-                <a href="zapomneli_jste_heslo.html">Zapoměli jste heslo?</a>
+                <a href="zapomneli_jste_heslo.html">Zapomněli jste heslo?</a>
                 <button type="submit">Přihlásit se</button>
             </form>
         </div>
@@ -183,7 +164,7 @@
                     console.log('User logged in:', user);
                     alert('Přihlášení úspěšné');
                     // Přesměrování na dum.html
-            window.location.href = 'dum.html';
+                    window.location.href = 'dum.html';
                 })
                 .catch((error) => {
                     console.error('Error logging in:', error);
