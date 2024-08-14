@@ -68,29 +68,6 @@
             background-color: #f0f0f0;
         }
 
-        .friend-request {
-            background-color: #e0ffe0;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .friend-request button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-
-        .friend-request button:hover {
-            background-color: #45a049;
-        }
-
         @media (max-width: 600px) {
             .user-list {
                 font-size: 16px;
@@ -107,7 +84,6 @@
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Vyhledávat jména a příjmení..." oninput="filterUsers()">
         </div>
-        <div id="friend-requests"></div>
         <div class="user-list" id="user-list"></div>
     </div>
 
@@ -161,62 +137,6 @@
                 });
         }
 
-        function loadFriendRequests(userId) {
-            database.ref('friendRequests/' + userId).once('value')
-                .then(snapshot => {
-                    const requests = snapshot.val();
-                    const friendRequestsElement = document.getElementById('friend-requests');
-                    friendRequestsElement.innerHTML = '';
-
-                    if (requests) {
-                        for (const requestId in requests) {
-                            if (requests.hasOwnProperty(requestId)) {
-                                const requesterId = requests[requestId];
-                                // Získat detaily o žadateli
-                                database.ref('users/' + requesterId).once('value')
-                                    .then(userSnapshot => {
-                                        const requester = userSnapshot.val();
-                                        const requesterName = `${requester.firstName} ${requester.lastName}`;
-
-                                        const requestDiv = document.createElement('div');
-                                        requestDiv.className = 'friend-request';
-                                        requestDiv.innerHTML = `
-                                            <span>${requesterName} si vás přidal do přátel</span>
-                                            <button onclick="acceptFriendRequest('${requesterId}')">Přidat do přátel</button>
-                                        `;
-                                        friendRequestsElement.appendChild(requestDiv);
-                                    });
-                            }
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading friend requests:', error);
-                });
-        }
-
-        function acceptFriendRequest(requesterId) {
-            const user = auth.currentUser;
-            if (user) {
-                const userId = user.uid;
-                const updates = {};
-                updates['friends/' + userId + '/' + requesterId] = true;
-                updates['friends/' + requesterId + '/' + userId] = true;
-                updates['friendRequests/' + userId + '/' + requesterId] = null; // Odstranit žádost po přijetí
-
-                database.ref().update(updates)
-                    .then(() => {
-                        console.log('Friend request accepted');
-                        loadFriendRequests(userId); // Reload friend requests
-                    })
-                    .catch(error => {
-                        console.error('Error accepting friend request:', error);
-                    });
-            } else {
-                console.log('No user is signed in.');
-            }
-        }
-
         function filterUsers() {
             const searchInput = document.getElementById('search-input').value.toLowerCase();
             const userListElement = document.getElementById('user-list');
@@ -235,7 +155,7 @@
         auth.onAuthStateChanged(user => {
             if (user) {
                 loadUsers();
-                loadFriendRequests(user.uid);
+                // Žádosti o přátelství už nenahráváme
             } else {
                 console.log('No user is signed in.');
             }
@@ -243,4 +163,3 @@
     </script>
 </body>
 </html>
-
