@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ChatBoom</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <style>
     /* Obecné stylování */
     body {
@@ -15,7 +16,7 @@
 
     /* Kontejner pro formulář */
     .container {
-      max-width: 90%;
+      max-width: 500px;
       margin: 20px auto;
       padding: 20px;
       background-color: #fff;
@@ -25,29 +26,50 @@
 
     /* Stylování pro form-group */
     .form-group {
+      display: flex;
+      align-items: center;
       margin-bottom: 15px;
+      position: relative;
     }
     .form-group label {
-      display: block;
-      margin-bottom: 5px;
+      flex: 1;
       font-weight: bold;
     }
     .form-group input {
-      width: calc(100% - 20px); /* Odečtení paddingu od šířky */
+      flex: 3;
       padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 5px;
+      margin-right: 10px;
     }
     .form-group input[type="password"] {
       font-family: "Arial", sans-serif; /* Zajištění zobrazení teček u pole pro heslo */
     }
 
+    /* Ikonka pro úpravu (tužka a fajfka) */
+    .edit-icon {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      right: 10px;
+    }
+    .edit-icon.edit {
+      color: #4a90e2;
+    }
+    .edit-icon.save {
+      color: #2ecc71;
+    }
+
     /* Stylování tlačítek */
     .action-buttons {
-      margin-top: 20px;
       display: flex;
       justify-content: space-between;
+      margin-top: 20px;
     }
     .action-buttons button {
       background-color: #4a90e2;
@@ -95,18 +117,30 @@
     <div class="form-group">
       <label for="firstName">Jméno:</label>
       <input type="text" id="firstName" name="firstName" value="Jméno" disabled>
+      <span class="edit-icon edit" id="edit-firstName" onclick="toggleEdit('firstName', 'edit-firstName')">
+        <i class="fas fa-pencil-alt"></i>
+      </span>
     </div>
     <div class="form-group">
       <label for="lastName">Příjmení:</label>
       <input type="text" id="lastName" name="lastName" value="Přijmení" disabled>
+      <span class="edit-icon edit" id="edit-lastName" onclick="toggleEdit('lastName', 'edit-lastName')">
+        <i class="fas fa-pencil-alt"></i>
+      </span>
     </div>
     <div class="form-group">
       <label for="email">Email:</label>
-      <input type="email" id="email" name="email" value="email" disabled>
+      <input type="email" id="email" name="email" value="email@example.com" disabled>
+      <span class="edit-icon edit" id="edit-email" onclick="toggleEdit('email', 'edit-email')">
+        <i class="fas fa-pencil-alt"></i>
+      </span>
     </div>
     <div class="form-group">
       <label for="password">Heslo:</label>
       <input type="password" id="password" name="password" value="heslo" disabled>
+      <span class="edit-icon edit" id="edit-password" onclick="toggleEdit('password', 'edit-password')">
+        <i class="fas fa-pencil-alt"></i>
+      </span>
     </div>
     <div class="action-buttons">
       <button onclick="logout()">Odhlásit se</button>
@@ -159,8 +193,33 @@
         alert('Musíte být přihlášeni.');
       }
     }
+
+    // Funkce pro povolení úprav
+    function toggleEdit(fieldId, editIconId) {
+      const inputField = document.getElementById(fieldId);
+      const editIcon = document.getElementById(editIconId);
+
+      if (inputField.disabled) {
+        // Povolit úpravy
+        inputField.disabled = false;
+        inputField.focus();
+        editIcon.innerHTML = '<i class="fas fa-check"></i>';
+        document.addEventListener('click', handleClickOutside);
+      } else {
+        // Uložit úpravy
+        inputField.disabled = true;
+        editIcon.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+        document.removeEventListener('click', handleClickOutside);
+      }
+
+      function handleClickOutside(event) {
+        if (!inputField.contains(event.target) && !editIcon.contains(event.target)) {
+          inputField.disabled = true;
+          editIcon.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+          document.removeEventListener('click', handleClickOutside);
+        }
+      }
+    }
   </script>
 </body>
 </html>
-
-
