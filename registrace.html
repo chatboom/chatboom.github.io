@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -78,18 +79,6 @@
         .slide-out { transform: translateX(-100%); }
         .sign-up { left: 0; width: 100%; z-index: 2; }
         .container.active .sign-up { transform: translateX(100%); }
-        .social-icons { margin: 20px 0; }
-        .social-icons a {
-            border: 1px solid #ccc;
-            border-radius: 20%;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 3px;
-            width: 40px;
-            height: 40px;
-        }
-        .social-icons a.icon i.fa-google { color: #db4437; }
         .toggle-container { display: none; }
         .error-message { color: red; font-size: 0.9em; margin-top: 5px; }
         .checkbox-container {
@@ -114,10 +103,6 @@
         <div class="form-container sign-up">
             <form onsubmit="register(event)">
                 <h1>Registrace</h1>
-                <div class="social-icons">
-                    <a href="#" onclick="signInWithGoogle()" class="icon"><i class="fab fa-google"></i></a>
-                </div>
-                <span>nebo použijte svůj e-mail pro registraci</span>
                 <input type="email" id="email-register" placeholder="Email" required>
                 <input type="password" id="password-register" placeholder="Heslo" required>
                 <input type="password" id="confirm-password-register" placeholder="Potvrdit heslo" required>
@@ -249,20 +234,6 @@
                 console.error('No user is signed in.');
                 alert('Žádný uživatel není přihlášen. Zkuste to prosím znovu.');
             }
-        }
-
-        function signInWithGoogle() {
-            var provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .then((result) => {
-                    var user = result.user;
-                    console.log('Přihlášení pomocí Google:', user);
-                    alert('Úspěšné přihlášení pomocí Google');
-                })
-                .catch((error) => {
-                    console.error('Chyba přihlášení pomocí Google:', error);
-                    alert('Chyba přihlášení pomocí Google: ' + error.message);
-                });
         }
     </script>
 </body>
