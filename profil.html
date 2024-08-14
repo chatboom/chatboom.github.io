@@ -76,6 +76,9 @@
         .profile-card .action-buttons button:hover {
             background: #357ab8;
         }
+        .profile-card .action-buttons .hidden {
+            display: none;
+        }
         .friend-requests {
             margin-top: 1rem;
         }
@@ -135,7 +138,7 @@
             </div>
         </div>
         <div class="action-buttons" id="friend-request-button">
-            <button onclick="sendFriendRequest()">Přidat do přátel</button>
+            <button id="add-friend-btn" onclick="sendFriendRequest()">Přidat do přátel</button>
         </div>
         <div class="friend-requests" id="friend-requests"></div>
     </div>
@@ -208,6 +211,24 @@
                 .catch(error => {
                     console.error('Error loading user profile:', error);
                 });
+
+            // Check if the user has sent a friend request to this profile
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const myId = user.uid;
+                    database.ref('sentFriendRequests/' + myId + '/' + userId).once('value')
+                        .then(snapshot => {
+                            if (snapshot.exists()) {
+                                document.getElementById('add-friend-btn').classList.add('hidden');
+                            } else {
+                                document.getElementById('add-friend-btn').classList.remove('hidden');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking friend request status:', error);
+                        });
+                }
+            });
         }
 
         function loadFriendRequests(userId) {
@@ -254,10 +275,14 @@
                         return;
                     }
                     const friendRequestRef = database.ref('friendRequests/' + userId);
+                    const sentFriendRequestRef = database.ref('sentFriendRequests/' + user.uid + '/' + userId);
+
                     friendRequestRef.push(user.uid)
+                        .then(() => sentFriendRequestRef.set(true))
                         .then(() => {
                             console.log('Friend request sent');
                             alert('Žádost o přátelství odeslána.');
+                            document.getElementById('add-friend-btn').classList.add('hidden');
                         })
                         .catch(error => {
                             console.error('Error sending friend request:', error);
@@ -275,10 +300,13 @@
 
                     const myFriendsRef = database.ref('friends/' + myId);
                     const theirFriendsRef = database.ref('friends/' + requesterId);
+                    const sentFriendRequestRef = database.ref('sentFriendRequests/' + requesterId + '/' + myId);
+                    const friendRequestsRef = database.ref('friendRequests/' + myId + '/' + requesterId);
 
                     myFriendsRef.push(requesterId)
                         .then(() => theirFriendsRef.push(myId))
-                        .then(() => database.ref('friendRequests/' + myId + '/' + requesterId).remove())
+                        .then(() => friendRequestsRef.remove())
+                        .then(() => sentFriendRequestRef.remove())
                         .then(() => {
                             console.log('Friend request accepted');
                             alert('Žádost o přátelství přijata.');
