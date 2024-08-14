@@ -1,12 +1,172 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatBoom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>Podmínky</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .last-updated {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .terms {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+        .translate-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .translate-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .language-options {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .language-options button {
+            background-color: transparent;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+        .language-options button:hover {
+            background-color: #f0f0f0;
+        }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #007bff;
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            color: #0056b3;
+        }
+
+        /* Responsivní design */
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            .translate-btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .terms {
+                font-size: 14px;
+            }
+            .back-btn {
+                font-size: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Podmínky</h1>
-    
+    <!-- Šipka pro návrat zpět -->
+    <div class="back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i>
+    </div>
+
+    <div class="translate-container">
+        <button class="translate-btn" onclick="toggleLanguages()">Přeložit</button>
+        <div class="language-options" id="language-options">
+            <button onclick="translate('en')">Angličtina</button>
+            <button onclick="translate('de')">Němčina</button>
+            <button onclick="translate('fr')">Francouzština</button>
+            <button onclick="translate('es')">Španělština</button>
+            <button onclick="translate('ru')">Ruština</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Podmínky</h1>
+        <div class="last-updated">Poslední aktualizace: 14. srpna 2024</div>
+        
+        <div class="terms">
+            <p>1. Používáním této webové stránky souhlasíte s těmito podmínkami. Pokud s nimi nesouhlasíte, prosím nepoužívejte tuto stránku.</p>
+            <p>2. Veškeré informace na této stránce jsou poskytovány „tak, jak jsou“, a nejsou poskytovány žádné záruky ohledně přesnosti nebo úplnosti.</p>
+            <p>3. Web si vyhrazuje právo kdykoliv měnit nebo upravovat tyto podmínky bez předchozího upozornění. Změny budou zveřejněny na této stránce.</p>
+            <p>4. Jakékoliv porušení těchto podmínek může vést k okamžitému ukončení vašeho přístupu na web.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleLanguages() {
+            var options = document.getElementById('language-options');
+            if (options.style.display === 'block') {
+                options.style.display = 'none';
+            } else {
+                options.style.display = 'block';
+            }
+        }
+
+        function translate(language) {
+            alert('Překlad do jazyka: ' + language + ' bude brzy dostupný.');
+        }
+
+        function goBack() {
+            window.location.href = 'registrace.html'; // Změň na správnou URL registrační stránky
+        }
+
+        // Skrýt nabídku jazyků, pokud uživatel klikne mimo
+        window.onclick = function(event) {
+            if (!event.target.matches('.translate-btn')) {
+                var options = document.getElementById('language-options');
+                if (options.style.display === 'block') {
+                    options.style.display = 'none';
+                }
+            }
+        }
+    </script>
 </body>
 </html>
