@@ -35,8 +35,9 @@
         }
 
         .top-bar-item:last-child {
-            /* Umístění ikony s pluskem na pravou stranu */
-            margin-left: auto; /* Udržuje ikonu na pravé straně */
+            display: flex;
+            align-items: center;
+            margin-left: auto; /* Udržuje ikony na pravé straně */
             padding-right: 20px; /* Extra padding napravo */
         }
 
@@ -45,15 +46,17 @@
             height: 30px;
         }
 
-        .add-friend-button {
+        .add-friend-button,
+        .requests-button {
             background: none; /* Bez pozadí */
             border: none; /* Bez rámečku */
             cursor: pointer; /* Ukazatel myši při najetí */
             padding: 0; /* Žádné vnitřní odsazení */
-            margin-left: 10px; /* Odsazení od ikony profilu */
+            margin-left: 10px; /* Odsazení mezi ikonami */
         }
 
-        .add-friend-button img {
+        .add-friend-button img,
+        .requests-button img {
             width: 30px;
             height: 30px;
         }
@@ -64,7 +67,8 @@
                 width: 25px;
                 height: 25px;
             }
-            .add-friend-button img {
+            .add-friend-button img,
+            .requests-button img {
                 width: 25px;
                 height: 25px;
             }
@@ -80,9 +84,13 @@
             </a>
         </div>
         <div class="top-bar-item">
-            <!-- Ikona pro přidání přátel, umístěná blízko pravého okraje -->
+            <!-- Ikona pro přidání přátel -->
             <button class="add-friend-button" onclick="redirectToAddFriends()">
                 <img src="https://img.icons8.com/ios-filled/50/000000/add-user-male.png" alt="Přidat přátele">
+            </button>
+            <!-- Ikona pro žádosti o přátelství -->
+            <button class="requests-button" onclick="redirectToFriendRequests()">
+                <img src="https://img.icons8.com/ios-filled/50/000000/like.png" alt="Žádosti o přátelství">
             </button>
         </div>
     </div>
@@ -107,6 +115,10 @@
     <script>
         function redirectToAddFriends() {
             window.location.href = 'pridat_pratele.html';
+        }
+
+        function redirectToFriendRequests() {
+            window.location.href = 'zadosti_o_pratelstvi.html';
         }
     </script>
 </body>
