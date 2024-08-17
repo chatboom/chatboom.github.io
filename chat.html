@@ -29,9 +29,8 @@
             background-color: #0084ff;
             color: #ffffff;
             padding: 1rem;
-            text-align: center;
-            font-size: 1.25rem;
-            font-weight: bold;
+            display: flex;
+            align-items: center;
             border-bottom: 1px solid #0073e6;
         }
         .messages {
@@ -40,15 +39,18 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.3rem;
             background: #e5e5ea;
         }
         .message {
-            max-width: 75%;
-            padding: 0.75rem;
-            border-radius: 20px;
+            max-width: 60%;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
             word-wrap: break-word;
-            font-size: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.2rem;
+            max-height: 4rem;
+            overflow: hidden;
         }
         .message.sent {
             align-self: flex-end;
@@ -96,16 +98,27 @@
         .input-container button:active {
             background-color: #005bb5;
         }
+        .typing-message {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            color: #888;
+            font-style: italic;
+            max-width: 60%;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            max-height: 4rem;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="header">
-            Chat s uživatelem
+            <!-- Header již neobsahuje jméno uživatele -->
         </div>
         <div class="messages" id="messages"></div>
         <div class="input-container">
-            <input type="text" id="message-input" placeholder="Napište zprávu...">
+            <input type="text" id="message-input" placeholder="Napište zprávu..." oninput="updateTypingStatus()" onblur="stopTyping()">
             <button onclick="sendMessage()">Odeslat</button>
         </div>
     </div>
@@ -129,6 +142,8 @@
 
         const auth = firebase.auth();
         const database = firebase.database();
+        let typingTimeout;
+        let typingMessageElement = null;
 
         function loadMessages() {
             auth.onAuthStateChanged(user => {
@@ -143,8 +158,11 @@
                     }
 
                     const messagesRef = database.ref('messages/' + conversationId);
+                    const typingRef = database.ref('typing/' + conversationId);
+
                     const messagesElement = document.getElementById('messages');
 
+                    // Sledujeme zprávy
                     messagesRef.on('child_added', snapshot => {
                         const message = snapshot.val();
                         const messageDiv = document.createElement('div');
@@ -153,8 +171,75 @@
                         messagesElement.appendChild(messageDiv);
                         messagesElement.scrollTop = messagesElement.scrollHeight; // Scroll to bottom
                     });
+
+                    // Sledujeme stav psaní
+                    typingRef.on('value', snapshot => {
+                        const typingData = snapshot.val();
+                        if (typingData && typingData.typing && typingData.senderId !== userId) {
+                            showTypingMessage();
+                        } else {
+                            removeTypingMessage();
+                        }
+                    });
+
                 } else {
                     console.error('No user is signed in');
+                }
+            });
+        }
+
+        function showTypingMessage() {
+            if (!typingMessageElement) {
+                typingMessageElement = document.createElement('div');
+                typingMessageElement.className = 'message typing-message';
+                typingMessageElement.innerHTML = '<p>Píše...</p>';
+                document.getElementById('messages').appendChild(typingMessageElement);
+                document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight; // Scroll to bottom
+            }
+        }
+
+        function removeTypingMessage() {
+            if (typingMessageElement) {
+                typingMessageElement.remove();
+                typingMessageElement = null;
+            }
+        }
+
+        function updateTypingStatus() {
+            clearTimeout(typingTimeout);
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+                    const typingRef = database.ref('typing/' + conversationId);
+
+                    typingRef.set({
+                        typing: true,
+                        senderId: userId
+                    });
+
+                    typingTimeout = setTimeout(() => {
+                        stopTyping();
+                    }, 3000);
+                }
+            });
+        }
+
+        function stopTyping() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+
+                    const typingRef = database.ref('typing/' + conversationId);
+
+                    // Zastavit stav psaní
+                    typingRef.set({
+                        typing: false,
+                        senderId: userId
+                    });
                 }
             });
         }
@@ -179,7 +264,9 @@
                         timestamp: firebase.database.ServerValue.TIMESTAMP
                     });
 
+                    // Vymazání vstupu a odstranění stavu psaní
                     messageInput.value = '';
+                    stopTyping();
                 } else {
                     console.error('No user is signed in');
                 }
