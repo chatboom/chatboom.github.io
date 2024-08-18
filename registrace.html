@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <title>ChatBoom</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
@@ -106,14 +105,11 @@
                 <input type="email" id="email-register" placeholder="Email" required>
                 <input type="password" id="password-register" placeholder="Heslo" required>
                 <input type="password" id="confirm-password-register" placeholder="Potvrdit heslo" required>
-
-                <!-- Zaškrtávací políčko s podmínkami -->
                 <div class="checkbox-container">
                     <input type="checkbox" id="terms-checkbox" required>
                     <label for="terms-checkbox">Souhlasím s podmínkami</label>
-                    <a href="podminky.html" target="_blank">Více</a> <!-- Odkaz na podmínky -->
+                    <a href="podminky.html" target="_blank">Více</a>
                 </div>
-
                 <button type="submit">Registrovat se</button>
             </form>
         </div>
@@ -121,9 +117,9 @@
         <div class="form-container slide-in hidden" id="step2">
             <form onsubmit="completeRegistration(event)">
                 <h1>Dokončení registrace</h1>
-                <input type="text" id="firstname" name="firstname" placeholder="Jméno" required>
-                <input type="text" id="lastname" name="lastname" placeholder="Příjmení" required>
-                <input type="text" id="nickname" name="nickname" placeholder="Přezdívka">
+                <input type="text" id="firstname" placeholder="Jméno" required>
+                <input type="text" id="lastname" placeholder="Příjmení" required>
+                <input type="text" id="nickname" placeholder="Přezdívka">
                 <span id="nicknameError" class="error-message"></span>
                 <button type="submit">Dokončit registraci</button>
             </form>
@@ -133,9 +129,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
-
     <script>
+        // Firebase konfigurace
         var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -146,7 +141,6 @@
             appId: "1:458271134858:web:5e09d3329ba81626830973",
             measurementId: "G-KS97KKQ3EH"
         };
-
         firebase.initializeApp(firebaseConfig);
 
         const auth = firebase.auth();
@@ -158,7 +152,6 @@
             const password = document.getElementById('password-register').value;
             const confirmPassword = document.getElementById('confirm-password-register').value;
 
-            // Kontrola zaškrtnutí políčka podmínek
             const termsCheckbox = document.getElementById('terms-checkbox');
             if (!termsCheckbox.checked) {
                 alert('Pro registraci musíte souhlasit s podmínkami.');
@@ -173,11 +166,6 @@
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     console.log('User registered:', userCredential.user);
-                    alert('Registrace úspěšná');
-                    return auth.signInWithEmailAndPassword(email, password); // Přihlášení po registraci
-                })
-                .then((userCredential) => {
-                    console.log('User signed in:', userCredential.user);
                     document.querySelector('.sign-up').classList.add('slide-out');
                     setTimeout(() => {
                         document.querySelector('.sign-up').classList.add('hidden');
@@ -201,7 +189,6 @@
                 const lastName = document.getElementById('lastname').value;
                 const nickname = document.getElementById('nickname').value;
 
-                // Kontrola existence přezdívky
                 if (nickname.trim() !== '') {
                     database.ref('users').orderByChild('nickname').equalTo(nickname).once('value')
                         .then(snapshot => {
@@ -209,7 +196,17 @@
                                 document.getElementById('nicknameError').textContent = 'Tato přezdívka již existuje. Zvolte prosím jinou.';
                             } else {
                                 document.getElementById('nicknameError').textContent = '';
-                                const userDetails = { firstName, lastName, nickname };
+                                
+                                // Získání aktuálního data a času
+                                const registrationDate = new Date().toISOString();
+
+                                const userDetails = {
+                                    firstName,
+                                    lastName,
+                                    nickname,
+                                    email: user.email, // Uložení emailu do databáze
+                                    registrationDate // Přidání data a času registrace
+                                };
 
                                 database.ref('users/' + userId).set(userDetails)
                                     .then(() => {
@@ -238,3 +235,4 @@
     </script>
 </body>
 </html>
+
