@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informace o uživatelích</title>
+    <title>ChatBoom</title>
     <style>
         .user-list {
             list-style-type: none;
@@ -72,9 +72,16 @@
             firebase.database().ref('users').once('value').then((snapshot) => {
                 const users = snapshot.val();
                 if (users) {
+                    const sortedUsers = Object.keys(users)
+                        .map((uid) => users[uid]) // Převede objekt na pole
+                        .sort((a, b) => {
+                            const nameA = `${a.firstName} ${a.lastName}`.toUpperCase(); // Ignoruje velikost písmen
+                            const nameB = `${b.firstName} ${b.lastName}`.toUpperCase();
+                            return nameA.localeCompare(nameB); // Řadí podle abecedy
+                        });
+
                     userList.innerHTML = ''; // Vyčistíme seznam
-                    Object.keys(users).forEach((uid) => {
-                        const user = users[uid];
+                    sortedUsers.forEach((user) => {
                         const li = document.createElement('li');
                         li.textContent = `${user.firstName} ${user.lastName}`;
                         li.addEventListener('click', () => {
