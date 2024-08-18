@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informace o uživatelích</title>
+    <style>
+        .user-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .user-list li {
+            cursor: pointer;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+
+        .user-details {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .user-details h3 {
+            margin: 0 0 10px;
+        }
+
+        .user-details p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Informace o uživatelích</h1>
+    <ul class="user-list" id="user-list"></ul>
+
+    <div class="user-details" id="user-details">
+        <h3 id="user-name"></h3>
+        <p><strong>Přezdívka:</strong> <span id="user-nickname"></span></p>
+        <p><strong>Email:</strong> <span id="user-email"></span></p>
+        <p><strong>Datum registrace:</strong> <span id="user-registration-date"></span></p>
+        <p><strong>Čas registrace:</strong> <span id="user-registration-time"></span></p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        // Firebase konfigurace
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            measurementId: "G-KS97KKQ3EH",
+            appId: "1:458271134858:web:5e09d3329ba81626830973"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Funkce pro načtení uživatelů
+        function loadUsers() {
+            const userList = document.getElementById('user-list');
+            const userDetailsDiv = document.getElementById('user-details');
+            const userName = document.getElementById('user-name');
+            const userNickname = document.getElementById('user-nickname');
+            const userEmail = document.getElementById('user-email');
+            const userRegistrationDate = document.getElementById('user-registration-date');
+            const userRegistrationTime = document.getElementById('user-registration-time');
+
+            firebase.database().ref('users').once('value').then((snapshot) => {
+                const users = snapshot.val();
+                if (users) {
+                    userList.innerHTML = ''; // Vyčistíme seznam
+                    Object.keys(users).forEach((uid) => {
+                        const user = users[uid];
+                        const li = document.createElement('li');
+                        li.textContent = `${user.firstName} ${user.lastName}`;
+                        li.addEventListener('click', () => {
+                            userName.textContent = `${user.firstName} ${user.lastName}`;
+                            userNickname.textContent = user.nickname || 'N/A';
+                            userEmail.textContent = user.email || 'N/A';
+                            
+                            // Získání a formátování data a času registrace
+                            const registrationDate = user.registrationDate ? new Date(user.registrationDate) : new Date();
+                            userRegistrationDate.textContent = registrationDate.toLocaleDateString('cs-CZ'); // Formátování data
+                            userRegistrationTime.textContent = registrationDate.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' }); // Formátování času bez sekund
+                            
+                            userDetailsDiv.style.display = 'block';
+                        });
+                        userList.appendChild(li);
+                    });
+                } else {
+                    userList.innerHTML = '<li>Žádní uživatelé nebyli nalezeni.</li>';
+                }
+            });
+        }
+
+        // Načtení uživatelů při načtení stránky
+        window.onload = function() {
+            loadUsers();
+        };
+    </script>
+</body>
+</html>
