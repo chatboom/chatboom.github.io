@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seznam přátel</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .friends-container {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        .friend {
+            background-color: #ffffff; /* Bílé pozadí */
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Jemný stín pro oddělení */
+        }
+        .friend span {
+            font-size: 16px;
+            color: #333; /* Tmavší text */
+        }
+    </style>
+</head>
+<body>
+    <div class="friends-container">
+        <h2>Vaši přátelé</h2>
+        <div id="friends-list">
+            <!-- Seznam přátel se načte sem -->
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        function loadFriends() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const myId = user.uid;
+                    const friendsRef = database.ref('friends/' + myId);
+
+                    friendsRef.once('value')
+                        .then(snapshot => {
+                            const friends = snapshot.val();
+                            const friendsListElement = document.getElementById('friends-list');
+                            friendsListElement.innerHTML = '';
+
+                            if (friends) {
+                                for (const friendId in friends) {
+                                    if (friends.hasOwnProperty(friendId)) {
+                                        database.ref('users/' + friends[friendId]).once('value')
+                                            .then(userSnapshot => {
+                                                const friend = userSnapshot.val();
+                                                const friendName = `${friend.firstName} ${friend.lastName}`;
+
+                                                const friendDiv = document.createElement('div');
+                                                friendDiv.className = 'friend';
+                                                friendDiv.innerHTML = `<span>${friendName}</span>`;
+                                                friendsListElement.appendChild(friendDiv);
+                                            })
+                                            .catch(error => {
+                                                console.error('Error loading friend details:', error);
+                                            });
+                                    }
+                                }
+                            } else {
+                                friendsListElement.innerHTML = '<p>Nemáte žádné přátele</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading friends:', error);
+                        });
+                } else {
+                    console.log('No user is signed in.');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFriends);
+    </script>
+</body>
+</html>
