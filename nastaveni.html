@@ -5,71 +5,128 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="title">ChatBoom</title>
   <style>
+    /* Stylování horní lišty */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      padding: 15px;
+    }
+
+    .top-bar a {
+      text-decoration: none; /* Odstranění podtržení */
+      color: #333;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .top-bar img {
+      width: 25px;
+      height: 25px;
+      margin-right: 10px;
+    }
+
+    .top-bar a:hover {
+      text-decoration: none; /* Ujistěte se, že ani při hoveru není podtržení */
+    }
+
+    /* Prostor pod horní lištou */
+    body {
+      padding-top: 70px;
+      margin: 0;
+    }
+
     /* Stylování sekcí */
     .section {
       margin-bottom: 20px;
       border: 1px solid #ccc;
       padding: 10px;
     }
+
     .section h2 {
       font-size: 20px;
       color: #333;
-      cursor: pointer; /* Ukazatel myši jako ukazatel na kliknutí */
+      cursor: pointer;
     }
+
     .section a {
       text-decoration: none; /* Odstranění podtržení u odkazů */
-      color: #333; /* Nastavení barvy odkazu na černou */
+      color: #333;
     }
+
     .section a:hover {
-      text-decoration: underline; /* Přidání podtržení při najetí myší */
+      text-decoration: none; /* Zrušení podtržení při hoveru */
     }
+
     .section ul {
       list-style-type: none;
       padding: 0;
-      display: none; /* Skrytí seznamu na začátku */
+      display: none;
     }
+
     .section ul li {
       margin-bottom: 5px;
-      cursor: pointer; /* Ukazatel myši jako ukazatel na kliknutí */
+      cursor: pointer;
     }
 
     /* Stylování pro režimy vzhledu */
     body.dark-mode {
-      background-color: #333; /* Tmavé pozadí */
-      color: #f4f4f4; /* Světlý text */
+      background-color: #333;
+      color: #f4f4f4;
     }
+
     body.dark-mode .section {
-      border-color: #444; /* Trochu světlejší barva rámečku */
+      border-color: #444;
     }
+
     body.dark-mode .section h2 {
-      color: #f4f4f4; /* Světlá barva textu pro nadpisy sekcí */
+      color: #f4f4f4;
     }
+
     body.dark-mode .section a {
-      color: #f4f4f4; /* Světlá barva textu pro odkazy */
+      color: #f4f4f4;
     }
+
     body.dark-mode .section ul li {
-      color: #f4f4f4; /* Světlá barva textu pro položky seznamu */
+      color: #f4f4f4;
     }
+
     body.light-mode {
-      background-color: #f4f4f4; /* Světlé pozadí */
-      color: #333; /* Temný text */
+      background-color: #f4f4f4;
+      color: #333;
     }
 
     /* Stylování pro barevný režim */
     .color-picker {
-      display: none; /* Skrytí na začátku */
+      display: none;
       margin-top: 10px;
     }
+
     .color-picker label {
       display: block;
       margin-bottom: 5px;
     }
+
     .color-picker input[type="color"] {
       margin-right: 10px;
     }
   </style>
 </head>
 <body>
+
+  <!-- Horní navigační lišta se šipkou a textem Zpět -->
+  <div class="top-bar">
+    <a href="dum.html">
+      <img src="https://img.icons8.com/ios-filled/50/000000/left.png" alt="Šipka zpět">
+      Zpět
+    </a>
+  </div>
 
   <div class="section">
     <h2><a id="account-link" href="ucet.html">Účet</a></h2>
@@ -89,7 +146,6 @@
     </ul>
   </div>
 
-  
   <div class="section">
     <h2 id="appearance-header" onclick="toggleList('appearance')">Vzhled</h2>
     <ul id="appearance">
