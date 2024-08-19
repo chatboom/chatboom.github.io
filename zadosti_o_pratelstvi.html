@@ -14,6 +14,7 @@
             align-items: center;
             height: 100vh;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            flex-direction: column; /* Přidáno pro správné umístění dolního panelu */
         }
         .requests-container {
             background: #ffffff;
@@ -23,6 +24,7 @@
             width: 90%;
             max-width: 600px;
             box-sizing: border-box;
+            margin-bottom: 80px; /* Přidáno pro prostor pro dolní panel */
         }
         .friend-request {
             background-color: #e0ffe0;
@@ -44,12 +46,51 @@
         .friend-request button:hover {
             background-color: #45a049;
         }
+        .bottom-bar {
+            width: 100%;
+            background-color: #ffffff; /* Bílé pozadí */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 1rem 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .bottom-bar-item img {
+            width: 30px; /* Větší ikony */
+            height: 30px;
+        }
+        .bottom-bar-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
     <div class="requests-container">
         <h2>Žádosti o přátelství</h2>
         <div id="friend-requests"></div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="bottom-bar-item">
+            <a href="dum.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Domovská Stránka">
+            </a>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="komunikace.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/chat.png" alt="Chat">
+            </a>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="nastaveni.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/settings.png" alt="Nastavení">
+            </a>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -148,6 +189,10 @@
                         .then(() => {
                             console.log('Friend request accepted and conversation created');
                             alert('Žádost o přátelství přijata a konverzace byla vytvořena.');
+
+                            // Zápis do pratele.html
+                            updateFriendsList(requesterId);
+
                             // Odstranění žádosti z DOM
                             if (requestElement) {
                                 requestElement.remove();
@@ -160,6 +205,27 @@
                     console.error('No user is signed in');
                 }
             });
+        }
+
+        // Funkce pro aktualizaci seznamu přátel
+        function updateFriendsList(requesterId) {
+            const friendsListRef = database.ref('users/' + requesterId);
+
+            friendsListRef.once('value')
+                .then(snapshot => {
+                    const friend = snapshot.val();
+                    const friendName = `${friend.firstName} ${friend.lastName}`;
+
+                    // Dynamicky přidat nového přítele do seznamu na stránce pratele.html
+                    const friendsListDiv = document.getElementById('friends-list');
+                    const friendDiv = document.createElement('div');
+                    friendDiv.className = 'friend';
+                    friendDiv.innerHTML = `<span>${friendName}</span>`;
+                    friendsListDiv.appendChild(friendDiv);
+                })
+                .catch(error => {
+                    console.error('Error updating friends list:', error);
+                });
         }
 
         document.addEventListener('DOMContentLoaded', loadFriendRequests);
