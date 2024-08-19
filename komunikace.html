@@ -10,6 +10,7 @@
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -23,6 +24,9 @@
             width: 90%;
             max-width: 600px;
             box-sizing: border-box;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         .conversation {
             background-color: #f0f0f0;
@@ -31,12 +35,51 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .bottom-bar {
+            width: 100%;
+            background-color: #ffffff; /* Bílé pozadí */
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 1rem 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .bottom-bar-item img {
+            width: 30px; /* Větší ikony */
+            height: 30px;
+        }
+        .bottom-bar-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
     <div class="conversations-container">
         <h1>Vaše konverzace</h1>
         <div id="conversations"></div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="bottom-bar-item">
+            <a href="dum.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Domovská Stránka">
+            </a>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="komunikace.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/chat.png" alt="Chat">
+            </a>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="nastaveni.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/settings.png" alt="Nastavení">
+            </a>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
