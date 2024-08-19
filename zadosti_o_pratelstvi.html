@@ -140,7 +140,7 @@
                                                 requestDiv.id = `request-${requestId}`;
                                                 requestDiv.innerHTML = `
                                                     <span>${requesterName} vám poslal žádost o přátelství</span>
-                                                    <button onclick="acceptFriendRequest('${requesterId}', document.getElementById('request-${requestId}'))">Přijmout</button>
+                                                    <button onclick="acceptFriendRequest('${requesterId}', '${requestId}')">Přijmout</button>
                                                 `;
                                                 friendRequestsElement.appendChild(requestDiv);
                                             })
@@ -162,20 +162,20 @@
             });
         }
 
-        function acceptFriendRequest(requesterId, requestElement) {
+        function acceptFriendRequest(requesterId, requestId) {
             auth.onAuthStateChanged(user => {
                 if (user) {
                     const myId = user.uid;
 
                     const myFriendsRef = database.ref('friends/' + myId);
                     const theirFriendsRef = database.ref('friends/' + requesterId);
-                    const friendRequestsRef = database.ref('friendRequests/' + myId + '/' + requesterId);
+                    const friendRequestsRef = database.ref('friendRequests/' + myId);
                     const conversationsRef = database.ref('conversations');
 
                     // Přidání přátelství a odstranění žádosti
                     myFriendsRef.push(requesterId)
                         .then(() => theirFriendsRef.push(myId))
-                        .then(() => friendRequestsRef.remove())
+                        .then(() => friendRequestsRef.child(requestId).remove()) // Opraveno pro správné odstranění žádosti
                         .then(() => {
                             // Vytvoření konverzace
                             const conversationId = [myId, requesterId].sort().join('_');
@@ -190,10 +190,8 @@
                             console.log('Friend request accepted and conversation created');
                             alert('Žádost o přátelství přijata a konverzace byla vytvořena.');
 
-                            // Zápis do pratele.html
-                            updateFriendsList(requesterId);
-
                             // Odstranění žádosti z DOM
+                            const requestElement = document.getElementById(`request-${requestId}`);
                             if (requestElement) {
                                 requestElement.remove();
                             }
@@ -205,27 +203,6 @@
                     console.error('No user is signed in');
                 }
             });
-        }
-
-        // Funkce pro aktualizaci seznamu přátel
-        function updateFriendsList(requesterId) {
-            const friendsListRef = database.ref('users/' + requesterId);
-
-            friendsListRef.once('value')
-                .then(snapshot => {
-                    const friend = snapshot.val();
-                    const friendName = `${friend.firstName} ${friend.lastName}`;
-
-                    // Dynamicky přidat nového přítele do seznamu na stránce pratele.html
-                    const friendsListDiv = document.getElementById('friends-list');
-                    const friendDiv = document.createElement('div');
-                    friendDiv.className = 'friend';
-                    friendDiv.innerHTML = `<span>${friendName}</span>`;
-                    friendsListDiv.appendChild(friendDiv);
-                })
-                .catch(error => {
-                    console.error('Error updating friends list:', error);
-                });
         }
 
         document.addEventListener('DOMContentLoaded', loadFriendRequests);
