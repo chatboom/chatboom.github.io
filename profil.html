@@ -160,7 +160,7 @@
         <div class="friend-requests" id="friend-requests"></div>
     </div>
 
-    <div class="nav-bar">
+    <div class="nav-bar" id="nav-bar">
         <img src="https://img.icons8.com/ios-filled/50/000000/user.png" alt="Profil" onclick="window.location.href='profil.html'">
         <img src="c:\Users\Danek\Downloads\friends.png" alt="Více" onclick="window.location.href='pratele.html'">
     </div>
@@ -237,10 +237,15 @@
             auth.onAuthStateChanged(user => {
                 if (user) {
                     const myId = user.uid;
+                    const navBar = document.getElementById('nav-bar');
                     if (myId === userId) {
+                        // Show the navigation bar if this is the user's own profile
+                        navBar.style.display = 'flex';
                         // Hide the "Add Friend" button if this is the user's own profile
                         document.getElementById('friend-request-button').style.display = 'none';
                     } else {
+                        // Hide the navigation bar if this is not the user's own profile
+                        navBar.style.display = 'none';
                         // Check if the user has sent a friend request to this profile
                         database.ref('sentFriendRequests/' + myId + '/' + userId).once('value')
                             .then(snapshot => {
@@ -259,33 +264,33 @@
         }
     
         function sendFriendRequest() {
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                const userId = getUrlParameter('userId'); // ID uživatele, jehož profil právě prohlížíme
-                if (!userId || userId === user.uid) {
-                    console.error('Invalid target user ID');
-                    return;
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = getUrlParameter('userId'); // ID uživatele, jehož profil právě prohlížíme
+                    if (!userId || userId === user.uid) {
+                        console.error('Invalid target user ID');
+                        return;
+                    }
+
+                    const friendRequestRef = database.ref('friendRequests/' + userId); // ID uživatele, kterému posíláme žádost
+                    const sentFriendRequestRef = database.ref('sentFriendRequests/' + user.uid + '/' + userId);
+
+                    // Přidání žádosti do databáze
+                    friendRequestRef.push(user.uid)
+                        .then(() => sentFriendRequestRef.set(true))
+                        .then(() => {
+                            console.log('Friend request sent');
+                            alert('Žádost o přátelství odeslána.');
+                            document.getElementById('add-friend-btn').classList.add('hidden');
+                        })
+                        .catch(error => {
+                            console.error('Error sending friend request:', error);
+                        });
+                } else {
+                    console.error('No user is signed in');
                 }
-
-                const friendRequestRef = database.ref('friendRequests/' + userId); // ID uživatele, kterému posíláme žádost
-                const sentFriendRequestRef = database.ref('sentFriendRequests/' + user.uid + '/' + userId);
-
-                // Přidání žádosti do databáze
-                friendRequestRef.push(user.uid)
-                    .then(() => sentFriendRequestRef.set(true))
-                    .then(() => {
-                        console.log('Friend request sent');
-                        alert('Žádost o přátelství odeslána.');
-                        document.getElementById('add-friend-btn').classList.add('hidden');
-                    })
-                    .catch(error => {
-                        console.error('Error sending friend request:', error);
-                    });
-            } else {
-                console.error('No user is signed in');
-            }
-        });
-    }
+            });
+        }
     
         function uploadProfilePic() {
             auth.onAuthStateChanged(user => {
