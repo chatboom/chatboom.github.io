@@ -108,7 +108,7 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
-        function loadUsers() {
+        function loadUsers(currentUserId) {
             database.ref('users').once('value')
                 .then(snapshot => {
                     const users = snapshot.val();
@@ -117,7 +117,7 @@
 
                     if (users) {
                         for (const userId in users) {
-                            if (users.hasOwnProperty(userId)) {
+                            if (users.hasOwnProperty(userId) && userId !== currentUserId) {
                                 const user = users[userId];
                                 const userDiv = document.createElement('div');
                                 userDiv.textContent = `${user.firstName} ${user.lastName}`;
@@ -154,8 +154,7 @@
 
         auth.onAuthStateChanged(user => {
             if (user) {
-                loadUsers();
-                // Žádosti o přátelství už nenahráváme
+                loadUsers(user.uid); // Načteme uživatele s výjimkou aktuálně přihlášeného
             } else {
                 console.log('No user is signed in.');
             }
