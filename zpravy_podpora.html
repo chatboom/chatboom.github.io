@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podpora - Zprávy</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .message-container {
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .message-container h2 {
+            margin: 0;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        .details {
+            display: none;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .details p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+    </style>
+    <!-- Firebase App (core) SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js"></script>
+    <!-- Firebase Realtime Database SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Zprávy Podpory</h1>
+        <div id="messages"></div>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js';
+        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js';
+
+        // Vaše Firebase konfigurace (nahradit vlastními údaji)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+        };
+
+        // Inicializace Firebase
+        const app = initializeApp(firebaseConfig);
+
+        // Inicializace Realtime Database
+        const db = getDatabase(app);
+
+        // Načítání zpráv z Realtime Database
+        const messagesRef = ref(db, 'messages');
+
+        onValue(messagesRef, (snapshot) => {
+            const messagesContainer = document.getElementById('messages');
+            messagesContainer.innerHTML = ''; // Vyčistit stávající obsah
+
+            snapshot.forEach((childSnapshot) => {
+                const data = childSnapshot.val();
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message-container');
+                messageElement.innerHTML = `
+                    <h2>${data.name}</h2>
+                    <div class="details">
+                        <p>E-mail: ${data.email}</p>
+                        <p>Zpráva: ${data.message}</p>
+                    </div>
+                `;
+
+                // Přidání události kliknutí pro zobrazení/skrývání detailů
+                messageElement.querySelector('h2').addEventListener('click', function() {
+                    const details = this.nextElementSibling;
+                    if (details.style.display === "none" || details.style.display === "") {
+                        details.style.display = "block";
+                    } else {
+                        details.style.display = "none";
+                    }
+                });
+
+                messagesContainer.appendChild(messageElement);
+            });
+        });
+    </script>
+</body>
+</html>
