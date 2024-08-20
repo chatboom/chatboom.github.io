@@ -1,225 +1,180 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChatBoom</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <style>
-    /* Obecné stylování */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      margin: 0;
-      padding: 0;
-    }
-
-    /* Kontejner pro formulář */
-    .container {
-      max-width: 500px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    /* Stylování pro form-group */
-    .form-group {
-      display: flex;
-      align-items: center;
-      margin-bottom: 15px;
-      position: relative;
-    }
-    .form-group label {
-      flex: 1;
-      font-weight: bold;
-    }
-    .form-group input {
-      flex: 3;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-right: 10px;
-    }
-    .form-group input[type="password"] {
-      font-family: "Arial", sans-serif; /* Zajištění zobrazení teček u pole pro heslo */
-    }
-
-    /* Ikonka pro úpravu (tužka a fajfka) */
-    .edit-icon {
-      width: 20px;
-      height: 20px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      right: 10px;
-    }
-    .edit-icon.edit {
-      color: #4a90e2;
-    }
-    .edit-icon.save {
-      color: #2ecc71;
-    }
-
-    /* Stylování tlačítek */
-    .action-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-    .action-buttons button {
-      background-color: #4a90e2;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      width: 48%;
-    }
-    .action-buttons button:hover {
-      background-color: #357ab8;
-    }
-    .action-buttons .delete {
-      background-color: #e74c3c;
-    }
-    .action-buttons .delete:hover {
-      background-color: #c0392b;
-    }
-
-    /* Úpravy pro responzivní zobrazení */
-    @media screen and (max-width: 600px) {
-      .container {
-        padding: 10px;
-      }
-      .form-group input {
-        padding: 8px;
-      }
-      .action-buttons {
-        flex-direction: column;
-      }
-      .action-buttons button {
-        width: 100%;
-        margin-bottom: 10px;
-      }
-      .action-buttons button:last-child {
-        margin-bottom: 0;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uživatelský profil</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #user-details {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        .field {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        label {
+            flex: 1;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        input {
+            flex: 2;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        input:disabled {
+            background-color: #f5f5f5;
+        }
+        .edit-btn, .save-btn {
+            margin-left: 10px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .save-btn {
+            display: none;
+            color: green;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="form-group">
-      <label for="firstName">Jméno:</label>
-      <input type="text" id="firstName" name="firstName" value="Jméno" disabled>
-      <span class="edit-icon edit" id="edit-firstName" onclick="toggleEdit('firstName', 'edit-firstName')">
-        <i class="fas fa-pencil-alt"></i>
-      </span>
-    </div>
-    <div class="form-group">
-      <label for="lastName">Příjmení:</label>
-      <input type="text" id="lastName" name="lastName" value="Přijmení" disabled>
-      <span class="edit-icon edit" id="edit-lastName" onclick="toggleEdit('lastName', 'edit-lastName')">
-        <i class="fas fa-pencil-alt"></i>
-      </span>
-    </div>
-    <div class="form-group">
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" value="email@example.com" disabled>
-      <span class="edit-icon edit" id="edit-email" onclick="toggleEdit('email', 'edit-email')">
-        <i class="fas fa-pencil-alt"></i>
-      </span>
-    </div>
-    <div class="form-group">
-      <label for="password">Heslo:</label>
-      <input type="password" id="password" name="password" value="heslo" disabled>
-      <span class="edit-icon edit" id="edit-password" onclick="toggleEdit('password', 'edit-password')">
-        <i class="fas fa-pencil-alt"></i>
-      </span>
-    </div>
-    <div class="action-buttons">
-      <button onclick="logout()">Odhlásit se</button>
-      <button class="delete" onclick="deleteAccount()">Smazat účet</button>
-    </div>
-  </div>
+    <div id="user-details">
+        <div class="field">
+            <label for="firstName">Jméno:</label>
+            <input type="text" id="firstName" disabled />
+            <button class="edit-btn" onclick="enableEdit('firstName')">✏️</button>
+            <button class="save-btn" id="saveFirstName" onclick="saveData('firstName')">✔️</button>
+        </div>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script>
-    // Vaše konfigurace Firebase
-    var firebaseConfig = {
-      apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
-      authDomain: "chatboom-95647.firebaseapp.com",
-      projectId: "chatboom-95647",
-      storageBucket: "chatboom-95647.appspot.com",
-      messagingSenderId: "458271134858",
-      appId: "1:458271134858:web:5e09d3329ba81626830973",
-      measurementId: "G-KS97KKQ3EH"
-    };
+        <div class="field">
+            <label for="lastName">Příjmení:</label>
+            <input type="text" id="lastName" disabled />
+            <button class="edit-btn" onclick="enableEdit('lastName')">✏️</button>
+            <button class="save-btn" id="saveLastName" onclick="saveData('lastName')">✔️</button>
+        </div>
 
-    // Inicializace Firebase
-    firebase.initializeApp(firebaseConfig);
+        <div class="field">
+            <label for="email">Email:</label>
+            <input type="email" id="email" disabled />
+            <button class="edit-btn" onclick="enableEdit('email')">✏️</button>
+            <button class="save-btn" id="saveEmail" onclick="saveData('email')">✔️</button>
+        </div>
 
-    const auth = firebase.auth();
+        <div class="field">
+            <label for="password">Heslo:</label>
+            <input type="password" id="password" disabled />
+            <button class="edit-btn" onclick="enableEdit('password')">✏️</button>
+            <button class="save-btn" id="savePassword" onclick="saveData('password')">✔️</button>
+        </div>
+    </div>
 
-    // Funkce pro odhlášení uživatele
-    function logout() {
-      auth.signOut().then(() => {
-        window.location.href = 'prihlaseni.html'; // Přesměrování na stránku pro přihlášení
-      }).catch((error) => {
-        console.error('Chyba při odhlašování:', error);
-      });
-    }
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-    // Funkce pro smazání účtu uživatele
-    function deleteAccount() {
-      const user = auth.currentUser;
-      if (user) {
-        const confirmDelete = confirm('Opravdu chcete smazat svůj účet? Tuto akci nelze vrátit zpět.');
-        if (confirmDelete) {
-          user.delete().then(() => {
-            alert('Účet byl úspěšně smazán.');
-            window.location.href = 'prihlaseni.html'; // Přesměrování na stránku pro přihlášení
-          }).catch((error) => {
-            console.error('Chyba při mazání účtu:', error);
-          });
+    <script>
+        // Firebase konfigurace
+        const firebaseConfig = {
+          apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+        };
+
+        // Inicializace Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        // Načtení údajů uživatele
+        function loadUserData() {
+            const user = auth.currentUser;
+            if (user) {
+                console.log('Uživatel přihlášen:', user.uid);
+                const userId = user.uid;
+                const userRef = database.ref('users/' + userId);
+                userRef.on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    console.log('Načtená data:', data);
+                    document.getElementById('firstName').value = data.firstName || '';
+                    document.getElementById('lastName').value = data.lastName || '';
+                    document.getElementById('email').value = data.email || '';
+                    document.getElementById('password').value = data.password || '';
+                });
+            } else {
+                console.log('Žádný uživatel není přihlášen.');
+            }
         }
-      } else {
-        alert('Musíte být přihlášeni.');
-      }
-    }
 
-    // Funkce pro povolení úprav
-    function toggleEdit(fieldId, editIconId) {
-      const inputField = document.getElementById(fieldId);
-      const editIcon = document.getElementById(editIconId);
-
-      if (inputField.disabled) {
-        // Povolit úpravy
-        inputField.disabled = false;
-        inputField.focus();
-        editIcon.innerHTML = '<i class="fas fa-check"></i>';
-        document.addEventListener('click', handleClickOutside);
-      } else {
-        // Uložit úpravy
-        inputField.disabled = true;
-        editIcon.innerHTML = '<i class="fas fa-pencil-alt"></i>';
-        document.removeEventListener('click', handleClickOutside);
-      }
-
-      function handleClickOutside(event) {
-        if (!inputField.contains(event.target) && !editIcon.contains(event.target)) {
-          inputField.disabled = true;
-          editIcon.innerHTML = '<i class="fas fa-pencil-alt"></i>';
-          document.removeEventListener('click', handleClickOutside);
+        // Umožnění úpravy pole
+        function enableEdit(fieldId) {
+            document.getElementById(fieldId).disabled = false;
+            document.querySelector(`#${fieldId} ~ .edit-btn`).style.display = 'none';
+            document.getElementById('save' + capitalizeFirstLetter(fieldId)).style.display = 'inline';
         }
-      }
-    }
-  </script>
+
+        // Uložení údajů zpět do Firebase
+        function saveData(fieldId) {
+            const user = auth.currentUser;
+            if (user) {
+                const userId = user.uid;
+                const userRef = database.ref('users/' + userId);
+                const updatedValue = document.getElementById(fieldId).value;
+                
+                let updateObj = {};
+                updateObj[fieldId] = updatedValue;
+                
+                userRef.update(updateObj, (error) => {
+                    if (error) {
+                        console.error('Chyba při ukládání:', error);
+                    } else {
+                        console.log('Údaje byly úspěšně uloženy!');
+                        document.getElementById(fieldId).disabled = true;
+                        document.querySelector(`#${fieldId} ~ .save-btn`).style.display = 'none';
+                        document.querySelector(`#${fieldId} ~ .edit-btn`).style.display = 'inline';
+                    }
+                });
+            } else {
+                console.log('Žádný uživatel není přihlášen.');
+            }
+        }
+
+        // Pomocná funkce na kapitalizaci prvního písmena
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Načtení údajů uživatele po přihlášení
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loadUserData();
+            } else {
+                console.log('Žádný uživatel není přihlášen.');
+            }
+        });
+    </script>
 </body>
 </html>
