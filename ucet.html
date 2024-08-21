@@ -54,37 +54,21 @@
             display: none;
             color: green;
         }
+        .message {
+            color: red;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div id="user-details">
-        <div class="field">
-            <label for="firstName">Jméno:</label>
-            <input type="text" id="firstName" disabled />
-            <button class="edit-btn" onclick="enableEdit('firstName')">✏️</button>
-            <button class="save-btn" id="saveFirstName" onclick="saveData('firstName')">✔️</button>
-        </div>
-
-        <div class="field">
-            <label for="lastName">Příjmení:</label>
-            <input type="text" id="lastName" disabled />
-            <button class="edit-btn" onclick="enableEdit('lastName')">✏️</button>
-            <button class="save-btn" id="saveLastName" onclick="saveData('lastName')">✔️</button>
-        </div>
-
         <div class="field">
             <label for="email">Email:</label>
             <input type="email" id="email" disabled />
             <button class="edit-btn" onclick="enableEdit('email')">✏️</button>
             <button class="save-btn" id="saveEmail" onclick="saveData('email')">✔️</button>
         </div>
-
-        <div class="field">
-            <label for="password">Heslo:</label>
-            <input type="password" id="password" disabled />
-            <button class="edit-btn" onclick="enableEdit('password')">✏️</button>
-            <button class="save-btn" id="savePassword" onclick="saveData('password')">✔️</button>
-        </div>
+        <div id="message" class="message"></div>
     </div>
 
     <!-- Firebase SDK -->
@@ -95,37 +79,30 @@
     <script>
         // Firebase konfigurace
         const firebaseConfig = {
-          apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
-          authDomain: "chatboom-95647.firebaseapp.com",
-          databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
-          projectId: "chatboom-95647",
-          storageBucket: "chatboom-95647.appspot.com",
-          messagingSenderId: "458271134858",
-          appId: "1:458271134858:web:5e09d3329ba81626830973",
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
         };
 
         // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
         const auth = firebase.auth();
+        const database = firebase.database();
 
         // Načtení údajů uživatele
         function loadUserData() {
             const user = auth.currentUser;
             if (user) {
-                console.log('Uživatel přihlášen:', user.uid);
                 const userId = user.uid;
                 const userRef = database.ref('users/' + userId);
                 userRef.on('value', (snapshot) => {
                     const data = snapshot.val();
-                    console.log('Načtená data:', data);
-                    document.getElementById('firstName').value = data.firstName || '';
-                    document.getElementById('lastName').value = data.lastName || '';
                     document.getElementById('email').value = data.email || '';
-                    document.getElementById('password').value = data.password || '';
                 });
-            } else {
-                console.log('Žádný uživatel není přihlášen.');
             }
         }
 
@@ -136,78 +113,35 @@
             document.getElementById('save' + capitalizeFirstLetter(fieldId)).style.display = 'inline';
         }
 
-        // Uložení údajů zpět do Firebase a aktualizace e-mailu uživatele
-        function saveData(fieldId) {
+        // Uložení údajů zpět do Firebase
+        async function saveData(fieldId) {
             const user = auth.currentUser;
-            if (user) {
-                const userId = user.uid;
-                const userRef = database.ref('users/' + userId);
-                const updatedValue = document.getElementById(fieldId).value;
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = '';
 
-                let updateObj = {};
-                updateObj[fieldId] = updatedValue;
+            if (user) {
+                const newValue = document.getElementById(fieldId).value;
 
                 if (fieldId === 'email') {
-                    // Odeslání ověřovacího e-mailu
-                    user.updateEmail(updatedValue)
-                        .then(() => {
-                            return user.sendEmailVerification(); // Odeslání ověřovacího e-mailu na nový e-mail
-                        })
-                        .then(() => {
-                            alert('Na nový e-mail byl odeslán ověřovací e-mail. Ověřte ho, prosím.');
-                            return userRef.update(updateObj);
-                        })
-                        .then(() => {
-                            console.log('Údaje byly úspěšně uloženy do Firebase!');
-                            document.getElementById(fieldId).disabled = true;
-                            document.querySelector(`#${fieldId} ~ .save-btn`).style.display = 'none';
-                            document.querySelector(`#${fieldId} ~ .edit-btn`).style.display = 'inline';
-                        })
-                        .catch((error) => {
-                            if (error.code === 'auth/requires-recent-login') {
-                                alert('Pro tuto akci je třeba se znovu přihlásit.');
-                                reauthenticateUser().then(() => {
-                                    saveData(fieldId); // Zkuste znovu po reauthentikaci
-                                });
-                            } else {
-                                console.error('Chyba při aktualizaci e-mailu:', error.message);
-                                alert('Chyba při aktualizaci e-mailu: ' + error.message);
-                            }
+                    try {
+                        // Odeslání ověřovacího e-mailu
+                        await user.updateEmail(newValue);
+                        await user.sendEmailVerification();
+                        messageElement.textContent = 'Ověřovací e-mail byl odeslán na nový e-mail. Prosím, ověřte svůj e-mail.';
+
+                        // Odhlásit uživatele a přesměrovat na přihlašovací stránku
+                        auth.signOut().then(() => {
+                            window.location.href = 'login.html'; // Přesměruj na přihlašovací stránku
                         });
-                } else {
-                    userRef.update(updateObj, (error) => {
-                        if (error) {
-                            console.error('Chyba při ukládání:', error);
-                        } else {
-                            console.log('Údaje byly úspěšně uloženy do Firebase!');
-                            document.getElementById(fieldId).disabled = true;
-                            document.querySelector(`#${fieldId} ~ .save-btn`).style.display = 'none';
-                            document.querySelector(`#${fieldId} ~ .edit-btn`).style.display = 'inline';
-                        }
-                    });
+
+                    } catch (error) {
+                        console.error('Chyba při aktualizaci e-mailu:', error.message);
+                        messageElement.textContent = 'Chyba při aktualizaci e-mailu: ' + error.message;
+                    }
                 }
             } else {
                 console.log('Žádný uživatel není přihlášen.');
             }
-        }
-
-        // Reauthentikace uživatele před citlivou operací
-        function reauthenticateUser() {
-            const user = auth.currentUser;
-            const currentPassword = prompt('Pro potvrzení zadejte své heslo:');
-            const credential = firebase.auth.EmailAuthProvider.credential(
-                user.email,
-                currentPassword
-            );
-
-            return user.reauthenticateWithCredential(credential)
-                .then(() => {
-                    console.log('Reauthentikace byla úspěšná.');
-                })
-                .catch((error) => {
-                    console.error('Chyba při reauthentikaci:', error.message);
-                    alert('Chyba při reauthentikaci: ' + error.message);
-                });
         }
 
         // Pomocná funkce na kapitalizaci prvního písmena
