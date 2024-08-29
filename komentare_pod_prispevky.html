@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Komentáře</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .top-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            z-index: 1000;
+        }
+
+        .top-bar-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .top-bar-item img {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+
+        .top-bar-item span {
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            overflow-y: auto;
+            padding-bottom: 80px; /* Rezerva pro textarea a tlačítko */
+        }
+
+        .comments-container {
+            margin-top: 20px;
+        }
+
+        .comment {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .comment-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .comment-form {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 10px 20px;
+            box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-sizing: border-box;
+        }
+
+        .comment-textarea {
+            flex: 1;
+            height: 60px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        .submit-comment-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-comment-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar-item">
+            <img src="https://img.icons8.com/ios-filled/50/000000/back.png" alt="Zpět" onclick="goBack()">
+            <span>Zpět</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="commentsContainer" class="comments-container">
+            <!-- Komentáře budou dynamicky generovány zde -->
+        </div>
+    </div>
+
+    <div class="comment-form">
+        <textarea id="commentText" class="comment-textarea" maxlength="500" placeholder="Napište svůj komentář..."></textarea>
+        <button id="submitCommentButton" class="submit-comment-button" disabled>Poslat</button>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        // Firebase konfigurace
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+        };
+
+        // Inicializace Firebase
+        firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
+
+        const commentText = document.getElementById('commentText');
+        const submitCommentButton = document.getElementById('submitCommentButton');
+        const commentsContainer = document.getElementById('commentsContainer');
+
+        // Získání ID příspěvku z URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('postId'); // Získání postId z URL parametru
+
+        if (!postId) {
+            alert('Chyba: ID příspěvku není k dispozici.');
+            window.location.href = 'dum.html'; // Přejít na domovskou stránku, pokud ID není k dispozici
+        }
+
+        // Funkce pro aktualizaci stavu tlačítka odeslání komentáře
+        function updateCommentButtonState() {
+            submitCommentButton.disabled = commentText.value.trim().length === 0;
+        }
+
+        // Funkce pro odeslání komentáře do Firebase
+        submitCommentButton.addEventListener('click', () => {
+            const commentContent = commentText.value.trim();
+            if (commentContent.length > 0) {
+                database.ref('posts/' + postId + '/comments').push({
+                    content: commentContent,
+                    timestamp: Date.now()
+                }).then(() => {
+                    console.log('Komentář úspěšně odeslán.');
+                    commentText.value = '';
+                    updateCommentButtonState();
+                }).catch((error) => {
+                    console.error('Chyba při odesílání komentáře:', error);
+                });
+            }
+        });
+
+        // Funkce pro zobrazení komentářů z Firebase
+        function displayComments() {
+            database.ref('posts/' + postId + '/comments').on('value', (snapshot) => {
+                commentsContainer.innerHTML = '';
+                const comments = snapshot.val();
+                if (comments) {
+                    Object.keys(comments).forEach((key) => {
+                        const comment = comments[key];
+                        const commentElement = document.createElement('div');
+                        commentElement.className = 'comment';
+                        commentElement.innerHTML = `
+                            <p>${comment.content}</p>
+                            <div class="comment-actions">
+                                <span>${new Date(comment.timestamp).toLocaleString()}</span>
+                            </div>
+                        `;
+                        commentsContainer.appendChild(commentElement);
+                    });
+                }
+            }, (error) => {
+                console.error('Chyba při načítání komentářů:', error);
+            });
+        }
+
+        // Načtení komentářů a stavu tlačítka při načtení stránky
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCommentButtonState();
+            displayComments();
+        });
+
+        // Funkce pro návrat na předchozí stránku
+        function goBack() {
+            window.location.href = 'dum.html';
+        }
+    </script>
+</body>
+</html>
