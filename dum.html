@@ -289,7 +289,8 @@
                     content: postContent,
                     timestamp: Date.now(),
                     likes: 0,
-                    likedBy: [] // Inicializace jako prázdné pole
+                    likedBy: [], // Inicializace jako prázdné pole
+                    comments: [] // Inicializace jako prázdné pole pro komentáře
                 }).then(() => {
                     console.log('Příspěvek úspěšně odeslán.');
                     postText.value = '';
