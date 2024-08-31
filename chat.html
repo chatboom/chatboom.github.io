@@ -331,7 +331,7 @@
         }
 
         function showContextMenu(event) {
-            event.preventDefault();
+            event.preventDefault(); // Zrušení výchozího kontextového menu
             selectedMessageElement = event.currentTarget;
 
             const contextMenu = document.getElementById('context-menu');
