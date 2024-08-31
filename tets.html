@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBoom</title>
+    <style>
+        body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f7f9fa;
+    overflow: hidden; /* Zajistí, že se nezobrazí žádný scroll bar, pokud je obsah přesahující */
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100vw; /* Zajišťuje, že kontejner bude mít šířku celé stránky */
+    margin: 0;
+    background: #ffffff;
+    border: none; /* Odstranění border-radius */
+    box-shadow: none; /* Odstranění stínu */
+    overflow: hidden;
+}
+
+.header {
+    background-color: #0084ff;
+    color: #ffffff;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #0073e6;
+    width: 100%; /* Zajišťuje, že header má šířku celé stránky */
+}
+
+.messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    background: #e5e5ea;
+}
+
+.message {
+    max-width: 60%;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+    line-height: 1.2rem;
+    max-height: 4rem;
+    overflow: hidden;
+}
+
+.message.sent {
+    align-self: flex-end;
+    background: #0084ff;
+    color: #ffffff;
+}
+
+.message.received {
+    align-self: flex-start;
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #ddd;
+}
+
+.input-container {
+    display: flex;
+    border-top: 1px solid #ddd;
+    background: #ffffff;
+    padding: 0.5rem;
+    width: 100%; /* Zajišťuje, že input-container má šířku celé stránky */
+    box-sizing: border-box; /* Zajistí, že padding je zahrnutý do šířky */
+}
+
+.input-container input {
+    flex: 1;
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    border-radius: 20px;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-container input:focus {
+    border-color: #0084ff;
+}
+
+.input-container button {
+    border: none;
+    background-color: #0084ff;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.input-container button:hover {
+    background-color: #0073e6;
+}
+
+.input-container button:active {
+    background-color: #005bb5;
+}
+
+.typing-message {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    color: #888;
+    font-style: italic;
+    max-width: 60%;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    max-height: 4rem;
+    overflow: hidden;
+}
+
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <!-- Header již neobsahuje jméno uživatele -->
+        </div>
+        <div class="messages" id="messages"></div>
+        <div class="input-container">
+            <input type="text" id="message-input" placeholder="Napište zprávu..." oninput="updateTypingStatus()" onblur="stopTyping()">
+            <button onclick="sendMessage()">Odeslat</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
+        const database = firebase.database();
+        let typingTimeout;
+        let typingMessageElement = null;
+
+        function loadMessages() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+
+                    if (!conversationId) {
+                        alert('Chyba: Conversation ID not found');
+                        return;
+                    }
+
+                    const messagesRef = database.ref('messages/' + conversationId);
+                    const typingRef = database.ref('typing/' + conversationId);
+
+                    const messagesElement = document.getElementById('messages');
+
+                    // Sledujeme zprávy
+                    messagesRef.on('child_added', snapshot => {
+                        const message = snapshot.val();
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message ' + (message.senderId === userId ? 'sent' : 'received');
+                        messageDiv.innerHTML = `<p>${message.text}</p>`;
+                        messagesElement.appendChild(messageDiv);
+                        messagesElement.scrollTop = messagesElement.scrollHeight; // Scroll to bottom
+                    });
+
+                    // Sledujeme stav psaní
+                    typingRef.on('value', snapshot => {
+                        const typingData = snapshot.val();
+                        if (typingData && typingData.typing && typingData.senderId !== userId) {
+                            showTypingMessage();
+                        } else {
+                            removeTypingMessage();
+                        }
+                    });
+
+                } else {
+                    console.error('No user is signed in');
+                }
+            });
+        }
+
+        function showTypingMessage() {
+            if (!typingMessageElement) {
+                typingMessageElement = document.createElement('div');
+                typingMessageElement.className = 'message typing-message';
+                typingMessageElement.innerHTML = '<p>Píše...</p>';
+                document.getElementById('messages').appendChild(typingMessageElement);
+                document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight; // Scroll to bottom
+            }
+        }
+
+        function removeTypingMessage() {
+            if (typingMessageElement) {
+                typingMessageElement.remove();
+                typingMessageElement = null;
+            }
+        }
+
+        function updateTypingStatus() {
+            clearTimeout(typingTimeout);
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+                    const typingRef = database.ref('typing/' + conversationId);
+
+                    typingRef.set({
+                        typing: true,
+                        senderId: userId
+                    });
+
+                    typingTimeout = setTimeout(() => {
+                        stopTyping();
+                    }, 3000);
+                }
+            });
+        }
+
+        function stopTyping() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+
+                    const typingRef = database.ref('typing/' + conversationId);
+
+                    // Zastavit stav psaní
+                    typingRef.set({
+                        typing: false,
+                        senderId: userId
+                    });
+                }
+            });
+        }
+
+        function sendMessage() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+                    const messageInput = document.getElementById('message-input');
+                    const messageText = messageInput.value.trim();
+
+                    if (!messageText || !conversationId) {
+                        return;
+                    }
+
+                    const messagesRef = database.ref('messages/' + conversationId);
+                    messagesRef.push({
+                        text: messageText,
+                        senderId: userId,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+
+                    // Vymazání vstupu a odstranění stavu psaní
+                    messageInput.value = '';
+                    stopTyping();
+                } else {
+                    console.error('No user is signed in');
+                }
+            });
+        }
+
+        window.onload = loadMessages;
+    </script>
+</body>
+</html>
