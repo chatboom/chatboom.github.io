@@ -59,8 +59,6 @@
             max-height: 4rem;
             overflow: hidden;
             position: relative;
-            /* Disable text selection for messages */
-            user-select: none;
         }
 
         .message.sent {
@@ -97,7 +95,8 @@
             margin-right: 0.5rem;
             outline: none;
             transition: border-color 0.3s;
-            user-select: text; /* Enable text selection for input */
+            /* Ensure text selection is enabled */
+            user-select: text; 
         }
 
         .input-container input:focus {
@@ -201,8 +200,6 @@
         let typingTimeout;
         let typingMessageElement = null;
         let selectedMessageElement = null;
-        let touchStartTimer = null;
-        let touchMoveDetected = false;
 
         function loadMessages() {
             auth.onAuthStateChanged(user => {
@@ -227,9 +224,7 @@
                         messageDiv.className = 'message ' + (message.senderId === userId ? 'sent' : 'received');
                         messageDiv.innerHTML = `<p>${message.text}</p>`;
                         messageDiv.dataset.messageId = snapshot.key;
-                        messageDiv.addEventListener('touchstart', handleTouchStart);
-                        messageDiv.addEventListener('touchmove', handleTouchMove);
-                        messageDiv.addEventListener('touchend', handleTouchEnd);
+                        messageDiv.addEventListener('contextmenu', showContextMenu);
                         messagesElement.appendChild(messageDiv);
                         messagesElement.scrollTop = messagesElement.scrollHeight;
                     });
@@ -330,24 +325,6 @@
                     console.error('No user is signed in');
                 }
             });
-        }
-
-        function handleTouchStart(event) {
-            touchMoveDetected = false;
-            touchStartTimer = setTimeout(() => {
-                if (!touchMoveDetected) {
-                    showContextMenu(event);
-                }
-            }, 500); // Show context menu after 500ms touch hold
-        }
-
-        function handleTouchMove() {
-            touchMoveDetected = true;
-            clearTimeout(touchStartTimer);
-        }
-
-        function handleTouchEnd() {
-            clearTimeout(touchStartTimer);
         }
 
         function showContextMenu(event) {
