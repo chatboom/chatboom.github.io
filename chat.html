@@ -59,7 +59,8 @@
             max-height: 4rem;
             overflow: hidden;
             position: relative;
-            user-select: none; /* Disable text selection for messages */
+            /* Disable text selection for messages */
+            user-select: none;
         }
 
         .message.sent {
@@ -143,7 +144,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             z-index: 1000;
             width: 150px;
-            box-sizing: border-box;
         }
 
         .context-menu ul {
@@ -273,11 +273,6 @@
                     const userId = user.uid;
                     const urlParams = new URLSearchParams(window.location.search);
                     const conversationId = urlParams.get('conversationId');
-
-                    if (!conversationId) {
-                        return;
-                    }
-
                     const typingRef = database.ref('typing/' + conversationId);
 
                     typingRef.set({
@@ -360,35 +355,11 @@
             selectedMessageElement = event.currentTarget;
 
             const contextMenu = document.getElementById('context-menu');
-            const { clientX: x, clientY: y } = event;
-
             const messageRect = selectedMessageElement.getBoundingClientRect();
-            const menuWidth = contextMenu.offsetWidth;
-            const menuHeight = contextMenu.offsetHeight;
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-
-            // Default position for context menu
-            let left = x;
-            let top = y;
-
-            // Adjust position if menu goes out of bounds
-            if (x + menuWidth > viewportWidth) {
-                left = viewportWidth - menuWidth - 10; // Menu within right boundary
-            }
-            if (y + menuHeight > viewportHeight) {
-                top = viewportHeight - menuHeight - 10; // Menu within bottom boundary
-            }
-            if (x < 10) {
-                left = 10; // Menu within left boundary
-            }
-            if (y < 10) {
-                top = 10; // Menu within top boundary
-            }
 
             contextMenu.style.display = 'block';
-            contextMenu.style.top = `${top}px`;
-            contextMenu.style.left = `${left}px`;
+            contextMenu.style.top = `${messageRect.bottom + window.scrollY}px`; // Place below the message
+            contextMenu.style.left = `${messageRect.right + window.scrollX}px`; // Place to the right of the message
 
             document.addEventListener('click', hideContextMenu);
         }
