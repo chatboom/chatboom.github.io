@@ -355,11 +355,11 @@
             selectedMessageElement = event.currentTarget;
 
             const contextMenu = document.getElementById('context-menu');
-            const messageRect = selectedMessageElement.getBoundingClientRect();
+            const { clientX: x, clientY: y } = event;
 
             contextMenu.style.display = 'block';
-            contextMenu.style.top = `${messageRect.bottom + window.scrollY}px`; // Place below the message
-            contextMenu.style.left = `${messageRect.right + window.scrollX}px`; // Place to the right of the message
+            contextMenu.style.top = `${Math.min(y, window.innerHeight - contextMenu.offsetHeight - 10)}px`;
+            contextMenu.style.left = `${Math.min(x, window.innerWidth - contextMenu.offsetWidth - 10)}px`;
 
             document.addEventListener('click', hideContextMenu);
         }
