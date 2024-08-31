@@ -389,18 +389,6 @@
 
         window.onload = loadMessages;
 
-        // Prevent text selection on touch and long press
-        document.addEventListener('touchstart', function(e) {
-            if (e.target.closest('.message')) {
-                e.preventDefault();
-            }
-        });
-
-        document.addEventListener('long-press', function(e) {
-            if (e.target.closest('.message')) {
-                e.preventDefault();
-            }
-        });
     </script>
 </body>
 </html>
