@@ -143,6 +143,7 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             z-index: 1000;
             width: 150px;
+            box-sizing: border-box;
         }
 
         .context-menu ul {
@@ -367,16 +368,22 @@
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
 
-            // Calculate position to keep the menu within the viewport
-            let left = messageRect.left - menuWidth - 10; // Menu to the left of the message
-            let top = messageRect.top;
+            // Default position for context menu
+            let left = x;
+            let top = y;
 
             // Adjust position if menu goes out of bounds
-            if (left < 0) {
-                left = messageRect.right + 10; // Menu to the right of the message if left side is out of bounds
+            if (x + menuWidth > viewportWidth) {
+                left = viewportWidth - menuWidth - 10; // Menu within right boundary
             }
-            if (top + menuHeight > viewportHeight) {
-                top = viewportHeight - menuHeight - 10; // Adjust top if menu goes out of bounds
+            if (y + menuHeight > viewportHeight) {
+                top = viewportHeight - menuHeight - 10; // Menu within bottom boundary
+            }
+            if (x < 10) {
+                left = 10; // Menu within left boundary
+            }
+            if (y < 10) {
+                top = 10; // Menu within top boundary
             }
 
             contextMenu.style.display = 'block';
