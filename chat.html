@@ -81,6 +81,9 @@
             padding: 0.5rem;
             width: 100%; /* Zajišťuje, že input-container má šířku celé stránky */
             box-sizing: border-box; /* Zajistí, že padding je zahrnutý do šířky */
+            position: fixed; /* Zajišťuje, že input-container bude vždy viditelný na spodní části */
+            bottom: 0; /* Upevňuje input-container k dolnímu okraji */
+            left: 0; /* Zajišťuje, že input-container je zarovnaný s levým okrajem */
         }
 
         .input-container input {
@@ -223,8 +226,8 @@
                         const messageDiv = document.createElement('div');
                         messageDiv.className = 'message ' + (message.senderId === userId ? 'sent' : 'received');
                         messageDiv.innerHTML = `<p>${message.text}</p>`;
-                        messageDiv.dataset.messageId = snapshot.key; // Uložení ID zprávy
-                        messageDiv.addEventListener('contextmenu', showContextMenu); // Přidání události pro zobrazení menu
+                        messageDiv.dataset.messageId = snapshot.key; // Přidání ID zprávy do datových atributů
+                        messageDiv.addEventListener('contextmenu', showContextMenu);
                         messagesElement.appendChild(messageDiv);
                         messagesElement.scrollTop = messagesElement.scrollHeight; // Scroll to bottom
                     });
