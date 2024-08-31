@@ -13,7 +13,7 @@
             flex-direction: column;
             height: 100vh;
             background-color: #f7f9fa;
-            overflow: hidden; /* Zajistí, že se nezobrazí žádný scroll bar, pokud je obsah přesahující */
+            overflow: hidden;
             -webkit-user-select: none; /* Safari */
             -moz-user-select: none; /* Firefox */
             -ms-user-select: none; /* Internet Explorer/Edge */
@@ -24,13 +24,13 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            width: 100vw; /* Zajišťuje, že kontejner bude mít šířku celé stránky */
+            width: 100vw;
             margin: 0;
             background: #ffffff;
-            border: none; /* Odstranění border-radius */
-            box-shadow: none; /* Odstranění stínu */
+            border: none;
+            box-shadow: none;
             overflow: hidden;
-            position: relative; /* Přidáno pro kontextové menu */
+            position: relative;
         }
 
         .header {
@@ -40,7 +40,7 @@
             display: flex;
             align-items: center;
             border-bottom: 1px solid #0073e6;
-            width: 100%; /* Zajišťuje, že header má šířku celé stránky */
+            width: 100%;
         }
 
         .messages {
@@ -62,7 +62,7 @@
             line-height: 1.2rem;
             max-height: 4rem;
             overflow: hidden;
-            position: relative; /* Přidáno pro kontextové menu */
+            position: relative;
             -webkit-user-select: none; /* Safari */
             -moz-user-select: none; /* Firefox */
             -ms-user-select: none; /* Internet Explorer/Edge */
@@ -87,11 +87,11 @@
             border-top: 1px solid #ddd;
             background: #ffffff;
             padding: 0.5rem;
-            width: 100%; /* Zajišťuje, že input-container má šířku celé stránky */
-            box-sizing: border-box; /* Zajistí, že padding je zahrnutý do šířky */
-            position: fixed; /* Zajišťuje, že input-container bude vždy viditelný na spodní části */
-            bottom: 0; /* Upevňuje input-container k dolnímu okraji */
-            left: 0; /* Zajišťuje, že input-container je zarovnaný s levým okrajem */
+            width: 100%;
+            box-sizing: border-box;
+            position: fixed;
+            bottom: 0;
+            left: 0;
         }
 
         .input-container input {
@@ -168,17 +168,14 @@
         }
     </style>
 </head>
-<body>
+<body onselectstart="return false;" onmousedown="return false;">
     <div class="chat-container">
-        <div class="header">
-            <!-- Header již neobsahuje jméno uživatele -->
-        </div>
+        <div class="header"></div>
         <div class="messages" id="messages"></div>
         <div class="input-container">
             <input type="text" id="message-input" placeholder="Napište zprávu..." oninput="updateTypingStatus()" onblur="stopTyping()">
             <button onclick="sendMessage()">Odeslat</button>
         </div>
-        <!-- Kontextové menu -->
         <div class="context-menu" id="context-menu">
             <ul>
                 <li onclick="copyMessage()">Kopírovat</li>
@@ -228,19 +225,17 @@
 
                     const messagesElement = document.getElementById('messages');
 
-                    // Sledujeme zprávy
                     messagesRef.on('child_added', snapshot => {
                         const message = snapshot.val();
                         const messageDiv = document.createElement('div');
                         messageDiv.className = 'message ' + (message.senderId === userId ? 'sent' : 'received');
                         messageDiv.innerHTML = `<p>${message.text}</p>`;
-                        messageDiv.dataset.messageId = snapshot.key; // Přidání ID zprávy do datových atributů
+                        messageDiv.dataset.messageId = snapshot.key;
                         messageDiv.addEventListener('contextmenu', showContextMenu);
                         messagesElement.appendChild(messageDiv);
-                        messagesElement.scrollTop = messagesElement.scrollHeight; // Scroll to bottom
+                        messagesElement.scrollTop = messagesElement.scrollHeight;
                     });
 
-                    // Sledujeme stav psaní
                     typingRef.on('value', snapshot => {
                         const typingData = snapshot.val();
                         if (typingData && typingData.typing && typingData.senderId !== userId) {
@@ -262,7 +257,7 @@
                 typingMessageElement.className = 'message typing-message';
                 typingMessageElement.innerHTML = '<p>Píše...</p>';
                 document.getElementById('messages').appendChild(typingMessageElement);
-                document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight; // Scroll to bottom
+                document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
             }
         }
 
@@ -303,7 +298,6 @@
 
                     const typingRef = database.ref('typing/' + conversationId);
 
-                    // Zastavit stav psaní
                     typingRef.set({
                         typing: false,
                         senderId: userId
@@ -332,7 +326,6 @@
                         timestamp: firebase.database.ServerValue.TIMESTAMP
                     });
 
-                    // Vymazání vstupu a odstranění stavu psaní
                     messageInput.value = '';
                     stopTyping();
                 } else {
@@ -342,7 +335,7 @@
         }
 
         function showContextMenu(event) {
-            event.preventDefault(); // Zrušení výchozího kontextového menu
+            event.preventDefault();
             selectedMessageElement = event.currentTarget;
 
             const contextMenu = document.getElementById('context-menu');
@@ -399,6 +392,19 @@
         }
 
         window.onload = loadMessages;
+
+        // Prevent text selection on touch and long press
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.closest('.message')) {
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('long-press', function(e) {
+            if (e.target.closest('.message')) {
+                e.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>
