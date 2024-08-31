@@ -272,6 +272,11 @@
                     const userId = user.uid;
                     const urlParams = new URLSearchParams(window.location.search);
                     const conversationId = urlParams.get('conversationId');
+
+                    if (!conversationId) {
+                        return;
+                    }
+
                     const typingRef = database.ref('typing/' + conversationId);
 
                     typingRef.set({
@@ -356,21 +361,22 @@
             const contextMenu = document.getElementById('context-menu');
             const { clientX: x, clientY: y } = event;
 
-            // Calculate position to keep the menu within the viewport
+            const messageRect = selectedMessageElement.getBoundingClientRect();
             const menuWidth = contextMenu.offsetWidth;
             const menuHeight = contextMenu.offsetHeight;
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
 
-            let left = x;
-            let top = y;
+            // Calculate position to keep the menu within the viewport
+            let left = messageRect.left - menuWidth - 10; // Menu to the left of the message
+            let top = messageRect.top;
 
             // Adjust position if menu goes out of bounds
-            if (left + menuWidth > viewportWidth) {
-                left = viewportWidth - menuWidth - 10; // Add some margin
+            if (left < 0) {
+                left = messageRect.right + 10; // Menu to the right of the message if left side is out of bounds
             }
             if (top + menuHeight > viewportHeight) {
-                top = viewportHeight - menuHeight - 10; // Add some margin
+                top = viewportHeight - menuHeight - 10; // Adjust top if menu goes out of bounds
             }
 
             contextMenu.style.display = 'block';
