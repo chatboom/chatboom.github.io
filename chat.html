@@ -60,7 +60,7 @@
             overflow: hidden;
             position: relative;
             /* Disable text selection for messages */
-            user-select: none; 
+            user-select: none;
         }
 
         .message.sent {
@@ -202,6 +202,7 @@
         let typingMessageElement = null;
         let selectedMessageElement = null;
         let touchStartTimer = null;
+        let touchMoveDetected = false;
 
         function loadMessages() {
             auth.onAuthStateChanged(user => {
@@ -227,6 +228,7 @@
                         messageDiv.innerHTML = `<p>${message.text}</p>`;
                         messageDiv.dataset.messageId = snapshot.key;
                         messageDiv.addEventListener('touchstart', handleTouchStart);
+                        messageDiv.addEventListener('touchmove', handleTouchMove);
                         messageDiv.addEventListener('touchend', handleTouchEnd);
                         messagesElement.appendChild(messageDiv);
                         messagesElement.scrollTop = messagesElement.scrollHeight;
@@ -331,9 +333,17 @@
         }
 
         function handleTouchStart(event) {
+            touchMoveDetected = false;
             touchStartTimer = setTimeout(() => {
-                showContextMenu(event);
+                if (!touchMoveDetected) {
+                    showContextMenu(event);
+                }
             }, 500); // Show context menu after 500ms touch hold
+        }
+
+        function handleTouchMove() {
+            touchMoveDetected = true;
+            clearTimeout(touchStartTimer);
         }
 
         function handleTouchEnd() {
