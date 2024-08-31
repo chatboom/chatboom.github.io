@@ -59,6 +59,8 @@
             max-height: 4rem;
             overflow: hidden;
             position: relative;
+            /* Disable text selection for messages */
+            user-select: none; 
         }
 
         .message.sent {
@@ -95,8 +97,7 @@
             margin-right: 0.5rem;
             outline: none;
             transition: border-color 0.3s;
-            /* Ensure text selection is enabled */
-            user-select: text; 
+            user-select: text; /* Enable text selection for input */
         }
 
         .input-container input:focus {
@@ -200,6 +201,7 @@
         let typingTimeout;
         let typingMessageElement = null;
         let selectedMessageElement = null;
+        let touchStartTimer = null;
 
         function loadMessages() {
             auth.onAuthStateChanged(user => {
@@ -224,7 +226,8 @@
                         messageDiv.className = 'message ' + (message.senderId === userId ? 'sent' : 'received');
                         messageDiv.innerHTML = `<p>${message.text}</p>`;
                         messageDiv.dataset.messageId = snapshot.key;
-                        messageDiv.addEventListener('contextmenu', showContextMenu);
+                        messageDiv.addEventListener('touchstart', handleTouchStart);
+                        messageDiv.addEventListener('touchend', handleTouchEnd);
                         messagesElement.appendChild(messageDiv);
                         messagesElement.scrollTop = messagesElement.scrollHeight;
                     });
@@ -325,6 +328,16 @@
                     console.error('No user is signed in');
                 }
             });
+        }
+
+        function handleTouchStart(event) {
+            touchStartTimer = setTimeout(() => {
+                showContextMenu(event);
+            }, 500); // Show context menu after 500ms touch hold
+        }
+
+        function handleTouchEnd() {
+            clearTimeout(touchStartTimer);
         }
 
         function showContextMenu(event) {
