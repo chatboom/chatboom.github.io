@@ -95,6 +95,8 @@
             margin-right: 0.5rem;
             outline: none;
             transition: border-color 0.3s;
+            /* Ensure text selection is enabled */
+            user-select: text; 
         }
 
         .input-container input:focus {
@@ -132,7 +134,6 @@
             overflow: hidden;
         }
 
-        /* Kontextové menu */
         .context-menu {
             display: none;
             position: absolute;
@@ -160,7 +161,7 @@
         }
     </style>
 </head>
-<body onselectstart="return false;" onmousedown="return false;">
+<body>
     <div class="chat-container">
         <div class="header"></div>
         <div class="messages" id="messages"></div>
@@ -384,7 +385,6 @@
         }
 
         window.onload = loadMessages;
-
     </script>
 </body>
 </html>
