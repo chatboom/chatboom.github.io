@@ -59,8 +59,7 @@
             max-height: 4rem;
             overflow: hidden;
             position: relative;
-            /* Disable text selection for messages */
-            user-select: none;
+            user-select: none; /* Disable text selection for messages */
         }
 
         .message.sent {
@@ -357,9 +356,26 @@
             const contextMenu = document.getElementById('context-menu');
             const { clientX: x, clientY: y } = event;
 
+            // Calculate position to keep the menu within the viewport
+            const menuWidth = contextMenu.offsetWidth;
+            const menuHeight = contextMenu.offsetHeight;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+
+            let left = x;
+            let top = y;
+
+            // Adjust position if menu goes out of bounds
+            if (left + menuWidth > viewportWidth) {
+                left = viewportWidth - menuWidth - 10; // Add some margin
+            }
+            if (top + menuHeight > viewportHeight) {
+                top = viewportHeight - menuHeight - 10; // Add some margin
+            }
+
             contextMenu.style.display = 'block';
-            contextMenu.style.top = `${Math.min(y, window.innerHeight - contextMenu.offsetHeight - 10)}px`;
-            contextMenu.style.left = `${Math.min(x, window.innerWidth - contextMenu.offsetWidth - 10)}px`;
+            contextMenu.style.top = `${top}px`;
+            contextMenu.style.left = `${left}px`;
 
             document.addEventListener('click', hideContextMenu);
         }
