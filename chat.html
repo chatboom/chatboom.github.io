@@ -21,11 +21,7 @@
             flex-direction: column;
             height: 100%;
             width: 100vw;
-            margin: 0;
             background: #ffffff;
-            border: none;
-            box-shadow: none;
-            overflow: hidden;
             position: relative;
         }
 
@@ -47,7 +43,7 @@
             flex-direction: column;
             gap: 0.3rem;
             background: #e5e5ea;
-            /* Remove max-height and use flex to handle the resizing */
+            margin-bottom: 60px; /* Zajistí, že poslední zpráva nebude skrytá pod inputem */
         }
 
         .message {
@@ -84,8 +80,8 @@
             position: fixed;
             bottom: 0;
             left: 0;
-            height: 60px; /* Adjust height as needed */
-            z-index: 10; /* Ensure it stays above other content */
+            height: 60px;
+            z-index: 10;
         }
 
         .input-container input {
@@ -97,7 +93,6 @@
             margin-right: 0.5rem;
             outline: none;
             transition: border-color 0.3s;
-            user-select: text; /* Allow text selection in input */
         }
 
         .input-container input:focus {
@@ -131,8 +126,6 @@
             max-width: 60%;
             padding: 0.3rem 0.6rem;
             border-radius: 12px;
-            max-height: 4rem;
-            overflow: hidden;
         }
 
         .context-menu {
@@ -155,7 +148,7 @@
         .context-menu ul li {
             padding: 0.5rem;
             cursor: pointer;
-            user-select: none; /* Prevent text selection */
+            user-select: none;
         }
 
         .context-menu ul li:hover {
@@ -292,7 +285,6 @@
                     const userId = user.uid;
                     const urlParams = new URLSearchParams(window.location.search);
                     const conversationId = urlParams.get('conversationId');
-
                     const typingRef = database.ref('typing/' + conversationId);
 
                     typingRef.set({
