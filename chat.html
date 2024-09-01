@@ -47,7 +47,7 @@
             flex-direction: column;
             gap: 0.3rem;
             background: #e5e5ea;
-            max-height: calc(100vh - 130px); /* Výška minus záhlaví a vstupní pole */
+            /* Remove max-height and use flex to handle the resizing */
         }
 
         .message {
@@ -84,7 +84,8 @@
             position: fixed;
             bottom: 0;
             left: 0;
-            height: 60px; /* Nastavte vhodnou výšku */
+            height: 60px; /* Adjust height as needed */
+            z-index: 10; /* Ensure it stays above other content */
         }
 
         .input-container input {
@@ -332,10 +333,7 @@
 
         function scrollToBottom() {
             const messagesElement = document.getElementById('messages');
-            const lastMessage = document.querySelector('.message:last-child');
-            if (lastMessage) {
-                lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }
+            messagesElement.scrollTop = messagesElement.scrollHeight;
         }
 
         function showContextMenu(event) {
