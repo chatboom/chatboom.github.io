@@ -40,17 +40,15 @@
         }
 
         .messages {
-    flex: 1;
-    padding: 1rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    background: #e5e5ea;
-    height: calc(100vh - 130px); /* Výška minus záhlaví a vstupní pole */
-    max-height: calc(100vh - 130px); /* Nastavení maximální výšky */
-    padding-bottom: 100px; /* Zvýšení spodního paddingu na dostatečnou velikost */
-}
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            background: #e5e5ea;
+            max-height: calc(100vh - 130px); /* Výška minus záhlaví a vstupní pole */
+        }
 
         .message {
             max-width: 60%;
@@ -86,6 +84,7 @@
             position: fixed;
             bottom: 0;
             left: 0;
+            height: 60px; /* Nastavte vhodnou výšku */
         }
 
         .input-container input {
@@ -121,6 +120,18 @@
 
         .input-container button:active {
             background-color: #005bb5;
+        }
+
+        .typing-message {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            color: #888;
+            font-style: italic;
+            max-width: 60%;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            max-height: 4rem;
+            overflow: hidden;
         }
 
         .context-menu {
@@ -188,6 +199,7 @@
         const auth = firebase.auth();
         const database = firebase.database();
         let typingTimeout;
+        let typingMessageElement = null;
         let selectedMessageElement = null;
 
         function loadMessages() {
@@ -215,9 +227,9 @@
                         messageDiv.dataset.messageId = snapshot.key;
                         messageDiv.addEventListener('contextmenu', showContextMenu);
                         messagesElement.appendChild(messageDiv);
-                        
+
                         // Automaticky scrolluje na konec při přidání nové zprávy
-                        messagesElement.scrollTop = messagesElement.scrollHeight;
+                        scrollToBottom();
                     });
 
                     typingRef.on('value', snapshot => {
@@ -236,25 +248,19 @@
         }
 
         function showTypingMessage() {
-            const messagesElement = document.getElementById('messages');
-            let typingMessageElement = document.getElementById('typing-message');
-
             if (!typingMessageElement) {
                 typingMessageElement = document.createElement('div');
-                typingMessageElement.className = 'message received';
-                typingMessageElement.id = 'typing-message';
+                typingMessageElement.className = 'message typing-message';
                 typingMessageElement.innerHTML = '<p>Píše...</p>';
-                messagesElement.appendChild(typingMessageElement);
+                document.getElementById('messages').appendChild(typingMessageElement);
+                scrollToBottom(); // Posunout na konec při zobrazení
             }
-
-            typingMessageElement.style.display = 'block';
-            messagesElement.scrollTop = messagesElement.scrollHeight;
         }
 
         function removeTypingMessage() {
-            const typingMessageElement = document.getElementById('typing-message');
             if (typingMessageElement) {
-                typingMessageElement.style.display = 'none';
+                typingMessageElement.remove();
+                typingMessageElement = null;
             }
         }
 
@@ -322,6 +328,14 @@
                     console.error('No user is signed in');
                 }
             });
+        }
+
+        function scrollToBottom() {
+            const messagesElement = document.getElementById('messages');
+            const lastMessage = document.querySelector('.message:last-child');
+            if (lastMessage) {
+                lastMessage.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
         }
 
         function showContextMenu(event) {
