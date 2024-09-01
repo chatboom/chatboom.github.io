@@ -47,6 +47,8 @@
             flex-direction: column;
             gap: 0.3rem;
             background: #e5e5ea;
+            height: calc(100vh - 130px); /* Výška minus záhlaví a vstupní pole */
+            max-height: calc(100vh - 130px); /* Nastavení maximální výšky */
         }
 
         .message {
@@ -56,10 +58,8 @@
             word-wrap: break-word;
             font-size: 0.9rem;
             line-height: 1.2rem;
-            max-height: 4rem;
-            overflow: hidden;
             position: relative;
-            user-select: none; /* Prevent text selection */
+            user-select: none;
         }
 
         .message.sent {
@@ -120,18 +120,6 @@
 
         .input-container button:active {
             background-color: #005bb5;
-        }
-
-        .typing-message {
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            color: #888;
-            font-style: italic;
-            max-width: 60%;
-            padding: 0.3rem 0.6rem;
-            border-radius: 12px;
-            max-height: 4rem;
-            overflow: hidden;
         }
 
         .context-menu {
@@ -199,7 +187,6 @@
         const auth = firebase.auth();
         const database = firebase.database();
         let typingTimeout;
-        let typingMessageElement = null;
         let selectedMessageElement = null;
 
         function loadMessages() {
@@ -227,6 +214,8 @@
                         messageDiv.dataset.messageId = snapshot.key;
                         messageDiv.addEventListener('contextmenu', showContextMenu);
                         messagesElement.appendChild(messageDiv);
+                        
+                        // Automaticky scrolluje na konec při přidání nové zprávy
                         messagesElement.scrollTop = messagesElement.scrollHeight;
                     });
 
@@ -246,19 +235,25 @@
         }
 
         function showTypingMessage() {
+            const messagesElement = document.getElementById('messages');
+            let typingMessageElement = document.getElementById('typing-message');
+
             if (!typingMessageElement) {
                 typingMessageElement = document.createElement('div');
-                typingMessageElement.className = 'message typing-message';
+                typingMessageElement.className = 'message received';
+                typingMessageElement.id = 'typing-message';
                 typingMessageElement.innerHTML = '<p>Píše...</p>';
-                document.getElementById('messages').appendChild(typingMessageElement);
-                document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+                messagesElement.appendChild(typingMessageElement);
             }
+
+            typingMessageElement.style.display = 'block';
+            messagesElement.scrollTop = messagesElement.scrollHeight;
         }
 
         function removeTypingMessage() {
+            const typingMessageElement = document.getElementById('typing-message');
             if (typingMessageElement) {
-                typingMessageElement.remove();
-                typingMessageElement = null;
+                typingMessageElement.style.display = 'none';
             }
         }
 
