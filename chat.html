@@ -37,6 +37,12 @@
             align-items: center;
             border-bottom: 1px solid #0073e6;
             width: 100%;
+            justify-content: space-between; /* Zajistí, že jméno bude vlevo a další prvky vpravo */
+        }
+
+        .header .username {
+            font-size: 1.2rem;
+            font-weight: bold;
         }
 
         .messages {
@@ -47,7 +53,7 @@
             flex-direction: column;
             gap: 0.3rem;
             background: #e5e5ea;
-            margin-bottom: 60px; /* Zajistí, že poslední zpráva nebude skrytá pod inputem */
+            margin-bottom: 60px;
             box-sizing: border-box;
         }
 
@@ -163,7 +169,9 @@
 </head>
 <body>
     <div class="chat-container">
-        <div class="header"></div>
+        <div class="header">
+            <span class="username" id="header-username">Loading...</span>
+        </div>
         <div class="messages" id="messages"></div>
         <div class="input-container">
             <input type="text" id="message-input" placeholder="Napište zprávu..." oninput="updateTypingStatus()" onblur="stopTyping()">
@@ -215,8 +223,23 @@
 
                     const messagesRef = database.ref('messages/' + conversationId);
                     const typingRef = database.ref('typing/' + conversationId);
+                    const conversationsRef = database.ref('conversations/' + conversationId);
 
                     const messagesElement = document.getElementById('messages');
+
+                    // Načíst jméno uživatele a aktualizovat header
+                    conversationsRef.once('value', snapshot => {
+                        const conversation = snapshot.val();
+                        const otherUserId = Object.keys(conversation.users).find(id => id !== userId);
+                        if (otherUserId) {
+                            database.ref('users/' + otherUserId).once('value')
+                                .then(userSnapshot => {
+                                    const otherUser = userSnapshot.val();
+                                    const otherUserName = `${otherUser.firstName} ${otherUser.lastName}`;
+                                    document.getElementById('header-username').textContent = otherUserName;
+                                });
+                        }
+                    });
 
                     messagesRef.on('child_added', snapshot => {
                         const message = snapshot.val();
@@ -246,60 +269,6 @@
             });
         }
 
-        function showTypingMessage() {
-            if (!typingMessageElement) {
-                typingMessageElement = document.createElement('div');
-                typingMessageElement.className = 'message typing-message';
-                typingMessageElement.innerHTML = '<p>Píše...</p>';
-                document.getElementById('messages').appendChild(typingMessageElement);
-                scrollToBottom(); // Posunout na konec při zobrazení
-            }
-        }
-
-        function removeTypingMessage() {
-            if (typingMessageElement) {
-                typingMessageElement.remove();
-                typingMessageElement = null;
-            }
-        }
-
-        function updateTypingStatus() {
-            clearTimeout(typingTimeout);
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    const userId = user.uid;
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const conversationId = urlParams.get('conversationId');
-                    const typingRef = database.ref('typing/' + conversationId);
-
-                    typingRef.set({
-                        typing: true,
-                        senderId: userId
-                    });
-
-                    typingTimeout = setTimeout(() => {
-                        stopTyping();
-                    }, 3000);
-                }
-            });
-        }
-
-        function stopTyping() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    const userId = user.uid;
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const conversationId = urlParams.get('conversationId');
-                    const typingRef = database.ref('typing/' + conversationId);
-
-                    typingRef.set({
-                        typing: false,
-                        senderId: userId
-                    });
-                }
-            });
-        }
-
         function sendMessage() {
             auth.onAuthStateChanged(user => {
                 if (user) {
@@ -310,7 +279,7 @@
                     const messageText = messageInput.value.trim();
 
                     if (!messageText || !conversationId) {
-                        return;
+                        return; // Zabránit odesílání prázdných zpráv
                     }
 
                     const messagesRef = database.ref('messages/' + conversationId);
@@ -328,6 +297,67 @@
             });
         }
 
+        function updateTypingStatus() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+
+                    if (!conversationId) {
+                        return;
+                    }
+
+                    const typingRef = database.ref('typing/' + conversationId);
+                    typingRef.set({
+                        typing: true,
+                        senderId: userId
+                    });
+
+                    clearTimeout(typingTimeout);
+                    typingTimeout = setTimeout(() => {
+                        stopTyping();
+                    }, 3000); // Nastavení 3 sekundy jako časový limit pro psaní
+                }
+            });
+        }
+
+        function stopTyping() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+
+                    if (!conversationId) {
+                        return;
+                    }
+
+                    const typingRef = database.ref('typing/' + conversationId);
+                    typingRef.set({
+                        typing: false,
+                        senderId: userId
+                    });
+                }
+            });
+        }
+
+        function showTypingMessage() {
+            if (!typingMessageElement) {
+                typingMessageElement = document.createElement('div');
+                typingMessageElement.className = 'typing-message';
+                typingMessageElement.textContent = 'Uživatel píše...';
+                document.getElementById('messages').appendChild(typingMessageElement);
+            }
+        }
+
+        function removeTypingMessage() {
+            if (typingMessageElement) {
+                typingMessageElement.remove();
+                typingMessageElement = null;
+            }
+        }
+
         function scrollToBottom() {
             const messagesElement = document.getElementById('messages');
             messagesElement.scrollTop = messagesElement.scrollHeight;
@@ -335,41 +365,34 @@
 
         function showContextMenu(event) {
             event.preventDefault();
+            if (selectedMessageElement) {
+                selectedMessageElement.classList.remove('selected');
+            }
             selectedMessageElement = event.currentTarget;
+            selectedMessageElement.classList.add('selected');
 
             const contextMenu = document.getElementById('context-menu');
-            const { clientX: x, clientY: y } = event;
-
             contextMenu.style.display = 'block';
-            contextMenu.style.top = `${Math.min(y, window.innerHeight - contextMenu.offsetHeight - 10)}px`;
-            contextMenu.style.left = `${Math.min(x, window.innerWidth - contextMenu.offsetWidth - 10)}px`;
-
-            document.addEventListener('click', hideContextMenu);
+            contextMenu.style.top = `${event.clientY}px`;
+            contextMenu.style.left = `${event.clientX}px`;
         }
 
-        function hideContextMenu() {
-            document.getElementById('context-menu').style.display = 'none';
-            document.removeEventListener('click', hideContextMenu);
-        }
+        document.addEventListener('click', () => {
+            const contextMenu = document.getElementById('context-menu');
+            contextMenu.style.display = 'none';
+        });
 
         function copyMessage() {
             if (selectedMessageElement) {
                 const text = selectedMessageElement.innerText;
                 navigator.clipboard.writeText(text).then(() => {
-                    console.log('Text copied to clipboard');
-                }).catch(err => {
-                    console.error('Failed to copy text: ', err);
+                    console.log('Message copied to clipboard');
                 });
             }
-            hideContextMenu();
         }
 
         function replyMessage() {
-            if (selectedMessageElement) {
-                const text = selectedMessageElement.innerText;
-                document.getElementById('message-input').value = `Re: ${text}`;
-            }
-            hideContextMenu();
+            // Funkcionalita pro odpověď na zprávu může být přidána zde
         }
 
         function deleteMessage() {
@@ -377,17 +400,16 @@
                 const messageId = selectedMessageElement.dataset.messageId;
                 const urlParams = new URLSearchParams(window.location.search);
                 const conversationId = urlParams.get('conversationId');
-                
-                if (messageId && conversationId) {
+                if (conversationId && messageId) {
                     const messageRef = database.ref('messages/' + conversationId + '/' + messageId);
                     messageRef.remove().then(() => {
                         console.log('Message deleted');
-                    }).catch(err => {
-                        console.error('Failed to delete message: ', err);
+                        selectedMessageElement.remove();
+                    }).catch(error => {
+                        console.error('Error removing message: ', error);
                     });
                 }
             }
-            hideContextMenu();
         }
 
         window.onload = loadMessages;
