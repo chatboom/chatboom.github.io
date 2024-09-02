@@ -3,193 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles.css">
     <title>ChatBoom</title>
     <style>
-        html, body {
+        body {
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff; /* Bílé pozadí */
+        }
+
+        .top-bar {
+            position: fixed;
+            top: 0;
             width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f7f9fa;
+            background-color: #ffffff;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            z-index: 1000;
         }
 
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            background: #ffffff;
-            position: relative;
-        }
-
-        .header {
-            background-color: #0084ff;
-            color: #ffffff;
-            padding: 1rem;
+        .top-bar-item {
             display: flex;
             align-items: center;
-            border-bottom: 1px solid #0073e6;
-            width: 100%;
-            justify-content: space-between; /* Zajistí, že jméno bude vlevo a další prvky vpravo */
         }
 
-        .header .username {
-            font-size: 1.2rem;
-            font-weight: bold;
+        .top-bar-item:first-child {
+            margin-right: auto;
         }
 
-        .messages {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
+        .top-bar-item:last-child {
             display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-            background: #e5e5ea;
-            margin-bottom: 60px;
-            box-sizing: border-box;
+            align-items: center;
+            margin-left: auto;
+            padding-right: 20px;
         }
 
-        .message {
-            max-width: 60%;
-            padding: 0.3rem 0.6rem;
-            border-radius: 12px;
-            word-wrap: break-word;
-            font-size: 0.9rem;
-            line-height: 1.2rem;
+        .top-bar-item img {
+            width: 30px;
+            height: 30px;
+        }
+
+        @media (max-width: 600px) {
+            .top-bar-item img {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        .container {
+            margin-top: 60px;
+            padding: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .post-form {
             position: relative;
-            user-select: none;
+            margin-bottom: 20px;
         }
 
-        .message.sent {
-            align-self: flex-end;
-            background: #0084ff;
-            color: #ffffff;
-        }
-
-        .message.received {
-            align-self: flex-start;
-            background: #ffffff;
-            color: #000000;
-            border: 1px solid #ddd;
-        }
-
-        .input-container {
-            display: flex;
-            border-top: 1px solid #ddd;
-            background: #ffffff;
-            padding: 0.5rem;
+        .post-textarea {
             width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
             box-sizing: border-box;
+        }
+
+        .char-counter {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .submit-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .submit-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .posts-container {
+            margin-top: 20px;
+        }
+
+        .post {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .post-actions {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .post-actions img {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .like-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .like-count {
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
+        .bottom-bar {
             position: fixed;
             bottom: 0;
-            left: 0;
-            height: 60px;
-            z-index: 10;
-        }
-
-        .input-container input {
-            flex: 1;
-            border: 1px solid #ddd;
-            padding: 0.75rem;
-            border-radius: 20px;
-            font-size: 1rem;
-            margin-right: 0.5rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .input-container input:focus {
-            border-color: #0084ff;
-        }
-
-        .input-container button {
-            border: none;
-            background-color: #0084ff;
-            color: white;
-            padding: 0.75rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s;
-        }
-
-        .input-container button:hover {
-            background-color: #0073e6;
-        }
-
-        .input-container button:active {
-            background-color: #005bb5;
-        }
-
-        .typing-message {
+            width: 100%;
             background-color: #ffffff;
-            border: 1px solid #ddd;
-            color: #888;
-            font-style: italic;
-            max-width: 60%;
-            padding: 0.3rem 0.6rem;
-            border-radius: 12px;
-        }
-
-        .context-menu {
-            display: none;
-            position: absolute;
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
             z-index: 1000;
-            width: 150px;
         }
 
-        .context-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .bottom-bar-item img {
+            width: 30px;
+            height: 30px;
         }
 
-        .context-menu ul li {
-            padding: 0.5rem;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .context-menu ul li:hover {
-            background-color: #f0f0f0;
+        @media (max-width: 600px) {
+            .bottom-bar-item img {
+                width: 25px;
+                height: 25px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="header">
-            <span class="username" id="header-username">Loading...</span>
+    <div class="top-bar">
+        <div class="top-bar-item">
+            <a href="profil.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/user.png" alt="Profil">
+            </a>
         </div>
-        <div class="messages" id="messages"></div>
-        <div class="input-container">
-            <input type="text" id="message-input" placeholder="Napište zprávu..." oninput="updateTypingStatus()" onblur="stopTyping()">
-            <button onclick="sendMessage()">Odeslat</button>
-        </div>
-        <div class="context-menu" id="context-menu">
-            <ul>
-                <li onclick="copyMessage()">Kopírovat</li>
-                <li onclick="replyMessage()">Odpovědět</li>
-                <li onclick="deleteMessage()">Smazat</li>
-            </ul>
+        <div class="top-bar-item">
+            <button class="requests-button" onclick="redirectToFriendRequests()">
+                <img src="https://img.icons8.com/ios-filled/50/000000/like.png" alt="Žádosti o přátelství">
+            </button>
         </div>
     </div>
 
+    <div class="container">
+        <div class="post-form">
+            <textarea id="postText" class="post-textarea" maxlength="500" placeholder="Napište svůj příspěvek..."></textarea>
+            <div id="charCounter" class="char-counter">0/500</div>
+        </div>
+        <button id="submitButton" class="submit-button" disabled>Odeslat</button>
+
+        <div id="postsContainer" class="posts-container">
+            <!-- Příspěvky budou dynamicky generovány zde -->
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="bottom-bar-item">
+            <a href="dum.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Domovská Stránka">
+            </a>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="search.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/search.png" alt="Hledat">
+            </a>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="komunikace.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/chat.png" alt="Chat">
+            </a>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="nastaveni.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/settings.png" alt="Nastavení">
+            </a>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <script>
+        function redirectToFriendRequests() {
+            window.location.href = 'zadosti_o_pratelstvi.html';
+        }
+
+        // Firebase konfigurace
         var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -198,221 +230,129 @@
             storageBucket: "chatboom-95647.appspot.com",
             messagingSenderId: "458271134858",
             appId: "1:458271134858:web:5e09d3329ba81626830973",
-            measurementId: "G-KS97KKQ3EH"
         };
 
+        // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
 
-        const auth = firebase.auth();
-        const database = firebase.database();
-        let typingTimeout;
-        let typingMessageElement = null;
-        let selectedMessageElement = null;
+        const postText = document.getElementById('postText');
+        const charCounter = document.getElementById('charCounter');
+        const submitButton = document.getElementById('submitButton');
+        const postsContainer = document.getElementById('postsContainer');
 
-        function loadMessages() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    const userId = user.uid;
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const conversationId = urlParams.get('conversationId');
+        // Definice zakázaných slov
+        const forbiddenWords = ['debile', 'kokote', 'blbec', 'zmrde', 'pičo', 'píčus', 'negře', 'negre', 'postiženec', 
+        'kurva', 'srač', 'čurak', 'skurvený', 'retard', 'jebat', 'šukat', 'šuká', 'hovado', 'jebat', 'mrdat', 'děvka', 
+        'kretén', 'žebrák', 'sračka', 'hajzl', 'feťák', 'bezdomovec']; // Přidejte slova, která chcete zakázat
 
-                    if (!conversationId) {
-                        alert('Chyba: Conversation ID not found');
-                        return;
-                    }
+        // Funkce pro kontrolu zakázaných slov
+        function containsForbiddenWords(text) {
+            const lowerCaseText = text.toLowerCase();
+            return forbiddenWords.some(word => lowerCaseText.includes(word.toLowerCase()));
+        }
 
-                    const messagesRef = database.ref('messages/' + conversationId);
-                    const typingRef = database.ref('typing/' + conversationId);
-                    const conversationsRef = database.ref('conversations/' + conversationId);
+        // Funkce pro aktualizaci počítadla znaků
+        function updateCharCounter() {
+            const textLength = postText.value.length;
+            charCounter.textContent = `${textLength}/500`;
+            submitButton.disabled = textLength === 0;
+        }
 
-                    const messagesElement = document.getElementById('messages');
+        // Aktualizace počítadla znaků při načtení stránky a při psaní
+        document.addEventListener('DOMContentLoaded', updateCharCounter);
+        postText.addEventListener('input', updateCharCounter);
 
-                    // Načíst jméno uživatele a aktualizovat header
-                    conversationsRef.once('value', snapshot => {
-                        const conversation = snapshot.val();
-                        const otherUserId = Object.keys(conversation.users).find(id => id !== userId);
-                        if (otherUserId) {
-                            database.ref('users/' + otherUserId).once('value')
-                                .then(userSnapshot => {
-                                    const otherUser = userSnapshot.val();
-                                    const otherUserName = `${otherUser.firstName} ${otherUser.lastName}`;
-                                    document.getElementById('header-username').textContent = otherUserName;
-                                });
-                        }
-                    });
-
-                    messagesRef.on('child_added', snapshot => {
-                        const message = snapshot.val();
-                        const messageDiv = document.createElement('div');
-                        messageDiv.className = 'message ' + (message.senderId === userId ? 'sent' : 'received');
-                        messageDiv.innerHTML = `<p>${message.text}</p>`;
-                        messageDiv.dataset.messageId = snapshot.key;
-                        messageDiv.addEventListener('contextmenu', showContextMenu);
-                        messagesElement.appendChild(messageDiv);
-
-                        // Automaticky scrolluje na konec při přidání nové zprávy
-                        scrollToBottom();
-                    });
-
-                    typingRef.on('value', snapshot => {
-                        const typingData = snapshot.val();
-                        if (typingData && typingData.typing && typingData.senderId !== userId) {
-                            showTypingMessage();
-                        } else {
-                            removeTypingMessage();
-                        }
-                    });
-
-                } else {
-                    console.error('No user is signed in');
+        // Funkce pro odeslání příspěvku do Firebase
+        submitButton.addEventListener('click', () => {
+            const postContent = postText.value.trim();
+            if (postContent.length > 0) {
+                if (containsForbiddenWords(postContent)) {
+                    alert('Příspěvek obsahuje zakázaná slova a nemůže být odeslán.');
+                    return;
                 }
-            });
-        }
-
-        function sendMessage() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    const userId = user.uid;
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const conversationId = urlParams.get('conversationId');
-                    const messageInput = document.getElementById('message-input');
-                    const messageText = messageInput.value.trim();
-
-                    if (!messageText || !conversationId) {
-                        return; // Zabránit odesílání prázdných zpráv
-                    }
-
-                    const messagesRef = database.ref('messages/' + conversationId);
-                    messagesRef.push({
-                        text: messageText,
-                        senderId: userId,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    });
-
-                    messageInput.value = '';
-                    stopTyping();
-                } else {
-                    console.error('No user is signed in');
-                }
-            });
-        }
-
-        function updateTypingStatus() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    const userId = user.uid;
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const conversationId = urlParams.get('conversationId');
-
-                    if (!conversationId) {
-                        return;
-                    }
-
-                    const typingRef = database.ref('typing/' + conversationId);
-                    typingRef.set({
-                        typing: true,
-                        senderId: userId
-                    });
-
-                    clearTimeout(typingTimeout);
-                    typingTimeout = setTimeout(() => {
-                        stopTyping();
-                    }, 3000); // Nastavení 3 sekundy jako časový limit pro psaní
-                }
-            });
-        }
-
-        function stopTyping() {
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    const userId = user.uid;
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const conversationId = urlParams.get('conversationId');
-
-                    if (!conversationId) {
-                        return;
-                    }
-
-                    const typingRef = database.ref('typing/' + conversationId);
-                    typingRef.set({
-                        typing: false,
-                        senderId: userId
-                    });
-                }
-            });
-        }
-
-        function showTypingMessage() {
-            if (!typingMessageElement) {
-                typingMessageElement = document.createElement('div');
-                typingMessageElement.className = 'typing-message';
-                typingMessageElement.textContent = 'Uživatel píše...';
-                document.getElementById('messages').appendChild(typingMessageElement);
-            }
-        }
-
-        function removeTypingMessage() {
-            if (typingMessageElement) {
-                typingMessageElement.remove();
-                typingMessageElement = null;
-            }
-        }
-
-        function scrollToBottom() {
-            const messagesElement = document.getElementById('messages');
-            messagesElement.scrollTop = messagesElement.scrollHeight;
-        }
-
-        function showContextMenu(event) {
-            event.preventDefault();
-            if (selectedMessageElement) {
-                selectedMessageElement.classList.remove('selected');
-            }
-            selectedMessageElement = event.currentTarget;
-            selectedMessageElement.classList.add('selected');
-
-            const contextMenu = document.getElementById('context-menu');
-            contextMenu.style.display = 'block';
-            contextMenu.style.top = `${event.clientY}px`;
-            contextMenu.style.left = `${event.clientX}px`;
-        }
-
-        document.addEventListener('click', () => {
-            const contextMenu = document.getElementById('context-menu');
-            contextMenu.style.display = 'none';
-        });
-
-        function copyMessage() {
-            if (selectedMessageElement) {
-                const text = selectedMessageElement.innerText;
-                navigator.clipboard.writeText(text).then(() => {
-                    console.log('Message copied to clipboard');
+                database.ref('posts').push({
+                    content: postContent,
+                    timestamp: Date.now(),
+                    likes: 0,
+                    likedBy: [], // Inicializace jako prázdné pole
+                    comments: [] // Inicializace jako prázdné pole pro komentáře
+                }).then(() => {
+                    console.log('Příspěvek úspěšně odeslán.');
+                    postText.value = '';
+                    updateCharCounter();
+                }).catch((error) => {
+                    console.error('Chyba při odesílání příspěvku:', error);
                 });
             }
-        }
+        });
 
-        function replyMessage() {
-            // Funkcionalita pro odpověď na zprávu může být přidána zde
-        }
-
-        function deleteMessage() {
-            if (selectedMessageElement) {
-                const messageId = selectedMessageElement.dataset.messageId;
-                const urlParams = new URLSearchParams(window.location.search);
-                const conversationId = urlParams.get('conversationId');
-                if (conversationId && messageId) {
-                    const messageRef = database.ref('messages/' + conversationId + '/' + messageId);
-                    messageRef.remove().then(() => {
-                        console.log('Message deleted');
-                        selectedMessageElement.remove();
-                    }).catch(error => {
-                        console.error('Error removing message: ', error);
+        // Funkce pro zobrazení příspěvků z Firebase
+        function displayPosts() {
+            database.ref('posts').on('value', (snapshot) => {
+                postsContainer.innerHTML = '';
+                const posts = snapshot.val();
+                if (posts) {
+                    const userId = 'exampleUserId'; // Změňte podle potřeby na aktuální uživatelské ID
+                    Object.keys(posts).forEach((key) => {
+                        const post = posts[key];
+                        const postElement = document.createElement('div');
+                        postElement.className = 'post';
+                        postElement.innerHTML = `
+                            <p>${post.content}</p>
+                            <div class="post-actions">
+                                <div class="like-container">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png" alt="Lajk" onclick="likePost('${key}', '${userId}')">
+                                    <span class="like-count">${post.likes || 0}</span>
+                                </div>
+                                <a href="komentare_pod_prispevky.html?postId=${key}">
+                                    <img src="https://img.icons8.com/ios-filled/50/000000/comments.png" alt="Komentáře">
+                                </a>
+                                <img src="https://img.icons8.com/ios-filled/50/000000/share.png" alt="Sdílet" onclick="sharePost()">
+                            </div>
+                        `;
+                        postsContainer.appendChild(postElement);
                     });
                 }
-            }
+            }, (error) => {
+                console.error('Chyba při načítání příspěvků:', error);
+            });
         }
 
-        window.onload = loadMessages;
+        // Načtení příspěvků při načtení stránky
+        document.addEventListener('DOMContentLoaded', displayPosts);
+
+        // Funkce pro lajkování příspěvku
+        function likePost(postId, userId) {
+            const postRef = database.ref('posts/' + postId);
+
+            postRef.once('value').then(snapshot => {
+                const postData = snapshot.val();
+                if (postData) {
+                    // Inicializace likedBy jako pole, pokud není
+                    const likedBy = Array.isArray(postData.likedBy) ? postData.likedBy : [];
+
+                    if (!likedBy.includes(userId)) {
+                        postRef.update({
+                            likes: (postData.likes || 0) + 1,
+                            likedBy: [...likedBy, userId]
+                        }).then(() => {
+                            console.log(`Příspěvek ${postId} byl lajkován.`);
+                        }).catch(error => {
+                            console.error('Chyba při lajkování příspěvku:', error);
+                        });
+                    } else {
+                        console.log('Uživatel již tento příspěvek lajkoval.');
+                    }
+                }
+            });
+        }
+
+        // Funkce pro sdílení příspěvku
+        function sharePost() {
+            console.log('Příspěvek byl sdílen.');
+            // Zde můžete přidat funkčnost pro sdílení
+        }
     </script>
 </body>
 </html>
