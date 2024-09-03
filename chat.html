@@ -3,116 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jednoduchý Chat</title>
+    <title>ChatBoom</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        html, body {
             margin: 0;
             padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #f4f4f4;
-        }
-
-        .chat-container {
-            width: 80%;
-            max-width: 600px;
-            height: 80%;
-            display: flex;
-            flex-direction: column;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
         }
 
-        .chat-messages {
-            flex-grow: 1;
-            padding: 10px;
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f7f9fa;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            background: #ffffff;
+            position: relative;
+        }
+
+        .header {
+            background-color: #0084ff;
+            color: #ffffff;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #0073e6;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .header .username {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 1rem;
             overflow-y: auto;
-            background-color: #fafafa;
-            border-bottom: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            background: #e5e5ea;
+            margin-bottom: 60px;
+            box-sizing: border-box;
         }
 
         .message {
-            margin-bottom: 10px;
-        }
-
-        .message-content {
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #007bff;
-            color: white;
-            max-width: 80%;
+            max-width: 60%;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
             word-wrap: break-word;
+            font-size: 0.9rem;
+            line-height: 1.2rem;
+            position: relative;
+            user-select: none;
         }
 
-        .message.left .message-content {
-            background-color: #e1e1e1;
-            color: black;
-            align-self: flex-start;
-        }
-
-        .message.right .message-content {
-            background-color: #007bff;
-            color: white;
+        .message.sent {
             align-self: flex-end;
+            background: #0084ff;
+            color: #ffffff;
         }
 
-        .chat-input {
+        .message.received {
+            align-self: flex-start;
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #ddd;
+        }
+
+        .input-container {
             display: flex;
-            padding: 10px;
-            background-color: #f4f4f4;
-            border-top: 1px solid #ccc;
-        }
-
-        textarea {
-            width: calc(100% - 80px);
-            height: 40px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            resize: none;
+            border-top: 1px solid #ddd;
+            background: #ffffff;
+            padding: 0.5rem;
+            width: 100%;
             box-sizing: border-box;
-            font-size: 14px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 60px;
+            z-index: 10;
         }
 
-        button {
-            width: 70px;
-            margin-left: 10px;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
+        .input-container input {
+            flex: 1;
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            margin-right: 0.5rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-container input:focus {
+            border-color: #0084ff;
+        }
+
+        .input-container button {
             border: none;
-            border-radius: 8px;
+            background-color: #0084ff;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 20px;
             cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .input-container button:hover {
+            background-color: #0073e6;
+        }
+
+        .input-container button:active {
+            background-color: #005bb5;
+        }
+
+        .typing-message {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            color: #888;
+            font-style: italic;
+            max-width: 60%;
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+        }
+
+        .context-menu {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 150px;
+        }
+
+        .context-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .context-menu ul li {
+            padding: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .context-menu ul li:hover {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-messages" id="chatMessages">
-            <!-- Zprávy budou přidány dynamicky -->
+        <div class="header">
+            <span class="username" id="header-username">Loading...</span>
         </div>
-        <div class="chat-input">
-            <textarea id="chatInput" placeholder="Napiš zprávu..."></textarea>
+        <div class="messages" id="messages"></div>
+        <div class="input-container">
+            <input type="text" id="message-input" placeholder="Napište zprávu..." oninput="updateTypingStatus()" onblur="stopTyping()">
             <button onclick="sendMessage()">Odeslat</button>
+        </div>
+        <div class="context-menu" id="context-menu">
+            <ul>
+                <li onclick="copyMessage()">Kopírovat</li>
+                <li onclick="replyMessage()">Odpovědět</li>
+                <li onclick="deleteMessage()">Smazat</li>
+            </ul>
         </div>
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        // Firebase konfigurace
-        const firebaseConfig = {
+        var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
             databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
@@ -120,44 +199,219 @@
             storageBucket: "chatboom-95647.appspot.com",
             messagingSenderId: "458271134858",
             appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
         };
 
-        // Inicializace Firebase
-        const app = firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(firebaseConfig);
+
+        const auth = firebase.auth();
         const database = firebase.database();
-        const messagesRef = database.ref('messages');
+        let typingTimeout;
+        let typingMessageElement = null;
+        let selectedMessageElement = null;
+
+        function loadMessages() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+
+                    if (!conversationId) {
+                        alert('Chyba: Conversation ID not found');
+                        return;
+                    }
+
+                    const messagesRef = database.ref('messages/' + conversationId);
+                    const typingRef = database.ref('typing/' + conversationId);
+                    const conversationsRef = database.ref('conversations/' + conversationId);
+
+                    const messagesElement = document.getElementById('messages');
+
+                    conversationsRef.once('value', snapshot => {
+                        const conversation = snapshot.val();
+                        const otherUserId = Object.keys(conversation.users).find(id => id !== userId);
+                        if (otherUserId) {
+                            database.ref('users/' + otherUserId).once('value')
+                                .then(userSnapshot => {
+                                    const otherUser = userSnapshot.val();
+                                    const otherUserName = `${otherUser.firstName} ${otherUser.lastName}`;
+                                    document.getElementById('header-username').textContent = otherUserName;
+                                });
+                        }
+                    });
+
+                    messagesRef.on('child_added', snapshot => {
+                        const message = snapshot.val();
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message ' + (message.senderId === userId ? 'sent' : 'received');
+                        messageDiv.innerHTML = `<p>${message.text}</p>`;
+                        messageDiv.dataset.messageId = snapshot.key;
+                        messageDiv.addEventListener('contextmenu', showContextMenu);
+                        messagesElement.appendChild(messageDiv);
+
+                        scrollToBottom();
+                    });
+
+                    typingRef.on('value', snapshot => {
+                        const typingData = snapshot.val();
+                        if (typingData && typingData.typing && typingData.senderId !== userId) {
+                            showTypingMessage();
+                        } else {
+                            removeTypingMessage();
+                        }
+                    });
+
+                } else {
+                    console.error('No user is signed in');
+                }
+            });
+        }
 
         function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (message) {
-                messagesRef.push().set({
-                    text: message,
-                    side: 'right' // Můžete měnit na 'left', pokud chcete zprávy z jiného zdroje
-                });
-                input.value = '';
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+                    const messageInput = document.getElementById('message-input');
+                    const messageText = messageInput.value.trim();
+
+                    if (!messageText || !conversationId) {
+                        return;
+                    }
+
+                    const messagesRef = database.ref('messages/' + conversationId);
+                    messagesRef.push({
+                        text: messageText,
+                        senderId: userId,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+
+                    messageInput.value = '';
+                    stopTyping();
+                } else {
+                    console.error('No user is signed in');
+                }
+            });
+        }
+
+        function updateTypingStatus() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+
+                    if (!conversationId) {
+                        return;
+                    }
+
+                    const typingRef = database.ref('typing/' + conversationId);
+                    typingRef.set({
+                        typing: true,
+                        senderId: userId
+                    });
+
+                    clearTimeout(typingTimeout);
+                    typingTimeout = setTimeout(() => {
+                        stopTyping();
+                    }, 3000);
+                }
+            });
+        }
+
+        function stopTyping() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const userId = user.uid;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const conversationId = urlParams.get('conversationId');
+
+                    if (!conversationId) {
+                        return;
+                    }
+
+                    const typingRef = database.ref('typing/' + conversationId);
+                    typingRef.set({
+                        typing: false,
+                        senderId: userId
+                    });
+                }
+            });
+        }
+
+        function showTypingMessage() {
+            if (!typingMessageElement) {
+                typingMessageElement = document.createElement('div');
+                typingMessageElement.className = 'typing-message';
+                typingMessageElement.textContent = 'Uživatel píše...';
+                document.getElementById('messages').appendChild(typingMessageElement);
             }
         }
 
-        function addMessage(text, side) {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', side);
-
-            const messageContent = document.createElement('div');
-            messageContent.classList.add('message-content');
-            messageContent.innerText = text;
-
-            messageDiv.appendChild(messageContent);
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Automatické scrollování na konec
+        function removeTypingMessage() {
+            if (typingMessageElement) {
+                typingMessageElement.remove();
+                typingMessageElement = null;
+            }
         }
 
-        // Načítání zpráv z Firebase a jejich zobrazení
-        messagesRef.on('child_added', (snapshot) => {
-            const message = snapshot.val();
-            addMessage(message.text, message.side);
+        function scrollToBottom() {
+            const messagesElement = document.getElementById('messages');
+            messagesElement.scrollTop = messagesElement.scrollHeight;
+        }
+
+        function showContextMenu(event) {
+            event.preventDefault();
+            if (selectedMessageElement) {
+                selectedMessageElement.classList.remove('selected');
+            }
+            selectedMessageElement = event.currentTarget;
+            selectedMessageElement.classList.add('selected');
+
+            const contextMenu = document.getElementById('context-menu');
+            contextMenu.style.display = 'block';
+            contextMenu.style.top = `${event.clientY}px`;
+            contextMenu.style.left = `${event.clientX}px`;
+        }
+
+        document.addEventListener('click', () => {
+            const contextMenu = document.getElementById('context-menu');
+            contextMenu.style.display = 'none';
         });
+
+        function copyMessage() {
+            if (selectedMessageElement) {
+                const text = selectedMessageElement.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    console.log('Message copied to clipboard');
+                });
+            }
+        }
+
+        function replyMessage() {
+            // Funkcionalita pro odpověď na zprávu může být přidána zde
+        }
+
+        function deleteMessage() {
+            if (selectedMessageElement) {
+                const messageId = selectedMessageElement.dataset.messageId;
+                const urlParams = new URLSearchParams(window.location.search);
+                const conversationId = urlParams.get('conversationId');
+                if (conversationId && messageId) {
+                    const messageRef = database.ref('messages/' + conversationId + '/' + messageId);
+                    messageRef.remove().then(() => {
+                        console.log('Message deleted');
+                        selectedMessageElement.remove();
+                    }).catch(error => {
+                        console.error('Error removing message: ', error);
+                    });
+                }
+            }
+        }
+
+        window.onload = loadMessages;
     </script>
 </body>
 </html>
