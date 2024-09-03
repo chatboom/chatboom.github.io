@@ -169,9 +169,19 @@
             z-index: 1000;
         }
 
+        .bottom-bar-item {
+            display: flex;
+            align-items: center;
+        }
+
         .bottom-bar-item img {
             width: 30px;
             height: 30px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
         }
     </style>
 </head>
@@ -183,9 +193,6 @@
             </a>
         </div>
         <div class="top-bar-item">
-            <button class="add-friend-button" onclick="redirectToAddFriends()">
-                <img src="https://img.icons8.com/ios-filled/50/000000/add-user-male.png" alt="Přidat přátele">
-            </button>
             <button class="requests-button" onclick="redirectToFriendRequests()">
                 <img src="https://img.icons8.com/ios-filled/50/000000/like.png" alt="Žádosti o přátelství">
             </button>
@@ -208,6 +215,11 @@
         <div class="bottom-bar-item">
             <a href="dum.html">
                 <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Domovská Stránka">
+            </a>
+        </div>
+        <div class="bottom-bar-item search-container">
+            <a href="pridat_pratele.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/search.png" alt="Hledat">
             </a>
         </div>
         <div class="bottom-bar-item">
