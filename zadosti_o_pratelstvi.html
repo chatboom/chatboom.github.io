@@ -206,6 +206,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', loadFriendRequests);
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
     </script>
 </body>
 </html>
