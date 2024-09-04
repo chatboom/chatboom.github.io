@@ -202,6 +202,12 @@
                 console.log('No user is signed in.');
             }
         });
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
     </script>
 </body>
 </html>
