@@ -16,6 +16,7 @@
       display: flex;
       align-items: center;
       padding: 15px;
+      z-index: 1000;
     }
 
     .top-bar a {
@@ -32,10 +33,6 @@
       margin-right: 10px;
     }
 
-    .top-bar a:hover {
-      text-decoration: none; /* Ujistěte se, že ani při hoveru není podtržení */
-    }
-
     /* Prostor pod horní lištou */
     body {
       padding-top: 70px;
@@ -45,14 +42,18 @@
     /* Stylování sekcí */
     .section {
       margin-bottom: 20px;
-      border: 1px solid #ccc;
       padding: 10px;
+      background-color: #fff;
+      border-radius: 5px; /* Zaoblení rohů */
     }
 
     .section h2 {
       font-size: 20px;
       color: #333;
       cursor: pointer;
+      margin: 0;
+      padding: 10px 0;
+      border-bottom: 1px solid #ccc; /* Oddělení nadpisu od obsahu */
     }
 
     .section a {
@@ -67,7 +68,7 @@
     .section ul {
       list-style-type: none;
       padding: 0;
-      display: none;
+      display: none; /* Skrytí seznamu po načtení */
     }
 
     .section ul li {
@@ -82,7 +83,8 @@
     }
 
     body.dark-mode .section {
-      border-color: #444;
+      background-color: #444;
+      border: 1px solid #555;
     }
 
     body.dark-mode .section h2 {
@@ -164,6 +166,39 @@
   </div>
 
   <script src="scripts.js"></script>
+  <script>
+    // JavaScript pro zakázání pravého kliknutí
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
 
+    // Příklad funkcí, které by měly být v `scripts.js`
+    function toggleList(id) {
+      const list = document.getElementById(id);
+      list.style.display = list.style.display === 'none' || list.style.display === '' ? 'block' : 'none';
+    }
+
+    function setLanguage(language) {
+      // Funkce pro změnu jazyka
+      alert('Nastavit jazyk na ' + language);
+    }
+
+    function changeAppearance(mode) {
+      document.body.className = mode + '-mode';
+      if (mode === 'colorful') {
+        document.getElementById('color-picker').style.display = 'block';
+      } else {
+        document.getElementById('color-picker').style.display = 'none';
+      }
+    }
+
+    function showColorPicker() {
+      document.getElementById('color-picker').style.display = 'block';
+    }
+
+    function changeBackgroundColor(event) {
+      document.body.style.backgroundColor = event.target.value;
+    }
+  </script>
 </body>
 </html>
