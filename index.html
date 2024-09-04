@@ -34,7 +34,7 @@
             height: 90vh; /* Větší výška pro zarovnání textu a tlačítek */
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center;
         }
 
         /* Stylování nadpisu uprostřed stránky */
@@ -42,15 +42,20 @@
             font-size: 2.5em;
             color: #333;
             font-weight: 700;
-            margin: auto 0;
+            display: none; /* Skrytý na mobilních zařízeních */
+        }
+
+        /* Stylování textu pod hlavním textem */
+        .info-text {
+            font-size: 1em;
+            color: #555;
+            margin-top: 20px;
+            display: none; /* Skrytý na mobilních zařízeních */
         }
 
         /* Stylování kontejneru tlačítek dole */
         .button-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 10px;
+            display: none; /* Skrýt tlačítka na desktopu */
         }
 
         /* Stylování tlačítek */
@@ -93,7 +98,18 @@
             }
 
             .center-text {
-                font-size: 2em;
+                display: none; /* Skrytý na mobilních zařízeních */
+            }
+
+            .info-text {
+                display: none; /* Skrytý na mobilních zařízeních */
+            }
+
+            .button-container {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 20px;
             }
 
             .rounded-button {
@@ -105,12 +121,40 @@
                 font-size: 12px;
             }
         }
+
+        /* Média queries pro desktopová zařízení */
+        @media (min-width: 601px) {
+            .center-text {
+                display: block; /* Zobrazení textu na desktopu */
+            }
+
+            .info-text {
+                display: block; /* Zobrazení textu na desktopu */
+            }
+
+            .button-container {
+                display: none; /* Skrýt tlačítka na desktopu */
+            }
+        }
+
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
         <!-- Text uprostřed stránky -->
-        <div class="center-text">Vítej</div>
+        <div class="center-text">Omlouvám se, zatím není možné spustit naši aplikaci na počítači.</div>
+
+        <!-- Text dole pod hlavním textem -->
+        <div class="info-text">
+            Pokud si však i tak chcete vyzkoušet naši aplikaci, vyzkoušejte ji otevřít na mobilním zařízení se systémem Android nebo iOS. Děkujeme za pochopení.
+        </div>
 
         <!-- Kontejner tlačítek dole -->
         <div class="button-container">
