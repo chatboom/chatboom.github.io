@@ -185,6 +185,7 @@
 
     function changeAppearance(mode) {
       document.body.className = mode + '-mode';
+      localStorage.setItem('appearance-mode', mode);
       if (mode === 'colorful') {
         document.getElementById('color-picker').style.display = 'block';
       } else {
@@ -198,7 +199,10 @@
 
     function changeBackgroundColor(event) {
       document.body.style.backgroundColor = event.target.value;
+      localStorage.setItem('background-color', event.target.value);
     }
+
+    
   </script>
 </body>
 </html>
