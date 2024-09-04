@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBoom</title>
+    <style>
+        /* Resetování základních stylů */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Stylování těla stránky */
+        body {
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        /* Hlavní kontejner */
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            height: 90vh; /* Větší výška pro zarovnání textu a tlačítek */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Stylování nadpisu uprostřed stránky */
+        .center-text {
+            font-size: 2.5em;
+            color: #333;
+            font-weight: 700;
+            display: none; /* Skrytý na mobilních zařízeních */
+        }
+
+        /* Stylování textu pod hlavním textem */
+        .info-text {
+            font-size: 1em;
+            color: #555;
+            margin-top: 20px;
+            display: none; /* Skrytý na mobilních zařízeních */
+        }
+
+        /* Stylování kontejneru tlačítek dole */
+        .button-container {
+            display: none; /* Skrýt tlačítka na desktopu */
+        }
+
+        /* Stylování tlačítek */
+        .rounded-button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Efekty pro tlačítka */
+        .rounded-button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .rounded-button:active {
+            background-color: #004080;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stylování pro text "Vytvořil: [jméno]" */
+        .footer {
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+            margin-top: 10px; /* Mezera nad textem "Vytvořil" */
+        }
+
+        /* Média queries pro mobilní zařízení */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .center-text {
+                display: none; /* Skrytý na mobilních zařízeních */
+            }
+
+            .info-text {
+                display: none; /* Skrytý na mobilních zařízeních */
+            }
+
+            .button-container {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 20px;
+            }
+
+            .rounded-button {
+                padding: 12px 18px;
+                font-size: 1em;
+            }
+
+            .footer {
+                font-size: 12px;
+            }
+        }
+
+        /* Média queries pro desktopová zařízení */
+        @media (min-width: 601px) {
+            .center-text {
+                display: block; /* Zobrazení textu na desktopu */
+            }
+
+            .info-text {
+                display: block; /* Zobrazení textu na desktopu */
+            }
+
+            .button-container {
+                display: none; /* Skrýt tlačítka na desktopu */
+            }
+        }
+
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Text uprostřed stránky -->
+        <div class="center-text">Omlouvám se, zatím není možné spustit naši aplikaci na počítači.</div>
+
+        <!-- Text dole pod hlavním textem -->
+        <div class="info-text">
+            Pokud si však i tak chcete vyzkoušet naši aplikaci, vyzkoušejte ji otevřít na mobilním zařízení se systémem Android nebo iOS. Děkujeme za pochopení.
+        </div>
+
+        <!-- Kontejner tlačítek dole -->
+        <div class="button-container">
+            <a href="prihlaseni.html" class="rounded-button">Přihlásit se</a>
+            <a href="registrace.html" class="rounded-button">Registrovat se</a>
+        </div>
+
+        <!-- Text dole pod tlačítky -->
+        <div class="footer">
+            Vytvořil: <span id="jmeno">Daniel Honzek</span>
+        </div>
+    </div>
+</body>
+</html>
