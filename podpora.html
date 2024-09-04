@@ -140,6 +140,12 @@
             console.error('Error adding data: ', error);
         });
     });
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
 </script>
 </body>
 </html>
