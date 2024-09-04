@@ -129,6 +129,12 @@
                     alert('Chyba při odesílání e-mailu pro resetování hesla: ' + error.message);
                 });
         }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
     </script>
 </body>
 </html>
