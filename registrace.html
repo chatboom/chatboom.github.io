@@ -232,6 +232,12 @@
                 alert('Žádný uživatel není přihlášen. Zkuste to prosím znovu.');
             }
         }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
     </script>
 </body>
 </html>
