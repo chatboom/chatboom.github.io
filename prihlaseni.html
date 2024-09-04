@@ -171,6 +171,12 @@
                     alert('Přihlášení neúspěšné: ' + error.message);
                 });
         }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
     </script>
 </body>
 </html>
