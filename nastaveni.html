@@ -165,7 +165,6 @@
     <h2><a id="support-link" href="podpora.html">Podpora</a></h2>
   </div>
 
-  <script src="scripts.js"></script>
   <script>
     // JavaScript pro zakázání pravého kliknutí
     document.addEventListener('contextmenu', function(e) {
@@ -202,7 +201,14 @@
       localStorage.setItem('background-color', event.target.value);
     }
 
-    
+    // Načítání režimu a barvy pozadí z localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+      const mode = localStorage.getItem('appearance-mode') || 'light';
+      const backgroundColor = localStorage.getItem('background-color') || '#f4f4f4';
+
+      changeAppearance(mode);
+      document.body.style.backgroundColor = backgroundColor;
+    });
   </script>
 </body>
 </html>
