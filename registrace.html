@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -95,6 +94,18 @@
             text-decoration: underline;
             cursor: pointer;
         }
+
+        /* Nové styly pro zobrazení ověření emailu */
+        #verification-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        #verification-message p {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -112,6 +123,12 @@
                 </div>
                 <button type="submit">Registrovat se</button>
             </form>
+        </div>
+
+        <div class="form-container hidden" id="verification-message">
+            <h1>Ověření emailu</h1>
+            <p>Právě jsme odeslali ověřovací email na vaši adresu. Zkontrolujte svůj email a klikněte na odkaz v něm, abyste dokončili registraci.</p>
+            <button onclick="checkEmailVerification()">Zkontrolovat ověření</button>
         </div>
 
         <div class="form-container slide-in hidden" id="step2">
@@ -165,18 +182,41 @@
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    console.log('User registered:', userCredential.user);
-                    document.querySelector('.sign-up').classList.add('slide-out');
-                    setTimeout(() => {
-                        document.querySelector('.sign-up').classList.add('hidden');
-                        document.getElementById('step2').classList.remove('hidden');
-                        document.getElementById('step2').classList.remove('slide-in');
-                    }, 300);
+                    const user = userCredential.user;
+                    return user.sendEmailVerification().then(() => {
+                        document.querySelector('.sign-up').classList.add('slide-out');
+                        setTimeout(() => {
+                            document.querySelector('.sign-up').classList.add('hidden');
+                            document.getElementById('verification-message').classList.remove('hidden');
+                        }, 300);
+                    });
                 })
                 .catch((error) => {
                     console.error('Error:', error);
                     alert('Chyba při registraci: ' + error.message);
                 });
+        }
+
+        function checkEmailVerification() {
+            const user = auth.currentUser;
+
+            if (user) {
+                user.reload().then(() => {
+                    if (user.emailVerified) {
+                        document.getElementById('verification-message').classList.add('hidden');
+                        document.getElementById('step2').classList.remove('hidden');
+                        document.getElementById('step2').classList.remove('slide-in');
+                    } else {
+                        alert('Email stále není ověřen. Zkontrolujte prosím svůj email a klikněte na ověřovací odkaz.');
+                    }
+                }).catch(error => {
+                    console.error('Error checking email verification:', error);
+                    alert('Chyba při kontrole ověření emailu: ' + error.message);
+                });
+            } else {
+                console.error('No user is signed in.');
+                alert('Žádný uživatel není přihlášen. Zkuste to prosím znovu.');
+            }
         }
 
         function completeRegistration(event) {
@@ -241,4 +281,3 @@
     </script>
 </body>
 </html>
-
