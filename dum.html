@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
     <title>ChatBoom</title>
     <style>
-        body {
+      body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
@@ -18,10 +18,10 @@
             width: 100%;
             background-color: #ffffff;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-            padding: 10px 20px;
+            padding: 20px 30px; /* Širší padding pro větší panel */
             z-index: 1000;
         }
 
@@ -30,15 +30,10 @@
             align-items: center;
         }
 
-        .top-bar-item:first-child {
-            margin-right: auto;
-        }
-
         .top-bar-item:last-child {
             display: flex;
             align-items: center;
-            margin-left: auto;
-            padding-right: 20px;
+            margin-left: auto; /* Posun srdce do leva */
         }
 
         .top-bar-item img {
@@ -162,16 +157,20 @@
             width: 100%;
             background-color: #ffffff;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
             box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
-            padding: 10px 10px;
+            padding: 10px 20px;
             z-index: 1000;
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
         .bottom-bar-item {
             display: flex;
             align-items: center;
+            flex: 1;
+            justify-content: center;
         }
 
         .bottom-bar-item img {
@@ -179,21 +178,37 @@
             height: 30px;
         }
 
-        .search-container {
-            display: flex;
-            align-items: center;
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .bottom-bar-item img {
+                width: 25px;
+                height: 25px;
+            }
+
+            .profile-icon {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        .friend-requests-icon {
+            position: absolute;
+            right: 70px; /* Posunutí srdce více vlevo */
+            top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="top-bar">
         <div class="top-bar-item">
-            <a href="profil.html">
-                <img src="https://img.icons8.com/ios-filled/50/000000/user.png" alt="Profil">
-            </a>
+            <!-- Můžete sem přidat další položky na levé straně horního panelu -->
         </div>
         <div class="top-bar-item">
-            <button class="requests-button" onclick="redirectToFriendRequests()">
+            <button class="requests-button friend-requests-icon" onclick="redirectToFriendRequests()">
                 <img src="https://img.icons8.com/ios-filled/50/000000/like.png" alt="Žádosti o přátelství">
             </button>
         </div>
@@ -228,8 +243,8 @@
             </a>
         </div>
         <div class="bottom-bar-item">
-            <a href="nastaveni.html">
-                <img src="https://img.icons8.com/ios-filled/50/000000/settings.png" alt="Nastavení">
+            <a href="profil.html">
+                <img class="profile-icon" src="https://img.icons8.com/ios-filled/50/000000/user.png" alt="Profil">
             </a>
         </div>
     </div>
@@ -268,123 +283,57 @@
         const postsContainer = document.getElementById('postsContainer');
 
         // Definice zakázaných slov
-        const forbiddenWords = ['debile', 'kokote', 'blbec', 'zmrde', 'pičo', 'píčus', 'negře', 'negre', 'postiženec', 
-        'kurva', 'srač', 'čurak', 'skurvený', 'retard', 'jebat', 'šukat', 'šuká', 'hovado', 'jebat', 'mrdat', 'děvka', 
-        'kretén', 'žebrák', 'sračka', 'hajzl', 'feťák', 'bezdomovec']; // Přidejte slova, která chcete zakázat
+        const forbiddenWords = ['slabé', 'neschopný', 'ztracený'];
 
-        // Funkce pro kontrolu zakázaných slov
-        function containsForbiddenWords(text) {
-            const lowerCaseText = text.toLowerCase();
-            return forbiddenWords.some(word => lowerCaseText.includes(word.toLowerCase()));
+        // Funkce pro kontrolu příspěvku
+        function checkPostText() {
+            const text = postText.value;
+            const isForbidden = forbiddenWords.some(word => text.toLowerCase().includes(word));
+            submitButton.disabled = isForbidden || text.length === 0;
+            charCounter.textContent = `${text.length}/500`;
         }
 
-        // Funkce pro aktualizaci počítadla znaků
-        function updateCharCounter() {
-            const textLength = postText.value.length;
-            charCounter.textContent = `${textLength}/500`;
-            submitButton.disabled = textLength === 0;
-        }
+        postText.addEventListener('input', checkPostText);
 
-        // Aktualizace počítadla znaků při načtení stránky a při psaní
-        document.addEventListener('DOMContentLoaded', updateCharCounter);
-        postText.addEventListener('input', updateCharCounter);
-
-        // Funkce pro odeslání příspěvku do Firebase
-        submitButton.addEventListener('click', () => {
-            const postContent = postText.value.trim();
-            if (postContent.length > 0) {
-                if (containsForbiddenWords(postContent)) {
-                    alert('Příspěvek obsahuje zakázaná slova a nemůže být odeslán.');
-                    return;
-                }
-                database.ref('posts').push({
+        function submitPost() {
+            const postContent = postText.value;
+            if (postContent.length > 0 && !forbiddenWords.some(word => postContent.toLowerCase().includes(word))) {
+                const newPostRef = database.ref('posts').push();
+                newPostRef.set({
                     content: postContent,
-                    timestamp: Date.now(),
-                    likes: 0,
-                    likedBy: [], // Inicializace jako prázdné pole
-                    comments: [] // Inicializace jako prázdné pole pro komentáře
+                    timestamp: new Date().toISOString()
                 }).then(() => {
-                    console.log('Příspěvek úspěšně odeslán.');
                     postText.value = '';
-                    updateCharCounter();
-                }).catch((error) => {
-                    console.error('Chyba při odesílání příspěvku:', error);
+                    charCounter.textContent = '0/500';
+                    submitButton.disabled = true;
                 });
             }
-        });
+        }
 
-        // Funkce pro zobrazení příspěvků z Firebase
-        function displayPosts() {
-            database.ref('posts').on('value', (snapshot) => {
+        submitButton.addEventListener('click', submitPost);
+
+        function loadPosts() {
+            database.ref('posts').orderByChild('timestamp').limitToLast(10).on('value', snapshot => {
                 postsContainer.innerHTML = '';
-                const posts = snapshot.val();
-                if (posts) {
-                    const userId = 'exampleUserId'; // Změňte podle potřeby na aktuální uživatelské ID
-                    Object.keys(posts).forEach((key) => {
-                        const post = posts[key];
-                        const postElement = document.createElement('div');
-                        postElement.className = 'post';
-                        postElement.innerHTML = `
-                            <p>${post.content}</p>
-                            <div class="post-actions">
-                                <div class="like-container">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png" alt="Lajk" onclick="likePost('${key}', '${userId}')">
-                                    <span class="like-count">${post.likes || 0}</span>
-                                </div>
-                                <a href="komentare_pod_prispevky.html?postId=${key}">
-                                    <img src="https://img.icons8.com/ios-filled/50/000000/comments.png" alt="Komentáře">
-                                </a>
-                                <img src="https://img.icons8.com/ios-filled/50/000000/share.png" alt="Sdílet" onclick="sharePost()">
+                snapshot.forEach(childSnapshot => {
+                    const post = childSnapshot.val();
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post';
+                    postElement.innerHTML = `
+                        <p>${post.content}</p>
+                        <div class="post-actions">
+                            <div class="like-container">
+                                <img src="https://img.icons8.com/ios-filled/50/000000/like.png" alt="Like">
+                                <span class="like-count">0</span>
                             </div>
-                        `;
-                        postsContainer.appendChild(postElement);
-                    });
-                }
-            }, (error) => {
-                console.error('Chyba při načítání příspěvků:', error);
+                        </div>
+                    `;
+                    postsContainer.appendChild(postElement);
+                });
             });
         }
 
-        // Načtení příspěvků při načtení stránky
-        document.addEventListener('DOMContentLoaded', displayPosts);
-
-        // Funkce pro lajkování příspěvku
-        function likePost(postId, userId) {
-            const postRef = database.ref('posts/' + postId);
-
-            postRef.once('value').then(snapshot => {
-                const postData = snapshot.val();
-                if (postData) {
-                    // Inicializace likedBy jako pole, pokud není
-                    const likedBy = Array.isArray(postData.likedBy) ? postData.likedBy : [];
-
-                    if (!likedBy.includes(userId)) {
-                        postRef.update({
-                            likes: (postData.likes || 0) + 1,
-                            likedBy: [...likedBy, userId]
-                        }).then(() => {
-                            console.log(`Příspěvek ${postId} byl lajkován.`);
-                        }).catch(error => {
-                            console.error('Chyba při lajkování příspěvku:', error);
-                        });
-                    } else {
-                        console.log('Uživatel již tento příspěvek lajkoval.');
-                    }
-                }
-            });
-        }
-
-        // Funkce pro sdílení příspěvku
-        function sharePost() {
-            console.log('Příspěvek byl sdílen.');
-            // Zde můžete přidat funkčnost pro sdílení
-        }
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.addEventListener('contextmenu', function(event) {
-                event.preventDefault();
-            });
-        });
+        loadPosts();
     </script>
 </body>
 </html>
