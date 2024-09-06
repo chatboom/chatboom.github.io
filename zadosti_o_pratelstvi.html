@@ -42,9 +42,16 @@
             border-radius: 5px;
             padding: 5px 10px;
             cursor: pointer;
+            margin-left: 10px;
+        }
+        .friend-request button.decline {
+            background-color: #f44336;
         }
         .friend-request button:hover {
             background-color: #45a049;
+        }
+        .friend-request button.decline:hover {
+            background-color: #e53935;
         }
         .bottom-bar {
             width: 100%;
@@ -145,7 +152,10 @@
                                                 requestDiv.id = `request-${requestId}`;
                                                 requestDiv.innerHTML = `
                                                     <span>${requesterName} vám poslal žádost o přátelství</span>
-                                                    <button onclick="acceptFriendRequest('${requesterId}', '${requestId}')">Přijmout</button>
+                                                    <div>
+                                                        <button onclick="acceptFriendRequest('${requesterId}', '${requestId}')">Přijmout</button>
+                                                        <button class="decline" onclick="declineFriendRequest('${requestId}')">Odmítnout</button>
+                                                    </div>
                                                 `;
                                                 friendRequestsElement.appendChild(requestDiv);
                                             })
@@ -203,6 +213,33 @@
                         })
                         .catch(error => {
                             console.error('Error accepting friend request:', error);
+                        });
+                } else {
+                    console.error('No user is signed in');
+                }
+            });
+        }
+
+        function declineFriendRequest(requestId) {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    const myId = user.uid;
+                    const friendRequestsRef = database.ref('friendRequests/' + myId);
+
+                    // Odstranění žádosti z databáze
+                    friendRequestsRef.child(requestId).remove()
+                        .then(() => {
+                            console.log('Friend request declined');
+                            alert('Žádost o přátelství byla odmítnuta.');
+
+                            // Odstranění žádosti z DOM
+                            const requestElement = document.getElementById(`request-${requestId}`);
+                            if (requestElement) {
+                                requestElement.remove();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error declining friend request:', error);
                         });
                 } else {
                     console.error('No user is signed in');
