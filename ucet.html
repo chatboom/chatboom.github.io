@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil uživatele</title>
+  <style>
+    /* Základní styl pro desktop */
+.container {
+  width: 90%;
+  max-width: 600px; /* Maximální šířka kontejneru */
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px; /* Zvýšení mezery mezi jednotlivými položkami */
+}
+
+.user-info label {
+  display: flex;
+  flex-direction: column; /* Sloupcový formát pro lepší zarovnání */
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.user-info input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #f5f5f5;
+  color: #333;
+  text-align: center;
+}
+
+.edit-button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #007bff;
+}
+
+.edit-button:disabled {
+  cursor: not-allowed;
+  color: #aaa;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.modal.active {
+  display: block;
+}
+
+.modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal .modal-header h2 {
+  margin: 0;
+}
+
+.modal .modal-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal .modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal .modal-body input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.modal .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.modal .modal-footer button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal .modal-footer .save-btn {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.modal .modal-footer .cancel-btn {
+  background-color: #ccc;
+}
+
+/* Optimalizace pro mobilní zařízení */
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .user-info {
+    gap: 15px;
+  }
+
+  .user-info label {
+    font-size: 14px;
+  }
+
+  .user-info input {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .edit-button {
+    width: 25px;
+    height: 25px;
+    font-size: 18px;
+  }
+
+  .modal .modal-body input {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .modal .modal-footer button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Profil uživatele</h1>
+    <div class="user-info">
+      <label for="userEmail">
+        <strong>Email:</strong>
+        <div class="input-container">
+          <input type="text" id="userEmail" readonly>
+          <button class="edit-button" id="editEmail">&#9998;</button>
+        </div>
+      </label>
+      
+      <label for="userNameSurname">
+        <strong>Jméno a příjmení:</strong>
+        <div class="input-container">
+          <input type="text" id="userNameSurname" readonly>
+          <button class="edit-button" id="editNameSurname">&#9998;</button>
+        </div>
+      </label>
+      
+      <label for="userPassword">
+        <strong>Heslo:</strong>
+        <div class="input-container">
+          <input type="text" id="userPassword" readonly>
+          <button class="edit-button" id="editPassword">&#9998;</button>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Modální okno pro editaci emailu -->
+  <div id="modalEmail" class="modal">
+    <div class="modal-header">
+      <h2>Upravit Email</h2>
+      <button id="closeModalEmail">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="text" id="modalEmailInput" placeholder="Nový email">
+    </div>
+    <div class="modal-footer">
+      <button id="saveEmail" class="save-btn">Uložit</button>
+      <button id="cancelEmail" class="cancel-btn">Zrušit</button>
+    </div>
+  </div>
+
+  <!-- Modální okno pro editaci jména a příjmení -->
+  <div id="modalNameSurname" class="modal">
+    <div class="modal-header">
+      <h2>Upravit Jméno a Příjmení</h2>
+      <button id="closeModalNameSurname">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="text" id="modalNameInput" placeholder="Nové jméno">
+      <input type="text" id="modalSurnameInput" placeholder="Nové příjmení">
+    </div>
+    <div class="modal-footer">
+      <button id="saveNameSurname" class="save-btn">Uložit</button>
+      <button id="cancelNameSurname" class="cancel-btn">Zrušit</button>
+    </div>
+  </div>
+
+  <!-- Modální okno pro editaci hesla -->
+  <div id="modalPassword" class="modal">
+    <div class="modal-header">
+      <h2>Upravit Heslo</h2>
+      <button id="closeModalPassword">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="password" id="modalPasswordInput" placeholder="Nové heslo">
+    </div>
+    <div class="modal-footer">
+      <button id="savePassword" class="save-btn">Uložit</button>
+      <button id="cancelPassword" class="cancel-btn">Zrušit</button>
+    </div>
+  </div>
+
+  <!-- Firebase scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+  <!-- JavaScript -->
+  <script>
+    // Firebase konfigurace
+    const firebaseConfig = {
+      apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+      authDomain: "chatboom-95647.firebaseapp.com",
+      databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "chatboom-95647",
+      storageBucket: "chatboom-95647.appspot.com",
+      messagingSenderId: "458271134858",
+      appId: "1:458271134858:web:5e09d3329ba81626830973",
+    };
+
+    // Inicializace Firebase s compat verzí
+    firebase.initializeApp(firebaseConfig);
+
+    // Funkce pro formátování emailu
+    function formatEmail(email) {
+      if (!email) return 'Neznámé';
+      const [localPart, domain] = email.split('@');
+      const shortLocalPart = localPart.length > 6 ? localPart.substring(0, 6) + '...' : localPart;
+      return `${shortLocalPart}@${domain}`;
+    }
+
+    // Funkce pro načtení údajů o přihlášeném uživateli
+    function getUserData() {
+      const user = firebase.auth().currentUser;
+
+      if (user) {
+        const userId = user.uid;
+        const userRef = firebase.database().ref('users/' + userId);
+
+        console.log(`Načítám data pro uživatele s ID: ${userId}`);
+
+        userRef.once('value')
+          .then((snapshot) => {
+            const userData = snapshot.val();
+            console.log('Načtená data:', userData);
+
+            // Zobrazení údajů
+            document.getElementById('userEmail').value = formatEmail(userData.email);
+            document.getElementById('userNameSurname').value = `${userData.firstName} ${userData.lastName}`;
+            document.getElementById('userPassword').value = '********'; // Heslo není z bezpečnostních důvodů zobrazeno
+          });
+      } else {
+        console.log('Uživatel není přihlášen.');
+      }
+    }
+
+    // Počkat na přihlášení uživatele
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    getUserData();
+  } else {
+    console.log('Uživatel není přihlášen.');
+  }
+});
+
+    // Otevření modálního okna pro email
+    document.getElementById('editEmail').addEventListener('click', () => {
+      document.getElementById('modalEmail').classList.add('active');
+    });
+
+    // Otevření modálního okna pro jméno a příjmení
+    document.getElementById('editNameSurname').addEventListener('click', () => {
+      document.getElementById('modalNameSurname').classList.add('active');
+    });
+
+    // Otevření modálního okna pro heslo
+    document.getElementById('editPassword').addEventListener('click', () => {
+      document.getElementById('modalPassword').classList.add('active');
+    });
+
+    // Zavření modálního okna pro email
+    document.getElementById('closeModalEmail').addEventListener('click', () => {
+      document.getElementById('modalEmail').classList.remove('active');
+    });
+
+    // Zavření modálního okna pro jméno a příjmení
+    document.getElementById('closeModalNameSurname').addEventListener('click', () => {
+      document.getElementById('modalNameSurname').classList.remove('active');
+    });
+
+    // Zavření modálního okna pro heslo
+    document.getElementById('closeModalPassword').addEventListener('click', () => {
+      document.getElementById('modalPassword').classList.remove('active');
+    });
+
+    // Uložení změn emailu
+    document.getElementById('saveEmail').addEventListener('click', () => {
+      const newEmail = document.getElementById('modalEmailInput').value;
+      const user = firebase.auth().currentUser;
+
+      if (user) {
+        user.updateEmail(newEmail)
+          .then(() => {
+            console.log('Email byl úspěšně aktualizován.');
+            getUserData(); // Načtení aktualizovaných údajů
+            document.getElementById('modalEmail').classList.remove('active');
+          })
+          .catch((error) => {
+            console.error('Chyba při aktualizaci emailu:', error);
+          });
+      }
+    });
+
+    // Uložení změn jména a příjmení
+    document.getElementById('saveNameSurname').addEventListener('click', () => {
+      const newFirstName = document.getElementById('modalNameInput').value;
+      const newLastName = document.getElementById('modalSurnameInput').value;
+      const user = firebase.auth().currentUser;
+
+      if (user) {
+        const userId = user.uid;
+        const userRef = firebase.database().ref('users/' + userId);
+
+        userRef.update({ firstName: newFirstName, lastName: newLastName })
+          .then(() => {
+            console.log('Jméno a příjmení byly úspěšně aktualizovány.');
+            getUserData(); // Načtení aktualizovaných údajů
+            document.getElementById('modalNameSurname').classList.remove('active');
+          })
+          .catch((error) => {
+            console.error('Chyba při aktualizaci jména a příjmení:', error);
+          });
+      }
+    });
+
+    // Uložení změn hesla
+    document.getElementById('savePassword').addEventListener('click', () => {
+      const newPassword = document.getElementById('modalPasswordInput').value;
+      const user = firebase.auth().currentUser;
+
+      if (user) {
+        user.updatePassword(newPassword)
+          .then(() => {
+            console.log('Heslo bylo úspěšně aktualizováno.');
+            document.getElementById('modalPassword').classList.remove('active');
+          })
+          .catch((error) => {
+            console.error('Chyba při aktualizaci hesla:', error);
+          });
+      }
+    });
+
+    // Zrušení úprav
+    document.getElementById('cancelEmail').addEventListener('click', () => {
+      document.getElementById('modalEmail').classList.remove('active');
+    });
+
+    document.getElementById('cancelNameSurname').addEventListener('click', () => {
+      document.getElementById('modalNameSurname').classList.remove('active');
+    });
+
+    document.getElementById('cancelPassword').addEventListener('click', () => {
+      document.getElementById('modalPassword').classList.remove('active');
+    });
+
+    // Načtení údajů při načtení stránky
+    window.onload = getUserData;
+  </script>
+</body>
+</html>
