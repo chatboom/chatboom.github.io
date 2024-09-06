@@ -55,10 +55,15 @@
         }
         .profile-card .stat {
             text-align: center;
+            cursor: pointer; /* Přidáno pro indikaci kliknutí */
         }
         .profile-card .stat p {
             margin: 0.25rem 0;
             font-size: 1rem;
+        }
+        .profile-card .stat:hover {
+            background-color: #f0f0f0; /* Změna pozadí při hover */
+            border-radius: 5px; /* Přidání zaoblení při hover */
         }
         .profile-card .action-buttons {
             margin-top: 1rem;
@@ -116,22 +121,6 @@
         .status-inactive {
             background-color: #888888;
         }
-        .nav-bar {
-            width: 100%;
-            background-color: #ffffff; 
-            display: flex;
-            justify-content: space-around;
-            padding: 0.5rem 0;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .nav-bar img {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-        }
         .back-button {
             position: absolute;
             top: 1rem;
@@ -149,6 +138,17 @@
             font-size: 1rem;
             color: #4a90e2;
         }
+        .bottom-bar-item {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .bottom-bar-item img {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
 <body>
@@ -156,6 +156,11 @@
         <div class="back-button" onclick="goBack()">
             <img src="https://img.icons8.com/ios-filled/50/000000/left.png" alt="Zpět">
             <span>Zpět</span>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="nastaveni.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/settings.png" alt="Nastavení">
+            </a>
         </div>
         <img src="https://via.placeholder.com/120" alt="Profilová fotka" id="profile-pic" onclick="uploadProfilePic()">
         <h2 class="name" id="fullName">Načítám...</h2>
@@ -170,9 +175,9 @@
                 <p id="posts">0</p>
                 <p>Příspěvků</p>
             </div>
-            <div class="stat">
+            <div class="stat" onclick="goToFollowers()">
                 <p id="followers">0</p>
-                <p>Sledujících</p>
+                <p>Přátelé</p>
             </div>
         </div>
         <div class="action-buttons" id="friend-request-button">
@@ -181,11 +186,8 @@
         <div class="friend-requests" id="friend-requests"></div>
     </div>
 
-    <div class="nav-bar" id="nav-bar">
-        <img src="https://img.icons8.com/ios-filled/50/000000/user.png" alt="Profil" onclick="window.location.href='profil.html'">
-        <img src="" alt="Více" onclick="window.location.href='pratele.html'">
-    </div>
-
+    <!-- Odstraněno nav-bar -->
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -246,27 +248,22 @@
                             statusText.textContent = 'Neaktivní';
                         }
                     } else {
-                        console.error('User details not found');
-                        document.getElementById('fullName').textContent = 'Profil nenalezen';
-                        document.getElementById('nickname').textContent = '';
+                        console.error('No user data found');
+                        document.getElementById('fullName').textContent = 'Není vyplněno';
+                        document.getElementById('nickname').textContent = 'Není vyplněno';
                     }
                 })
                 .catch(error => {
-                    console.error('Error loading user profile:', error);
+                    console.error('Error loading profile:', error);
                 });
     
             auth.onAuthStateChanged(user => {
                 if (user) {
                     const myId = user.uid;
-                    const navBar = document.getElementById('nav-bar');
                     if (myId === userId) {
-                        // Show the navigation bar if this is the user's own profile
-                        navBar.style.display = 'flex';
                         // Hide the "Add Friend" button if this is the user's own profile
                         document.getElementById('friend-request-button').style.display = 'none';
                     } else {
-                        // Hide the navigation bar if this is not the user's own profile
-                        navBar.style.display = 'none';
                         // Check if the user has sent a friend request to this profile
                         database.ref('sentFriendRequests/' + myId + '/' + userId).once('value')
                             .then(snapshot => {
@@ -357,6 +354,10 @@
     
         function goBack() {
             window.location.href = 'dum.html';
+        }
+
+        function goToFollowers() {
+            window.location.href = 'pratele.html';
         }
     
         window.onload = function() {
