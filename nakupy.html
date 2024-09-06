@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Nákupy</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>body {
+        font-family: 'Arial', sans-serif;
+        background-color: #ffffff;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden; /* Skrývá overflow na body úrovni */
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 600px;
+        max-height: 100vh;
+        overflow-y: auto; /* Umožní scrollování vertikálně */
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .card {
+        width: 85%;
+        height: 200px; /* Karta je delší než širší */
+        padding: 20px;
+        background-color: rgb(0, 0, 0);
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 68, 255, 0.7);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(0, 255, 0, 1);
+    }
+    
+    .content h2 {
+        font-size: 24px;
+        margin: 0 0 10px 0;
+    }
+    
+    .content p {
+        font-size: 16px;
+        line-height: 1.5;
+    }
+    
+    .content a {
+        text-decoration: none;
+        color: #ff5733;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    
+    @media (max-width: 600px) {
+        .container {
+            padding: 10px;
+        }
+    
+        .card {
+            height: 1000px; /* Prodloužení karty na menších zařízeních */
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="content">
+                <h2>Ranky</h2>
+                <p>Ranky se budou zorazovat vedle vašeho jména na profilu. </p>
+                <a href="#">Zjistit více</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="content">
+                <h2>Rozšířené nastavení</h2>
+                <p>Rozšířené nastavení je velepšená verze nastavení které vypadá setejně jako normaní nastavení ale jsou tam specialní kategorie.</p>
+                <a href="#">Zjistit více</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="content">
+                <h2>Již brzy</h2>
+                <p>Již brzy zde bude přidaný další věc</p>
+                <a href="#">Zjistit více</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
