@@ -6,72 +6,55 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Nákupy</title>
     <link rel="stylesheet" href="styles.css">
-    <style>body {
-        font-family: 'Arial', sans-serif;
-        background-color: #ffffff;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        overflow: hidden; /* Skrývá overflow na body úrovni */
-    }
-    
-    .container {
-        width: 100%;
-        max-width: 600px;
-        max-height: 100vh;
-        overflow-y: auto; /* Umožní scrollování vertikálně */
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        padding: 20px;
-    }
-    
-    .card {
-        width: 85%;
-        height: 150px; /* Karta je delší než širší */
-        padding: 15px;
-        background-color: rgb(0, 0, 0);
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0, 68, 255, 0.7);
-        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    }
-    
-    .card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 30px rgba(0, 255, 0, 1);
-    }
-    
-    .content h2 {
-        font-size: 24px;
-        margin: 0 0 10px 0;
-    }
-    
-    .content p {
-        font-size: 16px;
-        line-height: 1.5;
-    }
-    
-    .content a {
-        text-decoration: none;
-        color: #1c24c0;
-        font-weight: bold;
-        display: inline-block;
-        margin-top: 10px;
-    }
-    
-    @media (max-width: 600px) {
+    <style>
         .container {
-            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
         }
     
         .card {
-            height: 1000px; /* Prodloužení karty na menších zařízeních */
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-    }
+    
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+    
+        .content h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+    
+        .content p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+    
+        .content a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+    
+        .content a:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -94,11 +77,10 @@
 
         <div class="card">
             <div class="content">
-                <h2>Již brzy</h2>
-                <p>Již brzy zde bude přidaný další věc.</p>
+                <h2>VIP členství</h2>
+                <p>Staňte se VIP členem a získejte přístup k exkluzivním výhodám, jako jsou speciální avatary, přístup do privátních místností a další.</p>
                 <a href="#">Zjistit více</a>
             </div>
         </div>
-    </div>
 </body>
 </html>
