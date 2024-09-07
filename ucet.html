@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profil uživatele</title>
   <style>
-    /* Základní styl pro desktop */
 .container {
   width: 90%;
   max-width: 600px; /* Maximální šířka kontejneru */
@@ -14,6 +13,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   text-align: center;
+  box-sizing: border-box; /* Zahrne padding a border do šířky kontejneru */
 }
 
 .user-info {
@@ -31,8 +31,14 @@
   width: 100%;
 }
 
-.user-info input {
+.input-container {
+  position: relative; /* Umožní umístit tlačítko uvnitř textového pole */
   width: 100%;
+}
+
+.user-info input {
+  box-sizing: border-box; /* Zahrne padding a border do šířky elementu */
+  width: calc(100% - 40px); /* Zajistí, že textové pole nebude širší než dostupný prostor */
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -40,28 +46,28 @@
   background-color: #f5f5f5;
   color: #333;
   text-align: center;
+  pointer-events: none; /* Zabrání interakci s polem */
+  outline: none; /* Odstraní zvýraznění okraje při kliknutí */
+  user-select: none; /* Zabrání označování textu */
 }
 
 .edit-button {
+  position: absolute;
+  right: 10px; /* Posune tlačítko k pravé straně textového pole */
+  top: 50%;
+  transform: translateY(-50%);
   width: 30px;
   height: 30px;
   border: none;
   background: none;
   cursor: pointer;
   font-size: 20px;
-  color: #007bff;
+  color: black; /* Černá barva tlačítka */
 }
 
 .edit-button:disabled {
   cursor: not-allowed;
   color: #aaa;
-}
-
-.input-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
 }
 
 .modal {
@@ -150,7 +156,14 @@
     font-size: 14px;
   }
 
+  .input-container {
+    position: relative;
+    width: 100%; /* Zajistí, že kontejner pro vstupy bude plně šířkový */
+    overflow: hidden; /* Skrývá případný overflow, který může způsobit scrollování */
+  }
+
   .user-info input {
+    width: calc(100% - 40px); /* Úprava pro mobilní zobrazení, aby se zabránilo scrollování */
     font-size: 14px;
     padding: 8px;
   }
@@ -159,6 +172,7 @@
     width: 25px;
     height: 25px;
     font-size: 18px;
+    right: 30px; /* Úprava pro mobilní zobrazení */
   }
 
   .modal .modal-body input {
@@ -172,11 +186,30 @@
   }
 }
 
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Černé pozadí s 50% průhledností */
+  z-index: 999; /* Umístí překryvnou vrstvu nad ostatní obsah */
+}
+
+.overlay.active {
+  display: block;
+}
+
+
   </style>
 </head>
 <body>
+
+  <div id="overlay" class="overlay"></div>
+
   <div class="container">
-    <h1>Profil uživatele</h1>
+    <h1>Údaje uživatele</h1>
     <div class="user-info">
       <label for="userEmail">
         <strong>Email:</strong>
@@ -226,8 +259,8 @@
       <button id="closeModalNameSurname">&times;</button>
     </div>
     <div class="modal-body">
-      <input type="text" id="modalNameInput" placeholder="Nové jméno">
-      <input type="text" id="modalSurnameInput" placeholder="Nové příjmení">
+      <input type="text" id="modalNameInput" placeholder="Změna jména">
+      <input type="text" id="modalSurnameInput" placeholder="Změna přijmení">
     </div>
     <div class="modal-footer">
       <button id="saveNameSurname" class="save-btn">Uložit</button>
@@ -243,6 +276,7 @@
     </div>
     <div class="modal-body">
       <input type="password" id="modalPasswordInput" placeholder="Nové heslo">
+      <input type="password" id="modalPasswordInput" placeholder="Potvrdit heslo">
     </div>
     <div class="modal-footer">
       <button id="savePassword" class="save-btn">Uložit</button>
@@ -415,6 +449,58 @@ firebase.auth().onAuthStateChanged((user) => {
 
     // Načtení údajů při načtení stránky
     window.onload = getUserData;
+
+    // Otevření modálního okna pro email
+document.getElementById('editEmail').addEventListener('click', () => {
+  document.getElementById('modalEmail').classList.add('active');
+  document.getElementById('overlay').classList.add('active');
+});
+
+// Otevření modálního okna pro jméno a příjmení
+document.getElementById('editNameSurname').addEventListener('click', () => {
+  document.getElementById('modalNameSurname').classList.add('active');
+  document.getElementById('overlay').classList.add('active');
+});
+
+// Otevření modálního okna pro heslo
+document.getElementById('editPassword').addEventListener('click', () => {
+  document.getElementById('modalPassword').classList.add('active');
+  document.getElementById('overlay').classList.add('active');
+});
+
+// Zavření modálního okna pro email
+document.getElementById('closeModalEmail').addEventListener('click', () => {
+  document.getElementById('modalEmail').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+});
+
+// Zavření modálního okna pro jméno a příjmení
+document.getElementById('closeModalNameSurname').addEventListener('click', () => {
+  document.getElementById('modalNameSurname').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+});
+
+// Zavření modálního okna pro heslo
+document.getElementById('closeModalPassword').addEventListener('click', () => {
+  document.getElementById('modalPassword').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+});
+
+// Zrušení úprav
+document.getElementById('cancelEmail').addEventListener('click', () => {
+  document.getElementById('modalEmail').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+});
+
+document.getElementById('cancelNameSurname').addEventListener('click', () => {
+  document.getElementById('modalNameSurname').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+});
+
+document.getElementById('cancelPassword').addEventListener('click', () => {
+  document.getElementById('modalPassword').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+});
   </script>
 </body>
 </html>
