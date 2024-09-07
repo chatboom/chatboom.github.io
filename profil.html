@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatBoom</title>
     <style>
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -27,6 +35,10 @@ body {
     max-width: 400px;
     box-sizing: border-box;
     position: relative;
+    height: 100vh; /* Zajistí, že profil vyplní výšku viewportu */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Uloží profil do středu */
 }
 
 .profile-card img {
@@ -36,7 +48,7 @@ body {
     border: 3px solid #4a90e2;
     object-fit: cover;
     cursor: pointer;
-    margin-bottom: 1rem;
+    margin: 0 auto 1rem; 
 }
 
 .profile-card h2, .profile-card p {
@@ -164,18 +176,22 @@ body {
 
 /* Ozubené kolečko (nastavení) v pravém horním rohu */
 .settings-icon {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
+    position: fixed; /* Zajistí, že bude stále na stejné pozici i při scrollování */
+    top: 1rem; /* Vzdálenost od horní části obrazovky */
+    right: 36rem; /* Vzdálenost od pravé části obrazovky */
     display: flex;
     align-items: center;
+    justify-content: center; /* Ujistí se, že ikona je vertikálně i horizontálně vycentrována */
     cursor: pointer;
+    z-index: 0; /* Zajistí, že ikona bude nad ostatními prvky */
 }
 
 .settings-icon img {
-    width: 24px;
-    height: 24px;
+    width: 28px; /* Velikost ikony */
+    height: 28px;
 }
+
+
 
 /* Dolní panel */
 .bottom-bar {
@@ -249,11 +265,8 @@ body {
         </div>
     </div>
 
-
-
-
     <div class="profile-card">
-        <div class="bottom-bar-item">
+        <div class="settings-icon">
             <a href="nastaveni.html">
                 <img src="https://img.icons8.com/ios-filled/50/000000/settings.png" alt="Nastavení">
             </a>
@@ -479,3 +492,6 @@ body {
     </script>
 </body>
 </html>
+
+
+
