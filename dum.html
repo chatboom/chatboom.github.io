@@ -208,7 +208,6 @@
     right: 70px; /* Posunutí srdce více vlevo */
     top: 10px;
 }
-
     </style>
 </head>
 <body>
@@ -316,12 +315,10 @@
 
         function likePost(postId) {
             const likeCountElement = document.getElementById(`like-count-${postId}`);
-
-            // Získání aktuálního počtu „like“
             const postRef = database.ref('posts/' + postId);
+
             postRef.transaction(post => {
                 if (post) {
-                    // Pokud příspěvek již má hodnotu likes, zvýšíme ji o 1
                     if (post.likeCount === undefined) {
                         post.likeCount = 1;
                     } else {
@@ -330,7 +327,6 @@
                 }
                 return post;
             }).then(() => {
-                // Aktualizace počtu „like“ na stránce
                 postRef.once('value').then(snapshot => {
                     const post = snapshot.val();
                     likeCountElement.textContent = post.likeCount || 0;
@@ -340,13 +336,12 @@
             });
         }
 
-        // Funkce pro načtení příspěvků a jejich like count
         function loadPosts() {
             database.ref('posts').orderByChild('timestamp').limitToLast(10).on('value', snapshot => {
                 postsContainer.innerHTML = '';
                 snapshot.forEach(childSnapshot => {
                     const post = childSnapshot.val();
-                    const postId = childSnapshot.key; // Získání ID příspěvku
+                    const postId = childSnapshot.key;
                     const postElement = document.createElement('div');
                     postElement.className = 'post';
                     postElement.innerHTML = `
@@ -357,7 +352,7 @@
                                 <span class="like-count" id="like-count-${postId}">${post.likeCount || 0}</span>
                             </div>
                             <div class="comment-container">
-                                <a href="komentare_pod_prispevky.html?id=${postId}">
+                                <a href="komentare_pod_prispevky.html?postId=${postId}">
                                     <img src="https://img.icons8.com/ios-filled/50/000000/comments.png" alt="Komentáře">
                                 </a>
                             </div>
