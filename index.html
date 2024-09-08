@@ -89,6 +89,7 @@
             color: #777;
             text-align: center;
             margin-top: 10px; /* Mezera nad textem "Vytvořil" */
+            display: none; /* Skrytý na desktopu, bude zobrazen na mobilu */
         }
 
         /* Média queries pro mobilní zařízení */
@@ -118,6 +119,7 @@
             }
 
             .footer {
+                display: block; /* Zobrazení textu "Vytvořil" na mobilu */
                 font-size: 12px;
             }
         }
@@ -134,6 +136,10 @@
 
             .button-container {
                 display: none; /* Skrýt tlačítka na desktopu */
+            }
+
+            .footer {
+                display: none; /* Skrytí textu "Vytvořil" na desktopu */
             }
         }
 
