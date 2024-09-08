@@ -272,19 +272,20 @@
             messagingSenderId: "458271134858",
             appId: "1:458271134858:web:5e09d3329ba81626830973"
         };
-
+    
         // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-
+    
         const postText = document.getElementById('postText');
         const charCounter = document.getElementById('charCounter');
         const submitButton = document.getElementById('submitButton');
         const postsContainer = document.getElementById('postsContainer');
-
+        const userId = 'user1'; // Zde nastavte ID aktuálního uživatele
+    
         // Definice zakázaných slov
         const forbiddenWords = ['slabé', 'neschopný', 'ztracený'];
-
+    
         // Funkce pro kontrolu příspěvku
         function checkPostText() {
             const text = postText.value;
@@ -292,9 +293,9 @@
             submitButton.disabled = isForbidden || text.length === 0;
             charCounter.textContent = `${text.length}/500`;
         }
-
+    
         postText.addEventListener('input', checkPostText);
-
+    
         function submitPost() {
             const postContent = postText.value;
             if (postContent.length > 0 && !forbiddenWords.some(word => postContent.toLowerCase().includes(word))) {
@@ -302,7 +303,8 @@
                 newPostRef.set({
                     content: postContent,
                     timestamp: new Date().toISOString(),
-                    likeCount: 0 // Přidání výchozí hodnoty likes
+                    likes: {},
+                    likeCount: 0
                 }).then(() => {
                     postText.value = '';
                     charCounter.textContent = '0/500';
@@ -310,32 +312,9 @@
                 });
             }
         }
-
+    
         submitButton.addEventListener('click', submitPost);
-
-        function likePost(postId) {
-            const likeCountElement = document.getElementById(`like-count-${postId}`);
-            const postRef = database.ref('posts/' + postId);
-
-            postRef.transaction(post => {
-                if (post) {
-                    if (post.likeCount === undefined) {
-                        post.likeCount = 1;
-                    } else {
-                        post.likeCount += 1;
-                    }
-                }
-                return post;
-            }).then(() => {
-                postRef.once('value').then(snapshot => {
-                    const post = snapshot.val();
-                    likeCountElement.textContent = post.likeCount || 0;
-                });
-            }).catch(error => {
-                console.error('Chyba při aktualizaci like:', error);
-            });
-        }
-
+    
         function loadPosts() {
             database.ref('posts').orderByChild('timestamp').limitToLast(10).on('value', snapshot => {
                 postsContainer.innerHTML = '';
@@ -348,8 +327,8 @@
                         <p>${post.content}</p>
                         <div class="post-actions">
                             <div class="like-container">
-                                <img src="https://img.icons8.com/ios-filled/50/000000/like.png" alt="Like" onclick="likePost('${postId}')">
-                                <span class="like-count" id="like-count-${postId}">${post.likeCount || 0}</span>
+                                <img src="https://img.icons8.com/ios-filled/50/000000/like.png" alt="Like" onclick="handleLike('${postId}')">
+                                <span class="like-count">${post.likeCount || 0}</span>
                             </div>
                             <div class="comment-container">
                                 <a href="komentare_pod_prispevky.html?postId=${postId}">
@@ -362,8 +341,22 @@
                 });
             });
         }
-
+    
+        function handleLike(postId) {
+            const userLikesRef = database.ref(`posts/${postId}/likes/${userId}`);
+            userLikesRef.once('value', snapshot => {
+                if (!snapshot.exists()) {
+                    // Uložit like a aktualizovat počet
+                    userLikesRef.set(true).then(() => {
+                        const likeCountRef = database.ref(`posts/${postId}/likeCount`);
+                        likeCountRef.transaction(currentCount => (currentCount || 0) + 1);
+                    });
+                }
+            });
+        }
+    
         loadPosts();
     </script>
+    
 </body>
 </html>
