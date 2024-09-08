@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatBoom</title>
     <style>
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Zabránit posouvání stránky */
+}
+
         .user-list {
             list-style-type: none;
             padding: 0;
@@ -21,6 +29,10 @@
         .user-details {
             display: none;
             margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
 
         .user-details h3 {
@@ -30,18 +42,97 @@
         .user-details p {
             margin: 5px 0;
         }
+
+        .access-code-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .access-code-table {
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .access-code-table input {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .access-code-table button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .access-code-table button:hover {
+            background-color: #0056b3;
+        }
+
+
+
+        .search-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.search-container input {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-width: 400px; /* Maximální šířka */
+    box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-container input:focus {
+    border-color: #007bff; /* Barva okraje při fokusování */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Mírné stínování */
+}
+
+
     </style>
 </head>
 <body>
-    <h1>Informace o uživatelích</h1>
-    <ul class="user-list" id="user-list"></ul>
+    <div id="access-code-container" class="access-code-container">
+        <div class="access-code-table">
+            <h2>Zadejte přístupový kód</h2>
+            <input type="text" id="access-code-input" placeholder="Přístupový kód">
+            <button onclick="checkAccessCode()">Potvrdit</button>
+            <div class="error-message" id="error-message"></div>
+        </div>
+    </div>
 
-    <div class="user-details" id="user-details">
-        <h3 id="user-name"></h3>
-        <p><strong>Přezdívka:</strong> <span id="user-nickname"></span></p>
-        <p><strong>Email:</strong> <span id="user-email"></span></p>
-        <p><strong>Datum registrace:</strong> <span id="user-registration-date"></span></p>
-        <p><strong>Čas registrace:</strong> <span id="user-registration-time"></span></p>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Hledat uživatele...">
+    </div>
+
+    <div class="user-list-container hidden" id="user-list-container">
+        <ul class="user-list" id="user-list"></ul>
+        <div class="user-details" id="user-details">
+            <h3 id="user-name"></h3>
+            <p><strong>Přezdívka:</strong> <span id="user-nickname"></span></p>
+            <p><strong>Email:</strong> <span id="user-email"></span></p>
+            <p><strong>Datum registrace:</strong> <span id="user-registration-date"></span></p>
+            <p><strong>Čas registrace:</strong> <span id="user-registration-time"></span></p>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -59,7 +150,21 @@
         };
         firebase.initializeApp(firebaseConfig);
 
-        // Funkce pro načtení uživatelů
+        // Správný přístupový kód
+        const ACCESS_CODE = '7682364653'; // Změňte kód na svůj vlastní
+
+        function checkAccessCode() {
+            const input = document.getElementById('access-code-input').value;
+            const errorMessage = document.getElementById('error-message');
+            if (input === ACCESS_CODE) {
+                document.getElementById('access-code-container').style.display = 'none';
+                document.getElementById('user-list-container').classList.remove('hidden');
+                loadUsers();
+            } else {
+                errorMessage.textContent = 'Nesprávný přístupový kód!';
+            }
+        }
+
         function loadUsers() {
             const userList = document.getElementById('user-list');
             const userDetailsDiv = document.getElementById('user-details');
@@ -104,9 +209,9 @@
             });
         }
 
-        // Načtení uživatelů při načtení stránky
+        // Skrýt uživatelské detaily při načtení
         window.onload = function() {
-            loadUsers();
+            document.getElementById('user-list-container').classList.add('hidden');
         };
 
         document.addEventListener('DOMContentLoaded', (event) => {
@@ -114,6 +219,20 @@
                 event.preventDefault();
             });
         });
+
+
+
+
+                // Filtr uživatelů podle vyhledávacího pole
+document.getElementById('search-input').addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    const userItems = document.querySelectorAll('#user-list li');
+    userItems.forEach(function(item) {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+
     </script>
 </body>
 </html>
