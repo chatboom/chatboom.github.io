@@ -7,155 +7,255 @@
     <title>ChatBoom</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
 
-        .container {
-            flex: 1;
-            padding: 20px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            overflow-y: auto; /* Zajistí, že se komentáře budou posouvat */
-        }
+.top-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px 30px; /* Širší padding pro větší panel */
+    z-index: 1000;
+}
 
-        .comment-form {
-            position: sticky;
-            bottom: 0;
-            background: #ffffff;
-            padding: 10px;
-            box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: flex;
-            align-items: flex-end;
-        }
+.top-bar-item {
+    display: flex;
+    align-items: center;
+    margin-left: 15px; /* Přidá mezery mezi položky */
+}
 
-        .comment-textarea-wrapper {
-            flex: 1;
-            display: flex;
-        }
+.top-bar-item img {
+    width: 30px;
+    height: 30px;
+}
 
-        .comment-textarea-wrapper textarea {
-            width: 100%; /* Zabere celý prostor kromě místa pro tlačítko */
-            height: 120px; /* Zvětšená výška textového pole */
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            resize: none;
-            box-sizing: border-box;
-        }
+.add-friend-button,
+.requests-button,
+.comments-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
 
-        .comment-form button {
-            width: 100px;
-            padding: 10px;
-            font-size: 16px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
+.add-friend-button img,
+.requests-button img,
+.comments-button img {
+    width: 30px;
+    height: 30px;
+}
 
-        .comment-form button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
+@media (max-width: 600px) {
+    .top-bar-item img {
+        width: 25px;
+        height: 25px;
+    }
+    .add-friend-button img,
+    .requests-button img,
+    .comments-button img {
+        width: 25px;
+        height: 25px;
+    }
+}
 
-        .comments-container {
-            margin-top: 20px;
-        }
+.container {
+    margin-top: 60px;
+    padding: 20px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
-        .comment {
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
+.post-form {
+    position: relative;
+    margin-bottom: 20px;
+}
 
-        .comment-actions {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start; /* Změněno na flex-start */
-        }
+.post-textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+    box-sizing: border-box;
+}
 
-        .comment-actions img {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-        }
+.char-counter {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 12px;
+    color: #666;
+}
 
-        .like-container {
-            display: flex;
-            align-items: center;
-        }
+.submit-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
 
-        .like-count {
-            font-size: 14px;
-            margin-left: 5px;
-        }
+.submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
 
-        @media (max-width: 600px) {
-            .comment-form {
-                flex-direction: column;
-                align-items: stretch; /* Zajistí, že textové pole bude mít maximální šířku */
-            }
+.posts-container {
+    margin-top: 20px;
+}
 
-            .comment-textarea-wrapper {
-                width: 100%; /* Zajistí, že wrapper zabere celou šířku */
-                margin-bottom: 10px; /* Vzdálenost mezi textovým polem a tlačítkem */
-            }
+.post {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
 
-            .comment-textarea-wrapper textarea {
-                width: 100%; /* Zabere celý prostor v rámci wrapperu */
-            }
+.post-actions {
+    display: flex;
+    justify-content: center; /* Centruje ikony horizontálně */
+    align-items: flex-end; /* Zarovnání ikon ke spodní části příspěvku */
+    margin-top: 10px;
+}
 
-            .comment-form button {
-                width: 100%; /* Tlačítko bude mít 100% šířku */
-                max-width: 100px; /* Maximální šířka tlačítka */
-                margin-left: 0; /* Zrušíme levý margin */
-            }
-        }
+.post-actions img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
 
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
-            padding: 10px 20px;
-            z-index: 1000;
-        }
+.like-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Like ikona bude vlevo */
+}
 
-        .bottom-bar-item img {
-            width: 30px;
-            height: 30px;
-        }
+.like-count {
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.comment-container {
+    display: flex;
+    justify-content: center;
+    width: 100%; /* Zajistí, že komentář ikona bude uprostřed */
+    position: relative;
+    
+}
+
+
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
+    z-index: 1000;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.bottom-bar-item {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+}
+
+.bottom-bar-item img {
+    width: 30px;
+    height: 30px;
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+}
+
+@media (max-width: 600px) {
+    .bottom-bar-item img {
+        width: 25px;
+        height: 25px;
+    }
+
+    .profile-icon {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.friend-requests-icon {
+    position: absolute;
+    right: 70px; /* Posunutí srdce více vlevo */
+    top: 10px;
+}
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="commentsContainer" class="comments-container">
-            <!-- Komentáře budou dynamicky generovány zde -->
+    <div class="top-bar">
+        <div class="top-bar-item">
+            <!-- Můžete sem přidat další položky na levé straně horního panelu -->
+        </div>
+        <div class="top-bar-item">
+            <button class="requests-button friend-requests-icon" onclick="redirectToFriendRequests()">
+                <img src="https://img.icons8.com/ios-filled/50/000000/like.png" alt="Žádosti o přátelství">
+            </button>
         </div>
     </div>
 
-    <div class="comment-form">
-        <div class="comment-textarea-wrapper">
-            <textarea id="commentText" class="comment-textarea" maxlength="200" placeholder="Napište svůj komentář..."></textarea>
+    <div class="container">
+        <div class="post-form">
+            <textarea id="postText" class="post-textarea" maxlength="500" placeholder="Napište svůj příspěvek..."></textarea>
+            <div id="charCounter" class="char-counter">0/500</div>
         </div>
         <button id="submitButton" class="submit-button" disabled>Odeslat</button>
+
+        <div id="postsContainer" class="posts-container">
+            <!-- Příspěvky budou dynamicky generovány zde -->
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="bottom-bar-item">
+            <a href="dum.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Domovská Stránka">
+            </a>
+        </div>
+        <div class="bottom-bar-item search-container">
+            <a href="pridat_pratele.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/search.png" alt="Hledat">
+            </a>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="komunikace.html">
+                <img src="https://img.icons8.com/ios-filled/50/000000/chat.png" alt="Chat">
+            </a>
+        </div>
+        <div class="bottom-bar-item">
+            <a href="profil.html">
+                <img class="profile-icon" src="https://img.icons8.com/ios-filled/50/000000/user.png" alt="Profil">
+            </a>
+        </div>
     </div>
 
     <!-- Firebase SDK -->
@@ -164,129 +264,107 @@
 
     <script>
         // Firebase konfigurace
-        var firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
             databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "chatboom-95647",
             storageBucket: "chatboom-95647.appspot.com",
             messagingSenderId: "458271134858",
-            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            appId: "1:458271134858:web:5e09d3329ba81626830973"
         };
 
         // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
-        var database = firebase.database();
+        const database = firebase.database();
 
-        const commentText = document.getElementById('commentText');
+        const postText = document.getElementById('postText');
+        const charCounter = document.getElementById('charCounter');
         const submitButton = document.getElementById('submitButton');
-        const commentsContainer = document.getElementById('commentsContainer');
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const postId = urlParams.get('postId');
-
-        if (!postId) {
-            alert('Chyba: ID příspěvku není k dispozici.');
-            window.location.href = 'dum.html';
-        }
+        const postsContainer = document.getElementById('postsContainer');
 
         // Definice zakázaných slov
-        const forbiddenWords = ['debile', 'kokote', 'blbec', 'zmrde', 'pičo', 'píčus', 'negře', 'negre', 'postiženec', 
-        'kurva', 'srač', 'čurak', 'skurvený', 'retard', 'jebat', 'šukat', 'šuká', 'hovado', 'jebat', 'mrdat', 'děvka', 
-        'kretén', 'žebrák', 'sračka', 'hajzl', 'feťák', 'bezdomovec']; // Přidejte slova, která chcete zakázat
+        const forbiddenWords = ['slabé', 'neschopný', 'ztracený'];
 
-        // Funkce pro kontrolu zakázaných slov
-        function containsForbiddenWords(text) {
-            const lowerCaseText = text.toLowerCase();
-            return forbiddenWords.some(word => lowerCaseText.includes(word.toLowerCase()));
+        // Funkce pro kontrolu příspěvku
+        function checkPostText() {
+            const text = postText.value;
+            const isForbidden = forbiddenWords.some(word => text.toLowerCase().includes(word));
+            submitButton.disabled = isForbidden || text.length === 0;
+            charCounter.textContent = `${text.length}/500`;
         }
 
-        // Funkce pro aktualizaci stavu tlačítka
-        commentText.addEventListener('input', () => {
-            const textLength = commentText.value.length;
+        postText.addEventListener('input', checkPostText);
 
-            if (textLength > 0 && !containsForbiddenWords(commentText.value)) {
-                submitButton.disabled = false;
-            } else {
-                submitButton.disabled = true;
-            }
-        });
-
-        submitButton.addEventListener('click', () => {
-            const commentContent = commentText.value.trim();
-
-            if (commentContent.length === 0) {
-                alert('Komentář nemůže být prázdný.');
-                return;
-            }
-
-            if (containsForbiddenWords(commentContent)) {
-                alert('Komentář obsahuje zakázaná slova.');
-                return;
-            }
-
-            const commentId = database.ref('comments/' + postId).push().key;
-            const commentData = {
-                content: commentContent,
-                timestamp: Date.now(),
-                likes: 0
-            };
-
-            const updates = {};
-            updates['/comments/' + postId + '/' + commentId] = commentData;
-
-            database.ref().update(updates, (error) => {
-                if (error) {
-                    alert('Chyba při ukládání komentáře: ' + error.message);
-                } else {
-                    commentText.value = '';
+        function submitPost() {
+            const postContent = postText.value;
+            if (postContent.length > 0 && !forbiddenWords.some(word => postContent.toLowerCase().includes(word))) {
+                const newPostRef = database.ref('posts').push();
+                newPostRef.set({
+                    content: postContent,
+                    timestamp: new Date().toISOString(),
+                    likeCount: 0 // Přidání výchozí hodnoty likes
+                }).then(() => {
+                    postText.value = '';
+                    charCounter.textContent = '0/500';
                     submitButton.disabled = true;
-                }
-            });
-        });
+                });
+            }
+        }
 
-        function loadComments() {
-            database.ref('comments/' + postId).on('value', (snapshot) => {
-                commentsContainer.innerHTML = '';
-                const comments = snapshot.val();
-                if (comments) {
-                    const sortedComments = Object.keys(comments).sort((a, b) => comments[b].timestamp - comments[a].timestamp);
-                    sortedComments.forEach((key) => {
-                        const comment = comments[key];
-                        const commentElement = document.createElement('div');
-                        commentElement.className = 'comment';
-                        commentElement.innerHTML = `
-                            <p>${comment.content}</p>
-                            <div class="comment-actions">
-                                <div class="like-container">
-                                    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png" alt="Lajk" onclick="likeComment('${postId}', '${key}')">
-                                    <span class="like-count">${comment.likes || 0}</span>
-                                </div>
+        submitButton.addEventListener('click', submitPost);
+
+        function likePost(postId) {
+            const likeCountElement = document.getElementById(`like-count-${postId}`);
+            const postRef = database.ref('posts/' + postId);
+
+            postRef.transaction(post => {
+                if (post) {
+                    if (post.likeCount === undefined) {
+                        post.likeCount = 1;
+                    } else {
+                        post.likeCount += 1;
+                    }
+                }
+                return post;
+            }).then(() => {
+                postRef.once('value').then(snapshot => {
+                    const post = snapshot.val();
+                    likeCountElement.textContent = post.likeCount || 0;
+                });
+            }).catch(error => {
+                console.error('Chyba při aktualizaci like:', error);
+            });
+        }
+
+        function loadPosts() {
+            database.ref('posts').orderByChild('timestamp').limitToLast(10).on('value', snapshot => {
+                postsContainer.innerHTML = '';
+                snapshot.forEach(childSnapshot => {
+                    const post = childSnapshot.val();
+                    const postId = childSnapshot.key;
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post';
+                    postElement.innerHTML = `
+                        <p>${post.content}</p>
+                        <div class="post-actions">
+                            <div class="like-container">
+                                <img src="https://img.icons8.com/ios-filled/50/000000/like.png" alt="Like" onclick="likePost('${postId}')">
+                                <span class="like-count" id="like-count-${postId}">${post.likeCount || 0}</span>
                             </div>
-                        `;
-                        commentsContainer.appendChild(commentElement);
-                    });
-                    commentsContainer.scrollTop = commentsContainer.scrollHeight; // Posune na konec komentářů
-                }
-            }, (error) => {
-                console.error('Chyba při načítání komentářů:', error);
+                            <div class="comment-container">
+                                <a href="komentare_pod_prispevky.html?postId=${postId}">
+                                    <img src="https://img.icons8.com/ios-filled/50/000000/comments.png" alt="Komentáře">
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    postsContainer.appendChild(postElement);
+                });
             });
         }
 
-        function likeComment(postId, commentId) {
-            const commentRef = database.ref('comments/' + postId + '/' + commentId + '/likes');
-            commentRef.transaction((currentLikes) => {
-                return (currentLikes || 0) + 1;
-            });
-        }
-
-        loadComments();
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.addEventListener('contextmenu', function(event) {
-                event.preventDefault();
-            });
-        });
+        loadPosts();
     </script>
 </body>
 </html>
