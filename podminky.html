@@ -118,6 +118,10 @@
                 font-size: 20px;
             }
         }
+
+        .language-content {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -129,59 +133,268 @@
     <div class="translate-container">
         <button class="translate-btn" onclick="toggleLanguages()">Přeložit</button>
         <div class="language-options" id="language-options">
-            <button onclick="translate('en')">Angličtina</button>
-            <button onclick="translate('de')">Němčina</button>
-            <button onclick="translate('fr')">Francouzština</button>
-            <button onclick="translate('es')">Španělština</button>
-            <button onclick="translate('ru')">Ruština</button>
+            <button onclick="showContent('cs')">Čeština</button>
+            <button onclick="showContent('en')">Angličtina</button>
+            <button onclick="showContent('de')">Němčina</button>
+            <button onclick="showContent('fr')">Francouzština</button>
+            <button onclick="showContent('es')">Španělština</button>
+            <button onclick="showContent('ru')">Ruština</button>
         </div>
     </div>
 
     <div class="container">
-        <h1>Podmínky</h1>
-        <div class="last-updated">Poslední aktualizace 19. srpna 2024</div>
-        
-        <div class="terms">
-            <p>
-                Vítejte v naší chatovací aplikaci. Tato pravidla slouží k zajištění bezpečného a příjemného prostředí pro všechny uživatele. Před tím, než začnete používat naši aplikaci, pečlivě si přečtěte následující podmínky. Používáním této aplikace souhlasíte s dodržováním těchto pravidel a podmínek.
-            </p>
-            <h2>Registrace a Účet:</h2>
-            <p>
-                Při registraci v naší aplikaci je nezbytné poskytnout pravdivé a aktuální informace. Používání falešných identifikací nebo vytváření více účtů bez odpovídajícího povolení je přísně zakázáno. Každý uživatel je zodpovědný za bezpečnost svého účtu a hesla. Pokud se dozvíte o jakémkoli neautorizovaném použití vašeho účtu, je vaší povinností okamžitě nás informovat.
-            </p>
-            <h2>Používání aplikace:</h2>
-            <p>
-                Naše aplikace je určena pouze pro zákonné účely. Je zakázáno používat aplikaci k nelegálním nebo neetickým aktivitám, jako je šíření nelegálního obsahu nebo podvodných praktik. Uživatelé musí respektovat ostatní a nesmí šířit obsah, který je urážlivý, vulgární, diskriminační nebo jinak nevhodný. Je také zakázáno šířit osobní údaje jiných uživatelů bez jejich souhlasu a posílat spam, nevyžádané zprávy nebo reklamní materiály.
-            </p>
-            <h2>Bezpečnost a Soukromí:</h2>
-            <p>
-                Bezpečnost a soukromí našich uživatelů jsou pro nás prioritou. Uživatelé by měli být obezřetní při sdílení osobních údajů a vyhnout se zveřejňování citlivých informací. Je důležité respektovat soukromí ostatních a nevytvářet záznamy o jejich konverzacích bez jejich vědomí. Jakékoli objevené bezpečnostní problémy nebo zranitelnosti by měly být neprodleně hlášeny.
-            </p>
-            <h2>Chování uživatelů:</h2>
-            <p>
-                Všichni uživatelé jsou povinni se k ostatním chovat s respektem a důstojností. Jakékoli obtěžování, urážení nebo agresivní chování je zakázáno a může vést k sankcím. Používání nevhodného jazyka nebo zastrašování jiných uživatelů bude považováno za porušení pravidel a bude důsledně postihováno.
-            </p>
-            <h2>Moderování a Sankce:</h2>
-            <p>
-                Pro zajištění správného fungování a bezpečnosti platformy si vyhrazujeme právo monitorovat a moderovat veškerý obsah a chování na naší aplikaci. Jakékoli porušení pravidel může vést k varování, dočasnému zablokování nebo trvalému zrušení účtu. Uživatelé mají možnost se proti sankcím odvolat prostřednictvím formálního procesu stížností, který je k dispozici na našich webových stránkách.
-            </p>
-            <h2>Změny pravidel:</h2>
-            <p>
-                Tato pravidla mohou být kdykoli upravena nebo aktualizována. O všech změnách pravidel budeme uživatele informovat. Pokračováním v používání aplikace po těchto změnách souhlasíte s novými podmínkami.
-            </p>
-            <h2>Odpovědnost a Záruky:</h2>
-            <p>
-                Naše aplikace je poskytována „tak, jak je“, bez jakýchkoli záruk nebo garancí jakéhokoli druhu. Nezodpovídáme za žádné škody nebo ztráty, které mohou vzniknout v důsledku používání aplikace. Uživatelé používají naši aplikaci na vlastní riziko a odpovědnost.
-            </p>
-            <h2>Kontakt:</h2>
-            <p>
-                Pro jakékoli dotazy, připomínky nebo stížnosti ohledně těchto pravidel nebo používání aplikace nás prosím kontaktujte na [emailová adresa / kontaktní formulář]. Jsme tu, abychom vám pomohli a zajistili, že vaše zkušenost s naší aplikací bude co nejlepší.
-            </p>
+        <div id="cs" class="language-content" style="display: block;">
+            <h1>Podmínky</h1>
+            <div class="last-updated">Poslední aktualizace 9. září 2024</div>
+            
+            <div class="terms">
+                <p>
+                    Vítejte v naší chatovací aplikaci. Tato pravidla slouží k zajištění bezpečného a příjemného prostředí pro všechny uživatele. Před tím, než začnete používat naši aplikaci, pečlivě si přečtěte následující podmínky. Používáním této aplikace souhlasíte s dodržováním těchto pravidel a podmínek.
+                </p>
+                <h2>Registrace a Účet:</h2>
+                <p>
+                    Při registraci v naší aplikaci je nezbytné poskytnout pravdivé a aktuální informace. Používání falešných identifikací nebo vytváření více účtů bez odpovídajícího povolení je přísně zakázáno. Každý uživatel je zodpovědný za bezpečnost svého účtu a hesla. Pokud se dozvíte o jakémkoli neautorizovaném použití vašeho účtu, je vaší povinností okamžitě nás informovat.
+                </p>
+                <h2>Používání aplikace:</h2>
+                <p>
+                    Naše aplikace je určena pouze pro zákonné účely. Je zakázáno používat aplikaci k nelegálním nebo neetickým aktivitám, jako je šíření nelegálního obsahu nebo podvodných praktik. Uživatelé musí respektovat ostatní a nesmí šířit obsah, který je urážlivý, vulgární, diskriminační nebo jinak nevhodný. Je také zakázáno šířit osobní údaje jiných uživatelů bez jejich souhlasu a posílat spam, nevyžádané zprávy nebo reklamní materiály.
+                </p>
+                <h2>Bezpečnost a Soukromí:</h2>
+                <p>
+                    Bezpečnost a soukromí našich uživatelů jsou pro nás prioritou. Uživatelé by měli být obezřetní při sdílení osobních údajů a vyhnout se zveřejňování citlivých informací. Je důležité respektovat soukromí ostatních a nevytvářet záznamy o jejich konverzacích bez jejich vědomí. Jakékoli objevené bezpečnostní problémy nebo zranitelnosti by měly být neprodleně hlášeny.
+                </p>
+                <h2>Chování uživatelů:</h2>
+                <p>
+                    Všichni uživatelé jsou povinni se k ostatním chovat s respektem a důstojností. Jakékoli obtěžování, urážení nebo agresivní chování je zakázáno a může vést k sankcím. Používání nevhodného jazyka nebo zastrašování jiných uživatelů bude považováno za porušení pravidel a bude důsledně postihováno.
+                </p>
+                <h2>Moderování a Sankce:</h2>
+                <p>
+                    Pro zajištění správného fungování a bezpečnosti platformy si vyhrazujeme právo monitorovat a moderovat veškerý obsah a chování na naší aplikaci. Jakékoli porušení pravidel může vést k varování, dočasnému zablokování nebo trvalému zrušení účtu. Uživatelé mají možnost se proti sankcím odvolat prostřednictvím formálního procesu stížností, který je k dispozici na našich webových stránkách.
+                </p>
+                <h2>Změny pravidel:</h2>
+                <p>
+                    Tato pravidla mohou být kdykoli upravena nebo aktualizována. O všech změnách pravidel budeme uživatele informovat. Pokračováním v používání aplikace po těchto změnách souhlasíte s novými podmínkami.
+                </p>
+                <h2>Odpovědnost a Záruky:</h2>
+                <p>
+                    Naše aplikace je poskytována „tak, jak je“, bez jakýchkoli záruk nebo garancí jakéhokoli druhu. Nezodpovídáme za žádné škody nebo ztráty, které mohou vzniknout v důsledku používání aplikace. Uživatelé používají naši aplikaci na vlastní riziko a odpovědnost.
+                </p>
+                <h2>Kontakt:</h2>
+                <p>
+                    Pro jakékoli dotazy, připomínky nebo stížnosti ohledně těchto pravidel nebo používání aplikace nás prosím kontaktuj na naších stránkách podpory . Jsme tu, abychom vám pomohli a zajistili, že vaše zkušenost s naší aplikací bude co nejlepší.
+                </p>
+            </div>
         </div>
+
+        <div id="en" class="language-content">
+            <h1>Terms</h1>
+            <div class="last-updated">Last updated on September 9, 2024</div>
+            
+            <div class="terms">
+                <p>
+                    Welcome to our chat application. These rules are designed to ensure a safe and pleasant environment for all users. Before you start using our application, please carefully read the following terms. By using this application, you agree to comply with these rules and conditions.
+                </p>
+                <h2>Registration and Account:</h2>
+                <p>
+                    When registering in our application, it is essential to provide truthful and up-to-date information. The use of false identities or the creation of multiple accounts without proper authorization is strictly prohibited. Each user is responsible for the security of their account and password. If you become aware of any unauthorized use of your account, it is your duty to inform us immediately.
+                </p>
+                <h2>Using the Application:</h2>
+                <p>
+                    Our application is intended for lawful purposes only. It is prohibited to use the application for illegal or unethical activities, such as spreading illegal content or engaging in fraudulent practices. Users must respect others and refrain from spreading content that is offensive, vulgar, discriminatory, or otherwise inappropriate. It is also forbidden to distribute other users' personal data without their consent and to send spam, unsolicited messages, or advertising materials.
+                </p>
+                <h2>Security and Privacy:</h2>
+                <p>
+                    The security and privacy of our users are our priority. Users should be cautious when sharing personal information and avoid disclosing sensitive details. It is important to respect the privacy of others and not record their conversations without their knowledge. Any discovered security issues or vulnerabilities should be reported immediately.
+                </p>
+                <h2>User Conduct:</h2>
+                <p>
+                    All users are required to treat others with respect and dignity. Any harassment, insult, or aggressive behavior is prohibited and may lead to penalties. The use of inappropriate language or intimidation of other users will be considered a violation of the rules and will be strictly enforced.
+                </p>
+                <h2>Moderation and Penalties:</h2>
+                <p>
+                    To ensure the proper functioning and safety of the platform, we reserve the right to monitor and moderate all content and behavior on our application. Any violation of the rules may result in a warning, temporary suspension, or permanent account termination. Users have the right to appeal sanctions through a formal complaint process available on our website.
+                </p>
+                <h2>Changes to the Rules:</h2>
+                <p>
+                    These rules may be amended or updated at any time. We will notify users of any changes to the rules. By continuing to use the application after these changes, you agree to the new terms.
+                </p>
+                <h2>Liability and Warranties:</h2>
+                <p>
+                    Our application is provided "as is," without any warranties or guarantees of any kind. We are not responsible for any damage or loss that may result from using the application. Users use our application at their own risk and responsibility.
+                </p>
+                <h2>Contact:</h2>
+                <p>
+                    For any questions, comments, or complaints regarding these rules or the use of the application, please contact us on our support page. We are here to help and ensure that your experience with our application is the best it can be.
+                </p>
+                
+            </div>
+        </div>
+
+        <div id="de" class="language-content">
+            <h1>Bedingungen</h1>
+            <div class="last-updated">Letzte Aktualisierung: 9. September 2024</div>
+            <div class="terms">
+                <p>
+                    Willkommen in unserer Chat-Anwendung. Diese Regeln sollen eine sichere und angenehme Umgebung für alle Benutzer gewährleisten. Bevor Sie unsere Anwendung verwenden, lesen Sie bitte die folgenden Bedingungen sorgfältig durch. Durch die Nutzung dieser Anwendung stimmen Sie zu, diese Regeln und Bedingungen einzuhalten.
+                </p>
+                <h2>Registrierung und Konto:</h2>
+                <p>
+                    Bei der Registrierung in unserer Anwendung ist es wichtig, wahrheitsgemäße und aktuelle Informationen anzugeben. Die Verwendung falscher Identitäten oder die Erstellung mehrerer Konten ohne entsprechende Genehmigung ist streng verboten. Jeder Benutzer ist für die Sicherheit seines Kontos und seines Passworts verantwortlich. Wenn Sie von einer unautorisierten Nutzung Ihres Kontos erfahren, ist es Ihre Pflicht, uns umgehend zu informieren.
+                </p>
+                <h2>Nutzung der Anwendung:</h2>
+                <p>
+                    Unsere Anwendung ist ausschließlich für legale Zwecke bestimmt. Es ist verboten, die Anwendung für illegale oder unethische Aktivitäten wie das Verbreiten illegaler Inhalte oder betrügerische Praktiken zu nutzen. Benutzer müssen andere respektieren und dürfen keine Inhalte verbreiten, die beleidigend, vulgär, diskriminierend oder anderweitig unangemessen sind. Es ist auch verboten, persönliche Daten anderer Benutzer ohne deren Zustimmung weiterzugeben und Spam, unerwünschte Nachrichten oder Werbematerialien zu versenden.
+                </p>
+                <h2>Sicherheit und Datenschutz:</h2>
+                <p>
+                    Die Sicherheit und der Datenschutz unserer Benutzer haben für uns oberste Priorität. Benutzer sollten vorsichtig sein, wenn sie persönliche Informationen teilen, und es vermeiden, sensible Daten offenzulegen. Es ist wichtig, die Privatsphäre anderer zu respektieren und ihre Gespräche nicht ohne deren Wissen aufzuzeichnen. Alle entdeckten Sicherheitsprobleme oder Schwachstellen sollten unverzüglich gemeldet werden.
+                </p>
+                <h2>Verhalten der Benutzer:</h2>
+                <p>
+                    Alle Benutzer sind verpflichtet, andere mit Respekt und Würde zu behandeln. Jegliche Belästigung, Beleidigung oder aggressives Verhalten ist verboten und kann zu Sanktionen führen. Die Verwendung unangemessener Sprache oder die Einschüchterung anderer Benutzer wird als Verstoß gegen die Regeln betrachtet und streng geahndet.
+                </p>
+                <h2>Moderation und Sanktionen:</h2>
+                <p>
+                    Um den ordnungsgemäßen Betrieb und die Sicherheit der Plattform zu gewährleisten, behalten wir uns das Recht vor, alle Inhalte und Verhaltensweisen in unserer Anwendung zu überwachen und zu moderieren. Jede Verletzung der Regeln kann zu einer Verwarnung, einer vorübergehenden Sperrung oder einer dauerhaften Kontosperrung führen. Benutzer haben das Recht, Sanktionen durch ein formelles Beschwerdeverfahren auf unserer Website anzufechten.
+                </p>
+                <h2>Änderungen der Regeln:</h2>
+                <p>
+                    Diese Regeln können jederzeit geändert oder aktualisiert werden. Wir werden die Benutzer über alle Änderungen der Regeln informieren. Durch die weitere Nutzung der Anwendung nach diesen Änderungen stimmen Sie den neuen Bedingungen zu.
+                </p>
+                <h2>Haftung und Garantien:</h2>
+                <p>
+                    Unsere Anwendung wird "wie besehen" bereitgestellt, ohne jegliche Garantien oder Zusicherungen. Wir übernehmen keine Haftung für Schäden oder Verluste, die durch die Nutzung der Anwendung entstehen können. Die Benutzer verwenden unsere Anwendung auf eigenes Risiko und eigene Verantwortung.
+                </p>
+                <h2>Kontakt:</h2>
+                <p>
+                    Bei Fragen, Kommentaren oder Beschwerden zu diesen Regeln oder zur Nutzung der Anwendung wenden Sie sich bitte über unsere Support-Seite an uns. Wir sind hier, um zu helfen und sicherzustellen, dass Ihre Erfahrung mit unserer Anwendung bestmöglich ist.
+                </p>
     </div>
 
+    <div id="fr" class="language-content">
+        <h1>Conditions</h1>
+        <div class="last-updated">Dernière mise à jour : 9 septembre 2024</div>
+        <div class="terms">
+            <p>
+                Bienvenue dans notre application de chat. Ces règles sont conçues pour garantir un environnement sûr et agréable pour tous les utilisateurs. Avant de commencer à utiliser notre application, veuillez lire attentivement les conditions suivantes. En utilisant cette application, vous acceptez de respecter ces règles et conditions.
+            </p>
+            <h2>Inscription et Compte :</h2>
+            <p>
+                Lors de l'inscription à notre application, il est essentiel de fournir des informations véridiques et à jour. L'utilisation de fausses identités ou la création de plusieurs comptes sans autorisation appropriée est strictement interdite. Chaque utilisateur est responsable de la sécurité de son compte et de son mot de passe. Si vous prenez connaissance d'une utilisation non autorisée de votre compte, il est de votre devoir de nous en informer immédiatement.
+            </p>
+            <h2>Utilisation de l'Application :</h2>
+            <p>
+                Notre application est destinée uniquement à des fins légales. Il est interdit d'utiliser l'application pour des activités illégales ou contraires à l'éthique, telles que la diffusion de contenu illégal ou la participation à des pratiques frauduleuses. Les utilisateurs doivent respecter les autres et s'abstenir de diffuser du contenu offensant, vulgaire, discriminatoire ou inapproprié. Il est également interdit de diffuser les données personnelles d'autres utilisateurs sans leur consentement et d'envoyer des spams, des messages non sollicités ou du matériel publicitaire.
+            </p>
+            <h2>Sécurité et Confidentialité :</h2>
+            <p>
+                La sécurité et la confidentialité de nos utilisateurs sont notre priorité. Les utilisateurs doivent être prudents lorsqu'ils partagent des informations personnelles et éviter de divulguer des informations sensibles. Il est important de respecter la vie privée des autres et de ne pas enregistrer leurs conversations sans leur consentement. Tout problème de sécurité ou vulnérabilité découvert doit être signalé immédiatement.
+            </p>
+            <h2>Conduite des Utilisateurs :</h2>
+            <p>
+                Tous les utilisateurs sont tenus de traiter les autres avec respect et dignité. Tout harcèlement, insulte ou comportement agressif est interdit et peut entraîner des sanctions. L'utilisation d'un langage inapproprié ou l'intimidation d'autres utilisateurs sera considérée comme une violation des règles et sera strictement sanctionnée.
+            </p>
+            <h2>Modération et Sanctions :</h2>
+            <p>
+                Pour assurer le bon fonctionnement et la sécurité de la plateforme, nous nous réservons le droit de surveiller et de modérer tous les contenus et comportements sur notre application. Toute violation des règles peut entraîner un avertissement, une suspension temporaire ou la suppression définitive du compte. Les utilisateurs ont la possibilité de faire appel des sanctions via une procédure de plainte formelle disponible sur notre site Web.
+            </p>
+            <h2>Changements des Règles :</h2>
+            <p>
+                Ces règles peuvent être modifiées ou mises à jour à tout moment. Nous informerons les utilisateurs de tout changement des règles. En continuant d'utiliser l'application après ces modifications, vous acceptez les nouvelles conditions.
+            </p>
+            <h2>Responsabilité et Garanties :</h2>
+            <p>
+                Notre application est fournie "en l'état", sans aucune garantie ni promesse de quelque nature que ce soit. Nous ne sommes pas responsables des dommages ou pertes qui pourraient résulter de l'utilisation de l'application. Les utilisateurs utilisent notre application à leurs propres risques et responsabilités.
+            </p>
+            <h2>Contact :</h2>
+            <p>
+                Pour toute question, commentaire ou réclamation concernant ces règles ou l'utilisation de l'application, veuillez nous contacter via notre page de support. Nous sommes là pour vous aider et pour nous assurer que votre expérience avec notre application est la meilleure possible.
+            </p>
+        </div>
+
+        <div id="es" class="language-content">
+            <h1>Condiciones</h1>
+            <div class="last-updated">Última actualización: 9 de septiembre de 2024</div>
+            <div class="terms">
+                <p>
+                    Bienvenido a nuestra aplicación de chat. Estas reglas están diseñadas para garantizar un entorno seguro y agradable para todos los usuarios. Antes de comenzar a usar nuestra aplicación, lea atentamente las siguientes condiciones. Al usar esta aplicación, acepta cumplir con estas reglas y condiciones.
+                </p>
+                <h2>Registro y Cuenta:</h2>
+                <p>
+                    Al registrarse en nuestra aplicación, es esencial proporcionar información veraz y actualizada. Está estrictamente prohibido el uso de identidades falsas o la creación de múltiples cuentas sin la autorización adecuada. Cada usuario es responsable de la seguridad de su cuenta y contraseña. Si se entera de cualquier uso no autorizado de su cuenta, es su deber informarnos de inmediato.
+                </p>
+                <h2>Uso de la Aplicación:</h2>
+                <p>
+                    Nuestra aplicación está destinada únicamente a fines legales. Está prohibido usar la aplicación para actividades ilegales o poco éticas, como la distribución de contenido ilegal o la participación en prácticas fraudulentas. Los usuarios deben respetar a los demás y abstenerse de distribuir contenido que sea ofensivo, vulgar, discriminatorio o inapropiado. También está prohibido distribuir los datos personales de otros usuarios sin su consentimiento, así como enviar spam, mensajes no solicitados o material publicitario.
+                </p>
+                <h2>Seguridad y Privacidad:</h2>
+                <p>
+                    La seguridad y privacidad de nuestros usuarios son nuestra prioridad. Los usuarios deben tener cuidado al compartir información personal y evitar divulgar información sensible. Es importante respetar la privacidad de los demás y no registrar sus conversaciones sin su conocimiento. Cualquier problema de seguridad o vulnerabilidad descubierto debe ser reportado de inmediato.
+                </p>
+                <h2>Comportamiento de los Usuarios:</h2>
+                <p>
+                    Todos los usuarios están obligados a tratar a los demás con respeto y dignidad. Cualquier acoso, insulto o comportamiento agresivo está prohibido y puede dar lugar a sanciones. El uso de lenguaje inapropiado o la intimidación de otros usuarios será considerado una violación de las reglas y será estrictamente sancionado.
+                </p>
+                <h2>Moderación y Sanciones:</h2>
+                <p>
+                    Para garantizar el buen funcionamiento y la seguridad de la plataforma, nos reservamos el derecho de monitorear y moderar todo el contenido y comportamiento en nuestra aplicación. Cualquier violación de las reglas puede resultar en una advertencia, suspensión temporal o la cancelación permanente de la cuenta. Los usuarios tienen el derecho de apelar las sanciones a través de un proceso de quejas formal disponible en nuestro sitio web.
+                </p>
+                <h2>Cambios en las Reglas:</h2>
+                <p>
+                    Estas reglas pueden ser modificadas o actualizadas en cualquier momento. Informaremos a los usuarios de cualquier cambio en las reglas. Al continuar usando la aplicación después de estos cambios, acepta las nuevas condiciones.
+                </p>
+                <h2>Responsabilidad y Garantías:</h2>
+                <p>
+                    Nuestra aplicación se proporciona "tal cual", sin ninguna garantía o promesa de ningún tipo. No somos responsables de ningún daño o pérdida que pueda resultar del uso de la aplicación. Los usuarios usan nuestra aplicación bajo su propio riesgo y responsabilidad.
+                </p>
+                <h2>Contacto:</h2>
+                <p>
+                    Para cualquier pregunta, comentario o queja sobre estas reglas o el uso de la aplicación, por favor contáctenos a través de nuestra página de soporte. Estamos aquí para ayudar y asegurarnos de que su experiencia con nuestra aplicación sea lo mejor posible.
+                </p>
+            </div>
+
+            <div id="ru" class="language-content">
+                <h1>Условия</h1>
+                <div class="last-updated">Последнее обновление: 9 сентября 2024 года</div>
+                <div class="terms">
+                    <p>
+                        Добро пожаловать в наше приложение для чата. Эти правила предназначены для обеспечения безопасной и приятной атмосферы для всех пользователей. Перед тем, как начать использовать наше приложение, внимательно ознакомьтесь с нижеследующими условиями. Используя это приложение, вы соглашаетесь соблюдать эти правила и условия.
+                    </p>
+                    <h2>Регистрация и Аккаунт:</h2>
+                    <p>
+                        При регистрации в нашем приложении важно предоставить правдивую и актуальную информацию. Использование ложных данных или создание нескольких аккаунтов без соответствующего разрешения строго запрещено. Каждый пользователь несет ответственность за безопасность своего аккаунта и пароля. Если вы узнали о несанкционированном использовании вашего аккаунта, вы обязаны немедленно сообщить нам об этом.
+                    </p>
+                    <h2>Использование Приложения:</h2>
+                    <p>
+                        Наше приложение предназначено только для законных целей. Запрещено использовать приложение для незаконной или неэтичной деятельности, такой как распространение незаконного контента или мошенничество. Пользователи обязаны уважать других и не распространять контент, который является оскорбительным, вульгарным, дискриминационным или неподобающим. Также запрещено распространять личные данные других пользователей без их согласия и отправлять спам, нежелательные сообщения или рекламные материалы.
+                    </p>
+                    <h2>Безопасность и Конфиденциальность:</h2>
+                    <p>
+                        Безопасность и конфиденциальность наших пользователей являются нашим приоритетом. Пользователи должны проявлять осторожность при передаче личной информации и избегать раскрытия конфиденциальных данных. Важно уважать конфиденциальность других и не записывать их разговоры без их ведома. Любые обнаруженные проблемы безопасности или уязвимости должны быть немедленно сообщены.
+                    </p>
+                    <h2>Поведение Пользователей:</h2>
+                    <p>
+                        Bce пользователи обязаны относиться к другим c уважением и достоинством. Любое преследование, оскорбление или агрессивное поведение запрещено и может привести к санкциям. Использование ненадлежащей лексики или запугивание других пользователей будет рассматриваться как нарушение правил и строго наказываться.
+                    </p>
+                    <h2>Модерация и Санкции:</h2>
+                    <p>
+                        Чтобы обеспечить надлежащее функционирование и безопасность платформы, мы оставляем за собой право контролировать и модерировать весь контент и поведение в нашем приложении. Любое нарушение правил может привести к предупреждению, временному приостановлению или окончательному удалению аккаунта. Пользователи имеют право обжаловать санкции через формальный процесс подачи жалоб, доступный на нашем сайте.
+                    </p>
+                    <h2>Изменения в Правилах:</h2>
+                    <p>
+                        Эти правила могут быть изменены или обновлены в любое время. Мы уведомим пользователей o любых изменениях в правилах. Продолжая использовать приложение после этих изменений, вы соглашаетесь с новыми условиями.
+                    </p>
+                    <h2>Ответственность и Гарантии:</h2>
+                    <p>
+                        Наше приложение предоставляется «как есть», без каких-либо гарантий или обязательств. Мы не несем ответственности за ущерб или убытки, которые могут возникнуть в результате использования приложения. Пользователи используют наше приложение на свой страх и риск.
+                    </p>
+                    <h2>Контактная информация:</h2>
+                    <p>
+                        По любым вопросам, комментариям или жалобам по поводу этих правил или использования приложения, пожалуйста, свяжитесь с нами через нашу страницу поддержки. Мы готовы помочь и обеспечить, чтобы ваш опыт использования нашего приложения был максимально положительным.
+                    </p>
+                </div>
     <script>
-        function toggleLanguages() {
+         function toggleLanguages() {
             var options = document.getElementById('language-options');
             if (options.style.display === 'block') {
                 options.style.display = 'none';
@@ -190,15 +403,25 @@
             }
         }
 
-        function translate(language) {
-            alert('Překlad do jazyka: ' + language + ' bude brzy dostupný.');
+        function showContent(language) {
+            // Hide all language content
+            var contents = document.querySelectorAll('.language-content');
+            contents.forEach(function(content) {
+                content.style.display = 'none';
+            });
+
+            // Show selected language content
+            var selectedContent = document.getElementById(language);
+            if (selectedContent) {
+                selectedContent.style.display = 'block';
+            }
         }
 
         function goBack() {
-            window.location.href = 'registrace.html'; // Změň na správnou URL registrační stránky
+            window.location.href = 'registrace.html'; // Change to the correct URL for registration page
         }
 
-        // Skrýt nabídku jazyků, pokud uživatel klikne mimo
+        // Hide language options if user clicks outside
         window.onclick = function(event) {
             if (!event.target.matches('.translate-btn')) {
                 var options = document.getElementById('language-options');
