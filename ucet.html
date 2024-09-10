@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profil uživatele</title>
+  <title>ChatBoom</title>
   <style>
 .container {
   width: 90%;
@@ -501,6 +501,12 @@ document.getElementById('cancelPassword').addEventListener('click', () => {
   document.getElementById('modalPassword').classList.remove('active');
   document.getElementById('overlay').classList.remove('active');
 });
+
+document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
   </script>
 </body>
 </html>
