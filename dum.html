@@ -357,11 +357,16 @@
     
         loadPosts();
 
-        document.addEventListener('DOMContentLoaded', (event) => {
+        function redirectToFriendRequests() {
+    window.location.href = 'zadosti_o_pratelstvi.html'; // URL, kam chceš přesměrovat
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
             document.addEventListener('contextmenu', function(event) {
                 event.preventDefault();
             });
         });
+
     </script>
     
 </body>
