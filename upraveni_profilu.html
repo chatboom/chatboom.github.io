@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBoom</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            margin-top: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            font-size: 14px;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .info {
+            color: blue;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Upravte si svůj profil</h1>
+
+        <form id="editProfileForm">
+            <label for="firstName">Jméno:</label>
+            <input type="text" id="firstName" name="firstName" readonly onclick="location.href='jmeno_a_prijmeni.html'">
+
+            <label for="lastName">Příjmení:</label>
+            <input type="text" id="lastName" name="lastName" readonly onclick="location.href='jmeno_a_prijmeni.html'">
+
+            <label for="nickname">Přezdívka:</label>
+            <input type="text" id="nickname" name="nickname" readonly onclick="location.href='jmeno_a_prijmeni.html'">
+
+            <label for="gender">Pohlaví:</label>
+            <select id="gender" name="gender">
+                <option value="">Vyberte</option>
+                <option value="male">Muž</option>
+                <option value="female">Žena</option>
+                <option value="other">Nechci uvádět</option>
+            </select>
+
+            <label for="bio">Bio:</label>
+<textarea id="bio" name="bio" rows="4" placeholder="Napište něco o sobě..."></textarea>
+
+        </form>
+
+        <div class="info">
+            <p><a href="informace_o_zabezpeceni.html" style="color: blue; text-decoration: none;">Informace o zabezpečení</a></p>
+            <p><a href="informace_o_profilu.html" style="color: blue; text-decoration: none;">Informace o vašem profilu</a></p>
+        </div>
+        
+    </div>
+
+    <script>
+        // Firebase konfigurace a inicializace
+        const firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth();
+
+        // Načtení aktuálních dat uživatele při načtení stránky
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                const uid = user.uid;
+                const userRef = db.ref('users/' + uid);
+                userRef.once('value').then((snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        document.getElementById('firstName').value = data.firstName || '';
+                        document.getElementById('lastName').value = data.lastName || '';
+                        document.getElementById('nickname').value = data.nickname || '';
+                        document.getElementById('gender').value = data.gender || '';
+                        document.getElementById('bio').value = data.bio || '';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
