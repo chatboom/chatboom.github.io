@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatBoom</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* Zabránit posouvání stránky */
+}
 
         .user-list {
             list-style-type: none;
@@ -81,45 +82,32 @@
             background-color: #0056b3;
         }
 
+
+
         .search-container {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
-        }
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
 
-        .search-container input {
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.3s ease;
-        }
+.search-container input {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-width: 400px; /* Maximální šířka */
+    box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
 
-        .search-container input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
+.search-container input:focus {
+    border-color: #007bff; /* Barva okraje při fokusování */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Mírné stínování */
+}
 
-        .chat-list {
-            display: none;
-            margin-top: 20px;
-        }
 
-        .chat-list ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .chat-list ul li {
-            background-color: #e0e0e0;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
@@ -144,18 +132,13 @@
             <p><strong>Email:</strong> <span id="user-email"></span></p>
             <p><strong>Datum registrace:</strong> <span id="user-registration-date"></span></p>
             <p><strong>Čas registrace:</strong> <span id="user-registration-time"></span></p>
-            <button onclick="showChat()">Zobrazit chaty</button>
-        </div>
-
-        <div class="chat-list" id="chat-list">
-            <h3>Seznam chatů</h3>
-            <ul id="chat-list-content"></ul>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
+        // Firebase konfigurace
         var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -167,7 +150,8 @@
         };
         firebase.initializeApp(firebaseConfig);
 
-        const ACCESS_CODE = '7682364653';
+        // Správný přístupový kód
+        const ACCESS_CODE = '7682364653'; // Změňte kód na svůj vlastní
 
         function checkAccessCode() {
             const input = document.getElementById('access-code-input').value;
@@ -194,14 +178,14 @@
                 const users = snapshot.val();
                 if (users) {
                     const sortedUsers = Object.keys(users)
-                        .map((uid) => users[uid])
+                        .map((uid) => users[uid]) // Převede objekt na pole
                         .sort((a, b) => {
-                            const nameA = `${a.firstName} ${a.lastName}`.toUpperCase();
+                            const nameA = `${a.firstName} ${a.lastName}`.toUpperCase(); // Ignoruje velikost písmen
                             const nameB = `${b.firstName} ${b.lastName}`.toUpperCase();
-                            return nameA.localeCompare(nameB);
+                            return nameA.localeCompare(nameB); // Řadí podle abecedy
                         });
 
-                    userList.innerHTML = '';
+                    userList.innerHTML = ''; // Vyčistíme seznam
                     sortedUsers.forEach((user) => {
                         const li = document.createElement('li');
                         li.textContent = `${user.firstName} ${user.lastName}`;
@@ -209,9 +193,12 @@
                             userName.textContent = `${user.firstName} ${user.lastName}`;
                             userNickname.textContent = user.nickname || 'N/A';
                             userEmail.textContent = user.email || 'N/A';
+                            
+                            // Získání a formátování data a času registrace
                             const registrationDate = user.registrationDate ? new Date(user.registrationDate) : new Date();
-                            userRegistrationDate.textContent = registrationDate.toLocaleDateString('cs-CZ');
-                            userRegistrationTime.textContent = registrationDate.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+                            userRegistrationDate.textContent = registrationDate.toLocaleDateString('cs-CZ'); // Formátování data
+                            userRegistrationTime.textContent = registrationDate.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' }); // Formátování času bez sekund
+                            
                             userDetailsDiv.style.display = 'block';
                         });
                         userList.appendChild(li);
@@ -222,57 +209,30 @@
             });
         }
 
-        function showChat() {
-            const chatListDiv = document.getElementById('chat-list');
-            const chatListContent = document.getElementById('chat-list-content');
-            const userEmail = document.getElementById('user-email').textContent;
+        // Skrýt uživatelské detaily při načtení
+        window.onload = function() {
+            document.getElementById('user-list-container').classList.add('hidden');
+        };
 
-            firebase.database().ref('users').orderByChild('email').equalTo(userEmail).once('value')
-                .then((snapshot) => {
-                    const userData = snapshot.val();
-                    if (userData) {
-                        const userId = Object.keys(userData)[0];
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
 
-                        firebase.database().ref('conversations').once('value')
-                            .then((conversationSnapshot) => {
-                                const conversations = conversationSnapshot.val();
-                                if (conversations) {
-                                    chatListContent.innerHTML = '';
-                                    let hasChats = false;
 
-                                    Object.keys(conversations).forEach((conversationId) => {
-                                        const conversation = conversations[conversationId];
-                                        if (conversation.participants && conversation.participants.includes(userId)) {
-                                            hasChats = true;
-                                            const li = document.createElement('li');
-                                            const otherParticipant = conversation.participants.find(p => p !== userId);
-                                            li.textContent = `Chat s uživatelem ${otherParticipant}`;
-                                            chatListContent.appendChild(li);
-                                        }
-                                    });
 
-                                    if (!hasChats) {
-                                        chatListContent.innerHTML = '<li>Žádné chaty nenalezeny.</li>';
-                                    }
-                                    chatListDiv.style.display = 'block';
-                                } else {
-                                    chatListContent.innerHTML = '<li>Žádné chaty nenalezeny.</li>';
-                                    chatListDiv.style.display = 'block';
-                                }
-                            })
-                            .catch((error) => {
-                                console.error("Chyba při načítání konverzací:", error);
-                                chatListContent.innerHTML = '<li>Došlo k chybě při načítání konverzací.</li>';
-                            });
-                    } else {
-                        chatListContent.innerHTML = '<li>Uživatel nebyl nalezen.</li>';
-                    }
-                })
-                .catch((error) => {
-                    console.error("Chyba při načítání uživatele:", error);
-                    chatListContent.innerHTML = '<li>Došlo k chybě při načítání uživatele.</li>';
-                });
-        }
+
+                // Filtr uživatelů podle vyhledávacího pole
+document.getElementById('search-input').addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    const userItems = document.querySelectorAll('#user-list li');
+    userItems.forEach(function(item) {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+
     </script>
 </body>
 </html>
