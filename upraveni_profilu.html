@@ -105,7 +105,6 @@
     </div>
 
     <script>
-        // Firebase konfigurace a inicializace
         const firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -119,7 +118,6 @@
         const db = firebase.database();
         const auth = firebase.auth();
 
-        // Načtení aktuálních dat uživatele při načtení stránky
         auth.onAuthStateChanged((user) => {
             if (user) {
                 const uid = user.uid;
