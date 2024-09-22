@@ -21,7 +21,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            flex-direction: column; /* Přidáno pro správné umístění dolního panelu */
+            flex-direction: column;
         }
 
         .container {
@@ -34,7 +34,7 @@
             box-sizing: border-box;
             text-align: center;
             overflow-y: auto;
-            max-height: calc(100vh - 80px); /* Změněno pro umístění dolního panelu */
+            max-height: calc(100vh - 80px);
         }
 
         .search-bar {
@@ -79,7 +79,7 @@
 
         .bottom-bar {
             width: 100%;
-            background-color: #ffffff; /* Bílé pozadí */
+            background-color: #ffffff;
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -91,7 +91,7 @@
         }
 
         .bottom-bar-item img {
-            width: 30px; /* Větší ikony */
+            width: 30px;
             height: 30px;
         }
 
@@ -167,7 +167,7 @@
                                 const user = users[userId];
                                 const userDiv = document.createElement('div');
                                 userDiv.textContent = `${user.firstName} ${user.lastName}`;
-                                userDiv.dataset.userId = userId; // Přidáme userId jako data atribut
+                                userDiv.dataset.userId = userId;
                                 userDiv.onclick = function() {
                                     window.location.href = `profil.html?userId=${userId}`;
                                 };
@@ -200,7 +200,7 @@
 
         auth.onAuthStateChanged(user => {
             if (user) {
-                loadUsers(user.uid); // Načteme uživatele s výjimkou aktuálně přihlášeného
+                loadUsers(user.uid);
             } else {
                 console.log('No user is signed in.');
             }
