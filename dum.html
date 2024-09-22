@@ -21,14 +21,14 @@
     justify-content: flex-end;
     align-items: center;
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px 30px; /* Širší padding pro větší panel */
+    padding: 20px 30px;
     z-index: 1000;
 }
 
 .top-bar-item {
     display: flex;
     align-items: center;
-    margin-left: 15px; /* Přidá mezery mezi položky */
+    margin-left: 15px;
 }
 
 .top-bar-item img {
@@ -127,8 +127,8 @@
 
 .post-actions {
     display: flex;
-    justify-content: center; /* Centruje ikony horizontálně */
-    align-items: flex-end; /* Zarovnání ikon ke spodní části příspěvku */
+    justify-content: center;
+    align-items: flex-end;
     margin-top: 10px;
 }
 
@@ -141,7 +141,7 @@
 .like-container {
     display: flex;
     align-items: center;
-    justify-content: flex-start; /* Like ikona bude vlevo */
+    justify-content: flex-start;
 }
 
 .like-count {
@@ -152,12 +152,10 @@
 .comment-container {
     display: flex;
     justify-content: center;
-    width: 100%; /* Zajistí, že komentář ikona bude uprostřed */
+    width: 100%;
     position: relative;
     
 }
-
-
 
 .bottom-bar {
     position: fixed;
@@ -205,7 +203,7 @@
 
 .friend-requests-icon {
     position: absolute;
-    right: 70px; /* Posunutí srdce více vlevo */
+    right: 70px;
     top: 10px;
 }
     </style>
@@ -257,12 +255,10 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // Firebase konfigurace
         const firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -273,7 +269,6 @@
             appId: "1:458271134858:web:5e09d3329ba81626830973"
         };
     
-        // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
     
@@ -281,12 +276,14 @@
         const charCounter = document.getElementById('charCounter');
         const submitButton = document.getElementById('submitButton');
         const postsContainer = document.getElementById('postsContainer');
-        const userId = 'user1'; // Zde nastavte ID aktuálního uživatele
+        const userId = 'user1';
     
         // Definice zakázaných slov
-        const forbiddenWords = ['slabé', 'neschopný', 'ztracený'];
+        const forbiddenWords = ['debile', 'debila', 'debili', 'debilní', 'kokote', 'kokoti', 'blbec', 'blbý', 'zmrde', 'zmrdi',
+        'pičo', 'píčus', 'negře', 'negři', 'negre', 'postiženec', 'postizenec', 'postiženci', 'postizenci','kurva', 'kurvy', 'zkurvení',
+        'zkurveni', 'srač', 'srac', 'sráči', 'sraci', 'čurak', 'curak', 'čůráci', 'curaci', 'retard', 'retardi', 'jebat', 'šukat', 'šuká', 
+        'hovado', 'mrdat', 'mrdá', 'děvka', 'kretén', 'žebrák', 'sračka', 'hajzl',];
     
-        // Funkce pro kontrolu příspěvku
         function checkPostText() {
             const text = postText.value;
             const isForbidden = forbiddenWords.some(word => text.toLowerCase().includes(word));
@@ -346,7 +343,6 @@
             const userLikesRef = database.ref(`posts/${postId}/likes/${userId}`);
             userLikesRef.once('value', snapshot => {
                 if (!snapshot.exists()) {
-                    // Uložit like a aktualizovat počet
                     userLikesRef.set(true).then(() => {
                         const likeCountRef = database.ref(`posts/${postId}/likeCount`);
                         likeCountRef.transaction(currentCount => (currentCount || 0) + 1);
@@ -358,7 +354,7 @@
         loadPosts();
 
         function redirectToFriendRequests() {
-    window.location.href = 'zadosti_o_pratelstvi.html'; // URL, kam chceš přesměrovat
+    window.location.href = 'zadosti_o_pratelstvi.html';
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -367,7 +363,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
         });
 
-    </script>
-    
+    </script>   
 </body>
 </html>
