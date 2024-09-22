@@ -125,7 +125,6 @@
     </style>
 </head>
 <body>
-    <!-- Šipka pro návrat zpět -->
     <div class="back-btn" onclick="goBack()">
         <i class="fas fa-arrow-left"></i>
     </div>
@@ -405,13 +404,11 @@
         }
 
         function showContent(language) {
-            // Hide all language content
             var contents = document.querySelectorAll('.language-content');
             contents.forEach(function(content) {
                 content.style.display = 'none';
             });
-
-            // Show selected language content
+t
             var selectedContent = document.getElementById(language);
             if (selectedContent) {
                 selectedContent.style.display = 'block';
@@ -419,10 +416,9 @@
         }
 
         function goBack() {
-            window.location.href = 'registrace.html'; // Change to the correct URL for registration page
+            window.location.href = 'registrace.html';
         }
 
-        // Hide language options if user clicks outside
         window.onclick = function(event) {
             if (!event.target.matches('.translate-btn')) {
                 var options = document.getElementById('language-options');
