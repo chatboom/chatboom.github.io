@@ -7,38 +7,38 @@
   <style>
     .container {
       width: 90%;
-      max-width: 600px; /* Maximální šířka kontejneru */
+      max-width: 600px;
       margin: 0 auto;
       padding: 20px;
       border: 1px solid #ddd;
       border-radius: 8px;
       text-align: center;
-      box-sizing: border-box; /* Zahrne padding a border do šířky kontejneru */
+      box-sizing: border-box;
     }
 
     .user-info {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px; /* Zvýšení mezery mezi jednotlivými položkami */
+      gap: 20px;
     }
 
     .user-info label {
       display: flex;
-      flex-direction: column; /* Sloupcový formát pro lepší zarovnání */
+      flex-direction: column;
       align-items: center;
       gap: 10px;
       width: 100%;
     }
 
     .input-container {
-      position: relative; /* Umožní umístit tlačítko uvnitř textového pole */
+      position: relative;
       width: 100%;
     }
 
     .user-info input {
-      box-sizing: border-box; /* Zahrne padding a border do šířky elementu */
-      width: calc(100% - 40px); /* Zajistí, že textové pole nebude širší než dostupný prostor */
+      box-sizing: border-box;
+      width: calc(100% - 40px);
       padding: 10px;
       border: 1px solid #ddd;
       border-radius: 4px;
@@ -46,14 +46,14 @@
       background-color: #f5f5f5;
       color: #333;
       text-align: center;
-      pointer-events: none; /* Zabrání interakci s polem */
-      outline: none; /* Odstraní zvýraznění okraje při kliknutí */
-      user-select: none; /* Zabrání označování textu */
+      pointer-events: none;
+      outline: none;
+      user-select: none;
     }
 
     .edit-button {
       position: absolute;
-      right: 10px; /* Posune tlačítko k pravé straně textového pole */
+      right: 10px;
       top: 50%;
       transform: translateY(-50%);
       width: 30px;
@@ -62,7 +62,7 @@
       background: none;
       cursor: pointer;
       font-size: 20px;
-      color: black; /* Černá barva tlačítka */
+      color: black;
     }
 
     .edit-button:disabled {
@@ -141,7 +141,6 @@
       background-color: #ccc;
     }
 
-    /* Optimalizace pro mobilní zařízení */
     @media (max-width: 600px) {
       .container {
         width: 100%;
@@ -158,12 +157,12 @@
 
       .input-container {
         position: relative;
-        width: 100%; /* Zajistí, že kontejner pro vstupy bude plně šířkový */
-        overflow: hidden; /* Skrývá případný overflow, který může způsobit scrollování */
+        width: 100%;
+        overflow: hidden;
       }
 
       .user-info input {
-        width: calc(100% - 40px); /* Úprava pro mobilní zobrazení, aby se zabránilo scrollování */
+        width: calc(100% - 40px);
         font-size: 14px;
         padding: 8px;
       }
@@ -172,7 +171,7 @@
         width: 25px;
         height: 25px;
         font-size: 18px;
-        right: 30px; /* Úprava pro mobilní zobrazení */
+        right: 30px;
       }
 
       .modal .modal-body input {
@@ -193,8 +192,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5); /* Černé pozadí s 50% průhledností */
-      z-index: 999; /* Umístí překryvnou vrstvu nad ostatní obsah */
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
     }
 
     .overlay.active {
@@ -227,7 +226,6 @@
     </div>
   </div>
 
-  <!-- Modální okno pro editaci emailu -->
   <div id="modalEmail" class="modal">
     <div class="modal-header">
       <h2>Upravit Email</h2>
@@ -242,7 +240,6 @@
     </div>
   </div>
 
-  <!-- Modální okno pro editaci hesla -->
   <div id="modalPassword" class="modal">
     <div class="modal-header">
       <h2>Upravit Heslo</h2>
@@ -258,14 +255,11 @@
     </div>
   </div>
 
-  <!-- Firebase scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 
-  <!-- JavaScript -->
   <script>
-    // Firebase konfigurace
     const firebaseConfig = {
       apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
       authDomain: "chatboom-95647.firebaseapp.com",
@@ -277,7 +271,6 @@
     };
     firebase.initializeApp(firebaseConfig);
 
-    // Inicializace Firebase Auth a Realtime Database
     const auth = firebase.auth();
     const database = firebase.database();
 
@@ -299,32 +292,27 @@
     const savePasswordButton = document.getElementById('savePassword');
     const cancelPasswordButton = document.getElementById('cancelPassword');
 
-    // Funkce pro otevření modálního okna
     function openModal(modal) {
       modal.classList.add('active');
       overlay.classList.add('active');
     }
 
-    // Funkce pro zavření modálního okna
     function closeModal(modal) {
       modal.classList.remove('active');
       overlay.classList.remove('active');
     }
 
-    // Zobrazení modálního okna pro úpravu emailu
     editEmailButton.addEventListener('click', () => {
-      modalEmailInput.value = emailInput.value; // Nastaví hodnotu vstupu na aktuální email
+      modalEmailInput.value = emailInput.value;
       openModal(modalEmail);
     });
 
-    // Zobrazení modálního okna pro úpravu hesla
     editPasswordButton.addEventListener('click', () => {
       modalPasswordInput.value = '';
       modalPasswordConfirmInput.value = '';
       openModal(modalPassword);
     });
 
-    // Uložení nového emailu
     saveEmailButton.addEventListener('click', () => {
       const newEmail = modalEmailInput.value;
       if (newEmail) {
@@ -338,7 +326,6 @@
       }
     });
 
-    // Uložení nového hesla
     savePasswordButton.addEventListener('click', () => {
       const newPassword = modalPasswordInput.value;
       const confirmPassword = modalPasswordConfirmInput.value;
@@ -354,22 +341,17 @@
       }
     });
 
-    // Zavření modálního okna pro email
     cancelEmailButton.addEventListener('click', () => closeModal(modalEmail));
     document.getElementById('closeModalEmail').addEventListener('click', () => closeModal(modalEmail));
 
-    // Zavření modálního okna pro heslo
     cancelPasswordButton.addEventListener('click', () => closeModal(modalPassword));
     document.getElementById('closeModalPassword').addEventListener('click', () => closeModal(modalPassword));
 
-    // Inicializace - načte údaje uživatele
     auth.onAuthStateChanged(user => {
       if (user) {
         emailInput.value = user.email;
-        // Heslo se nezobrazuje z bezpečnostních důvodů
       }
     });
   </script>
-
 </body>
 </html>
