@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBoom</title>
+    <style>
+        body {
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+        }
+        .membership-container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        .membership-level {
+            background-color: #fff;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .membership-level:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .membership-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+        .membership-subtitle {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .membership-description {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .membership-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .membership-button:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 600px) {
+            .membership-title {
+                font-size: 20px;
+            }
+            .membership-subtitle {
+                font-size: 16px;
+            }
+            .membership-description {
+                font-size: 14px;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="membership-container">
+        <div class="membership-level">
+            <div class="membership-title">Standard</div>
+            <div class="membership-description">
+                Odstraňte reklamy a získejte základní emotikony.
+            </div>
+            <a href="#" class="membership-button">Zakoupit Standard</a>
+        </div>
+
+        <div class="membership-level">
+            <div class="membership-title">Pokročilý</div>
+            <div class="membership-description">
+                Získejte speciální avatary a další výhody.
+            </div>
+            <a href="#" class="membership-button">Zakoupit Pokročilý</a>
+        </div>
+
+        <div class="membership-level">
+            <div class="membership-title">Exkluzivní</div>
+            <div class="membership-description">
+                Získejte všechny výhody Pokročilého plus prémiové samolepky a personalizovaná témata.
+            </div>
+            <a href="#" class="membership-button">Zakoupit Exkluzivní</a>
+        </div>
+
+        <div class="membership-level">
+            <div class="membership-title">Profesionální</div>
+            <div class="membership-description">
+                Získejte neomezené posílání souborů a pokročilé statistiky.
+            </div>
+            <a href="#" class="membership-button">Zakoupit Profesionální</a>
+        </div>
+    </div>
+</body>
+</html>
