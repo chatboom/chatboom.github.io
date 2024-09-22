@@ -35,10 +35,10 @@ body {
     max-width: 400px;
     box-sizing: border-box;
     position: relative;
-    height: 100vh; /* Zajistí, že profil vyplní výšku viewportu */
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Uloží profil do středu */
+    justify-content: center;
 }
 
 .profile-card img {
@@ -174,26 +174,22 @@ body {
     color: #4a90e2;
 }
 
-/* Ozubené kolečko (nastavení) v pravém horním rohu */
 .settings-icon {
-    position: fixed; /* Zajistí, že bude stále na stejné pozici i při scrollování */
-    top: 1rem; /* Vzdálenost od horní části obrazovky */
-    right: 36rem; /* Vzdálenost od pravé části obrazovky */
+    position: fixed;
+    top: 1rem;
+    right: 36rem;
     display: flex;
     align-items: center;
-    justify-content: center; /* Ujistí se, že ikona je vertikálně i horizontálně vycentrována */
+    justify-content: center;
     cursor: pointer;
-    z-index: 0; /* Zajistí, že ikona bude nad ostatními prvky */
+    z-index: 0;
 }
 
 .settings-icon img {
-    width: 28px; /* Velikost ikony */
+    width: 28px;
     height: 28px;
 }
 
-
-
-/* Dolní panel */
 .bottom-bar {
     position: fixed;
     bottom: 0;
@@ -294,8 +290,6 @@ body {
         </div>
         <div class="friend-requests" id="friend-requests"></div>
     </div>
-
-    <!-- Odstraněno nav-bar -->
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -344,7 +338,6 @@ body {
                         if (userDetails.profilePic) {
                             document.getElementById('profile-pic').src = userDetails.profilePic;
                         }
-                        // Update status indicator
                         const statusIndicator = document.getElementById('status-indicator');
                         const statusText = document.getElementById('status-text');
                         if (userDetails.isActive) {
@@ -370,10 +363,10 @@ body {
                 if (user) {
                     const myId = user.uid;
                     if (myId === userId) {
-                        // Hide the "Add Friend" button if this is the user's own profile
+                        
                         document.getElementById('friend-request-button').style.display = 'none';
                     } else {
-                        // Check if the user has sent a friend request to this profile
+            
                         database.ref('sentFriendRequests/' + myId + '/' + userId).once('value')
                             .then(snapshot => {
                                 if (snapshot.exists()) {
@@ -393,16 +386,15 @@ body {
         function sendFriendRequest() {
             auth.onAuthStateChanged(user => {
                 if (user) {
-                    const userId = getUrlParameter('userId'); // ID uživatele, jehož profil právě prohlížíme
+                    const userId = getUrlParameter('userId'); 
                     if (!userId || userId === user.uid) {
                         console.error('Invalid target user ID');
                         return;
                     }
 
-                    const friendRequestRef = database.ref('friendRequests/' + userId); // ID uživatele, kterému posíláme žádost
+                    const friendRequestRef = database.ref('friendRequests/' + userId); 
                     const sentFriendRequestRef = database.ref('sentFriendRequests/' + user.uid + '/' + userId);
-
-                    // Přidání žádosti do databáze
+                    
                     friendRequestRef.push(user.uid)
                         .then(() => sentFriendRequestRef.set(true))
                         .then(() => {
@@ -433,7 +425,7 @@ body {
     
                             uploadTask.on('state_changed',
                                 snapshot => {
-                                    // Progress
+                                    
                                 },
                                 error => {
                                     console.error('Error uploading file:', error);
