@@ -62,7 +62,6 @@
     </div>
 
     <script>
-        // Firebase konfigurace a inicializace
         const firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -76,12 +75,11 @@
         const db = firebase.database();
         const auth = firebase.auth();
     
-        // Funkce pro formátování data
         function formatDate(timestamp) {
             if (timestamp) {
                 const date = new Date(timestamp);
                 const day = date.getDate();
-                const month = date.getMonth() + 1; // měsíc je 0-indexovaný
+                const month = date.getMonth() + 1;
                 const year = date.getFullYear();
                 const hours = String(date.getHours()).padStart(2, '0');
                 const minutes = String(date.getMinutes()).padStart(2, '0');
@@ -90,7 +88,6 @@
             return 'N/A';
         }
     
-        // Funkce pro formátování doby strávené v aplikaci
         function formatTime(milliseconds) {
             if (milliseconds) {
                 const minutes = Math.floor(milliseconds / 60000);
@@ -100,7 +97,6 @@
             return 'N/A';
         }
     
-        // Načtení údajů o profilu
         auth.onAuthStateChanged((user) => {
             if (user) {
                 const uid = user.uid;
@@ -121,7 +117,5 @@
             });
         });
     </script>
-    
-
 </body>
 </html>
