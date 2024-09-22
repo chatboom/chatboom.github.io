@@ -21,7 +21,7 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
-            overflow-y: auto; /* Zajistí, že se komentáře budou posouvat */
+            overflow-y: auto;
         }
 
         .comment-form {
@@ -41,8 +41,8 @@
         }
 
         .comment-textarea-wrapper textarea {
-            width: 100%; /* Zabere celý prostor kromě místa pro tlačítko */
-            height: 120px; /* Zvětšená výška textového pole */
+            width: 100%;
+            height: 120px;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
@@ -84,7 +84,7 @@
             margin-top: 10px;
             display: flex;
             align-items: center;
-            justify-content: flex-start; /* Změněno na flex-start */
+            justify-content: flex-start;
         }
 
         .comment-actions img {
@@ -106,22 +106,22 @@
         @media (max-width: 600px) {
             .comment-form {
                 flex-direction: column;
-                align-items: stretch; /* Zajistí, že textové pole bude mít maximální šířku */
+                align-items: stretch;
             }
 
             .comment-textarea-wrapper {
-                width: 100%; /* Zajistí, že wrapper zabere celou šířku */
-                margin-bottom: 10px; /* Vzdálenost mezi textovým polem a tlačítkem */
+                width: 100%;
+                margin-bottom: 10px;
             }
 
             .comment-textarea-wrapper textarea {
-                width: 100%; /* Zabere celý prostor v rámci wrapperu */
+                width: 100%;
             }
 
             .comment-form button {
-                width: 100%; /* Tlačítko bude mít 100% šířku */
-                max-width: 100px; /* Maximální šířka tlačítka */
-                margin-left: 0; /* Zrušíme levý margin */
+                width: 100%;
+                max-width: 100px;
+                margin-left: 0;
             }
         }
 
@@ -158,12 +158,10 @@
         <button id="submitButton" class="submit-button" disabled>Odeslat</button>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // Firebase konfigurace
         var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -174,7 +172,6 @@
             appId: "1:458271134858:web:5e09d3329ba81626830973",
         };
 
-        // Inicializace Firebase
         firebase.initializeApp(firebaseConfig);
         var database = firebase.database();
 
@@ -191,17 +188,16 @@
         }
 
         // Definice zakázaných slov
-        const forbiddenWords = ['debile', 'kokote', 'blbec', 'zmrde', 'pičo', 'píčus', 'negře', 'negre', 'postiženec', 
-        'kurva', 'srač', 'čurak', 'skurvený', 'retard', 'jebat', 'šukat', 'šuká', 'hovado', 'jebat', 'mrdat', 'děvka', 
-        'kretén', 'žebrák', 'sračka', 'hajzl', 'feťák', 'bezdomovec']; // Přidejte slova, která chcete zakázat
+        const forbiddenWords = ['debile', 'debila', 'debili', 'debilní', 'kokote', 'kokoti', 'blbec', 'blbý', 'zmrde', 'zmrdi',
+        'pičo', 'píčus', 'negře', 'negři', 'negre', 'postiženec', 'postizenec', 'postiženci', 'postizenci','kurva', 'kurvy', 'zkurvení',
+        'zkurveni', 'srač', 'srac', 'sráči', 'sraci', 'čurak', 'curak', 'čůráci', 'curaci', 'retard', 'retardi', 'jebat', 'šukat', 'šuká', 
+        'hovado', 'mrdat', 'mrdá', 'děvka', 'kretén', 'žebrák', 'sračka', 'hajzl',];
 
-        // Funkce pro kontrolu zakázaných slov
         function containsForbiddenWords(text) {
             const lowerCaseText = text.toLowerCase();
             return forbiddenWords.some(word => lowerCaseText.includes(word.toLowerCase()));
         }
 
-        // Funkce pro aktualizaci stavu tlačítka
         commentText.addEventListener('input', () => {
             const textLength = commentText.value.length;
 
@@ -266,7 +262,7 @@
                         `;
                         commentsContainer.appendChild(commentElement);
                     });
-                    commentsContainer.scrollTop = commentsContainer.scrollHeight; // Posune na konec komentářů
+                    commentsContainer.scrollTop = commentsContainer.scrollHeight;
                 }
             }, (error) => {
                 console.error('Chyba při načítání komentářů:', error);
