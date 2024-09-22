@@ -98,7 +98,6 @@
             color: #0056b3;
         }
 
-        /* Responsivní design */
         @media (max-width: 600px) {
             .container {
                 width: 95%;
@@ -125,7 +124,6 @@
     </style>
 </head>
 <body>
-    <!-- Šipka pro návrat zpět -->
     <div class="back-btn" onclick="goBack()">
         <i class="fas fa-arrow-left"></i>
     </div>
@@ -405,13 +403,11 @@
         }
 
         function showContent(language) {
-            // Hide all language content
             var contents = document.querySelectorAll('.language-content');
             contents.forEach(function(content) {
                 content.style.display = 'none';
             });
 
-            // Show selected language content
             var selectedContent = document.getElementById(language);
             if (selectedContent) {
                 selectedContent.style.display = 'block';
@@ -419,10 +415,9 @@
         }
 
         function goBack() {
-            window.location.href = 'informace.html'; // Change to the correct URL for registration page
+            window.location.href = 'informace.html'; 
         }
 
-        // Hide language options if user clicks outside
         window.onclick = function(event) {
             if (!event.target.matches('.translate-btn')) {
                 var options = document.getElementById('language-options');
