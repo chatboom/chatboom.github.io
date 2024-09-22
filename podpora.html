@@ -71,13 +71,10 @@
             color: #0056b3;
         }
     </style>
-    <!-- Firebase App (core) SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <!-- Firebase Realtime Database SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
-    <!-- Šipka pro návrat zpět -->
     <div class="back-btn" onclick="goBack()">
         <i class="fas fa-arrow-left"></i> Zpět
     </div>
@@ -99,42 +96,37 @@
     </div>
 
     <script>
-    // Vaše Firebase konfigurace (nahradit vlastními údaji)
     var firebaseConfig = {
         apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
         authDomain: "chatboom-95647.firebaseapp.com",
-        databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app", // Opravená URL
+        databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
         projectId: "chatboom-95647",
         storageBucket: "chatboom-95647.appspot.com",
         messagingSenderId: "458271134858",
         appId: "1:458271134858:web:5e09d3329ba81626830973",
     };
 
-    // Inicializace Firebase
     firebase.initializeApp(firebaseConfig);
 
-    // Inicializace Realtime Database
     var database = firebase.database();
 
     function goBack() {
-        window.history.back(); // Vrátí uživatele na předchozí stránku
+        window.history.back();
     }
 
     document.getElementById('supportForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Zabrání výchozímu odeslání formuláře
+        event.preventDefault();
         
         var name = document.getElementById('name').value;
         var email = document.getElementById('email').value;
         var message = document.getElementById('message').value;
 
-        // Uložení dat do Realtime Database
         database.ref('messages').push({
             name: name,
             email: email,
             message: message,
             timestamp: Date.now()
         }).then(function() {
-            // Přesměrování na `dum.html`
             window.location.href = `dum.html`;
         }).catch(function(error) {
             console.error('Error adding data: ', error);
