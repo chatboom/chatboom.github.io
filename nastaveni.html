@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="title">ChatBoom</title>
   <style>
-    /* Stylování horní lišty */
     .top-bar {
       position: fixed;
       top: 0;
@@ -20,7 +19,7 @@
     }
 
     .top-bar a {
-      text-decoration: none; /* Odstranění podtržení */
+      text-decoration: none;
       color: #333;
       font-size: 20px;
       display: flex;
@@ -33,18 +32,16 @@
       margin-right: 10px;
     }
 
-    /* Prostor pod horní lištou */
     body {
       padding-top: 70px;
       margin: 0;
     }
 
-    /* Stylování sekcí */
     .section {
       margin-bottom: 20px;
       padding: 10px;
       background-color: #fff;
-      border-radius: 5px; /* Zaoblení rohů */
+      border-radius: 5px;
     }
 
     .section h2 {
@@ -53,22 +50,22 @@
       cursor: pointer;
       margin: 0;
       padding: 10px 0;
-      border-bottom: 1px solid #ccc; /* Oddělení nadpisu od obsahu */
+      border-bottom: 1px solid #ccc;
     }
 
     .section a {
-      text-decoration: none; /* Odstranění podtržení u odkazů */
+      text-decoration: none;
       color: #333;
     }
 
     .section a:hover {
-      text-decoration: none; /* Zrušení podtržení při hoveru */
+      text-decoration: none;
     }
 
     .section ul {
       list-style-type: none;
       padding: 0;
-      display: none; /* Skrytí seznamu po načtení */
+      display: none;
     }
 
     .section ul li {
@@ -76,7 +73,6 @@
       cursor: pointer;
     }
 
-    /* Stylování pro režimy vzhledu */
     body.dark-mode {
       background-color: #333;
       color: #f4f4f4;
@@ -104,7 +100,6 @@
       color: #333;
     }
 
-    /* Stylování pro barevný režim */
     .color-picker {
       display: none;
       margin-top: 10px;
@@ -122,7 +117,6 @@
 </head>
 <body>
 
-  <!-- Horní navigační lišta se šipkou a textem Zpět -->
   <div class="top-bar">
     <a href="dum.html">
       <img src="https://img.icons8.com/ios-filled/50/000000/left.png" alt="Šipka zpět">
@@ -161,7 +155,6 @@
     </div>
   </div>
 
-  <!-- Nová sekce s položkou k zakoupení -->
   <div class="section">
     <h2><a id="purchase-link" href="nakupy.html">Položky k zakoupení</a></h2>
   </div>
@@ -170,25 +163,21 @@
     <h2><a id="support-link" href="podpora.html">Podpora</a></h2>
   </div>
 
-  <!-- Nová sekce s informacemi -->
   <div class="section">
     <h2><a id="info-link" href="informace.html">Informace</a></h2>
   </div>
 
   <script>
-    // JavaScript pro zakázání pravého kliknutí
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
     });
 
-    // Příklad funkcí, které by měly být v `scripts.js`
     function toggleList(id) {
       const list = document.getElementById(id);
       list.style.display = list.style.display === 'none' || list.style.display === '' ? 'block' : 'none';
     }
 
     function setLanguage(language) {
-      // Funkce pro změnu jazyka
       alert('Nastavit jazyk na ' + language);
     }
 
@@ -211,7 +200,6 @@
       localStorage.setItem('background-color', event.target.value);
     }
 
-    // Načítání režimu a barvy pozadí z localStorage
     document.addEventListener('DOMContentLoaded', function() {
       const mode = localStorage.getItem('appearance-mode') || 'light';
       const backgroundColor = localStorage.getItem('background-color') || '#f4f4f4';
