@@ -52,9 +52,7 @@
             font-size: 16px;
         }
     </style>
-    <!-- Firebase App (core) SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js"></script>
-    <!-- Firebase Realtime Database SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js"></script>
 </head>
 <body>
@@ -64,11 +62,9 @@
     </div>
 
     <script type="module">
-        // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js';
         import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js';
 
-        // Vaše Firebase konfigurace (nahradit vlastními údaji)
         const firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -79,18 +75,15 @@
             appId: "1:458271134858:web:5e09d3329ba81626830973",
         };
 
-        // Inicializace Firebase
         const app = initializeApp(firebaseConfig);
 
-        // Inicializace Realtime Database
         const db = getDatabase(app);
 
-        // Načítání zpráv z Realtime Database
         const messagesRef = ref(db, 'messages');
 
         onValue(messagesRef, (snapshot) => {
             const messagesContainer = document.getElementById('messages');
-            messagesContainer.innerHTML = ''; // Vyčistit stávající obsah
+            messagesContainer.innerHTML = ''; 
 
             snapshot.forEach((childSnapshot) => {
                 const data = childSnapshot.val();
@@ -104,7 +97,6 @@
                     </div>
                 `;
 
-                // Přidání události kliknutí pro zobrazení/skrývání detailů
                 messageElement.querySelector('h2').addEventListener('click', function() {
                     const details = this.nextElementSibling;
                     if (details.style.display === "none" || details.style.display === "") {
