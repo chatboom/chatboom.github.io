@@ -10,7 +10,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden; /* Zabránit posouvání stránky */
+    overflow: hidden; 
 }
 
         .user-list {
@@ -82,8 +82,6 @@ html, body {
             background-color: #0056b3;
         }
 
-
-
         .search-container {
     margin-bottom: 20px;
     display: flex;
@@ -95,7 +93,7 @@ html, body {
     border-radius: 8px;
     border: 1px solid #ccc;
     width: 100%;
-    max-width: 400px; /* Maximální šířka */
+    max-width: 400px;
     box-sizing: border-box;
     font-size: 16px;
     outline: none;
@@ -103,8 +101,8 @@ html, body {
 }
 
 .search-container input:focus {
-    border-color: #007bff; /* Barva okraje při fokusování */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3); /* Mírné stínování */
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
 
@@ -138,7 +136,6 @@ html, body {
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        // Firebase konfigurace
         var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -151,7 +148,7 @@ html, body {
         firebase.initializeApp(firebaseConfig);
 
         // Správný přístupový kód
-        const ACCESS_CODE = '7682364653'; // Změňte kód na svůj vlastní
+        const ACCESS_CODE = '7682364653';
 
         function checkAccessCode() {
             const input = document.getElementById('access-code-input').value;
@@ -178,14 +175,14 @@ html, body {
                 const users = snapshot.val();
                 if (users) {
                     const sortedUsers = Object.keys(users)
-                        .map((uid) => users[uid]) // Převede objekt na pole
+                        .map((uid) => users[uid]) 
                         .sort((a, b) => {
-                            const nameA = `${a.firstName} ${a.lastName}`.toUpperCase(); // Ignoruje velikost písmen
+                            const nameA = `${a.firstName} ${a.lastName}`.toUpperCase();
                             const nameB = `${b.firstName} ${b.lastName}`.toUpperCase();
-                            return nameA.localeCompare(nameB); // Řadí podle abecedy
+                            return nameA.localeCompare(nameB);
                         });
 
-                    userList.innerHTML = ''; // Vyčistíme seznam
+                    userList.innerHTML = '';
                     sortedUsers.forEach((user) => {
                         const li = document.createElement('li');
                         li.textContent = `${user.firstName} ${user.lastName}`;
@@ -194,9 +191,8 @@ html, body {
                             userNickname.textContent = user.nickname || 'N/A';
                             userEmail.textContent = user.email || 'N/A';
                             
-                            // Získání a formátování data a času registrace
                             const registrationDate = user.registrationDate ? new Date(user.registrationDate) : new Date();
-                            userRegistrationDate.textContent = registrationDate.toLocaleDateString('cs-CZ'); // Formátování data
+                            userRegistrationDate.textContent = registrationDate.toLocaleDateString('cs-CZ');
                             userRegistrationTime.textContent = registrationDate.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' }); // Formátování času bez sekund
                             
                             userDetailsDiv.style.display = 'block';
@@ -209,7 +205,6 @@ html, body {
             });
         }
 
-        // Skrýt uživatelské detaily při načtení
         window.onload = function() {
             document.getElementById('user-list-container').classList.add('hidden');
         };
@@ -220,10 +215,6 @@ html, body {
             });
         });
 
-
-
-
-                // Filtr uživatelů podle vyhledávacího pole
 document.getElementById('search-input').addEventListener('input', function() {
     const filter = this.value.toLowerCase();
     const userItems = document.querySelectorAll('#user-list li');
