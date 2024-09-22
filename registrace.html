@@ -95,7 +95,6 @@
             cursor: pointer;
         }
 
-        /* Nové styly pro zobrazení ověření emailu */
         #verification-message {
             display: flex;
             flex-direction: column;
@@ -150,7 +149,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script>
-        // Firebase konfigurace
         var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
@@ -240,15 +238,14 @@
                             } else {
                                 document.getElementById('nicknameError').textContent = '';
                                 
-                                // Získání aktuálního data a času
                                 const registrationDate = new Date().toISOString();
 
                                 const userDetails = {
                                     firstName,
                                     lastName,
                                     nickname,
-                                    email: user.email, // Uložení emailu do databáze
-                                    registrationDate // Přidání data a času registrace
+                                    email: user.email,
+                                    registrationDate
                                 };
 
                                 database.ref('users/' + userId).set(userDetails)
