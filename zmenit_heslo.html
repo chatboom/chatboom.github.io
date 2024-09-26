@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBoom</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .reset-card {
+            background: #ffffff;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        .reset-card h2 {
+            margin-bottom: 1rem;
+            color: #333333;
+        }
+        .reset-card form {
+            width: 100%;
+        }
+        .reset-card input[type="email"] {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .reset-card input[type="submit"] {
+            background: #4a90e2;
+            color: #ffffff;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        .reset-card input[type="submit"]:hover {
+            background: #357ab8;
+        }
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #4a90e2;
+            text-decoration: none;
+        }
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+        @media (max-width: 600px) {
+            .reset-card {
+                padding: 0.5rem;
+                border-radius: 0;
+            }
+            .reset-card input[type="email"],
+            .reset-card input[type="submit"] {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="ucet.html" class="back-button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5"></path>
+            <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+        Zpět
+    </a>
+    <div class="reset-card">
+        <h2>Změna Hesla</h2>
+        <form id="reset-form" onsubmit="resetPassword(event)">
+            <input type="email" id="email-reset" placeholder="Email" required>
+            <input type="submit" value="Odeslat žádost o změnění hesla.">
+        </form>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
+            authDomain: "chatboom-95647.firebaseapp.com",
+            databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chatboom-95647",
+            storageBucket: "chatboom-95647.appspot.com",
+            messagingSenderId: "458271134858",
+            appId: "1:458271134858:web:5e09d3329ba81626830973",
+            measurementId: "G-KS97KKQ3EH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        function resetPassword(event) {
+            event.preventDefault();
+            const email = document.getElementById('email-reset').value;
+
+            firebase.auth().sendPasswordResetEmail(email)
+                .then(() => {
+                    alert('E-mail s pokyny pro resetování hesla byl odeslán.');
+                })
+                .catch((error) => {
+                    console.error('Error sending password reset email:', error);
+                    alert('Chyba při odesílání e-mailu pro resetování hesla: ' + error.message);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>
