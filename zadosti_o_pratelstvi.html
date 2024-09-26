@@ -12,67 +12,108 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             flex-direction: column;
         }
+
         .requests-container {
             background: #ffffff;
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 600px;
+            width: 95%;
+            max-width: 500px;
             box-sizing: border-box;
-            margin-bottom: 80px;
+            margin-bottom: 70px;
+            text-align: center;
         }
+
+        h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
         .friend-request {
             background-color: #e0ffe0;
             padding: 10px;
             margin-bottom: 10px;
-            border-radius: 5px;
+            border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
+        .friend-request div {
+            display: flex;
+            gap: 10px;
+        }
+
         .friend-request button {
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
-            padding: 5px 10px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
             cursor: pointer;
-            margin-left: 10px;
+            transition: background-color 0.3s ease;
         }
+
         .friend-request button.decline {
             background-color: #f44336;
         }
+
         .friend-request button:hover {
             background-color: #45a049;
         }
+
         .friend-request button.decline:hover {
             background-color: #e53935;
         }
+
         .bottom-bar {
             width: 100%;
             background-color: #ffffff;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 1rem 0;
+            padding: 10px 0;
             position: fixed;
             bottom: 0;
             left: 0;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
         }
+
         .bottom-bar-item img {
-            width: 30px;
-            height: 30px;
+            width: 25px;
+            height: 25px;
         }
+
         .bottom-bar-item {
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .bottom-bar-item a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media only screen and (min-width: 600px) {
+            .friend-request button {
+                padding: 10px 20px;
+            }
+
+            .bottom-bar-item img {
+                width: 30px;
+                height: 30px;
+            }
         }
     </style>
 </head>
@@ -110,7 +151,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        var firebaseConfig = {
+         var firebaseConfig = {
             apiKey: "AIzaSyAu1PLSU2rnSLNdfQcshBSNESqM7svzyRQ",
             authDomain: "chatboom-95647.firebaseapp.com",
             databaseURL: "https://chatboom-95647-default-rtdb.europe-west1.firebasedatabase.app",
