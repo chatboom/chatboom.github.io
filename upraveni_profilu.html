@@ -63,6 +63,23 @@
             margin-top: 20px;
             font-size: 12px;
         }
+
+        #saveButton {
+            display: none;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        #saveButton:hover {
+            background-color: #45a049;
+        }
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
@@ -92,13 +109,14 @@
             </select>
 
             <label for="bio">Bio:</label>
-<textarea id="bio" name="bio" rows="4" placeholder="Napište něco o sobě..."></textarea>
+            <textarea id="bio" name="bio" rows="4" placeholder="Napište něco o sobě..."></textarea>
+
+            <button id="saveButton" onclick="saveProfile()">Uložit</button>
 
         </form>
 
         <div class="info">
             <p><a href="informace_o_zabezpeceni.html" style="color: blue; text-decoration: none;">Informace o zabezpečení</a></p>
-            <p><a href="informace_o_profilu.html" style="color: blue; text-decoration: none;">Informace o vašem profilu</a></p>
             <p><a href="ucet.html" style="color: blue; text-decoration: none;">Zobrazit informace o účtu </a></p>
         </div>
         
@@ -134,6 +152,39 @@
                 });
             }
         });
+
+        const bioField = document.getElementById('bio');
+        const saveButton = document.getElementById('saveButton');
+
+        // Zobrazit tlačítko "Uložit" po začátku psaní
+        bioField.addEventListener('input', function () {
+            if (bioField.value.trim() !== "") {
+                saveButton.style.display = 'block';
+            } else {
+                saveButton.style.display = 'none';
+            }
+        });
+
+        function saveProfile() {
+            const bio = document.getElementById('bio').value;
+            const gender = document.getElementById('gender').value;
+
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    const uid = user.uid;
+                    const userRef = db.ref('users/' + uid);
+
+                    userRef.update({
+                        bio: bio,
+                        gender: gender
+                    }).then(() => {
+                        alert('Profil byl uložen.');
+                    }).catch((error) => {
+                        console.error('Chyba při ukládání: ', error);
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>
