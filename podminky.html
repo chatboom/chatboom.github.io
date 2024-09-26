@@ -98,7 +98,6 @@
             color: #0056b3;
         }
 
-        /* Responsivní design */
         @media (max-width: 600px) {
             .container {
                 width: 95%;
@@ -408,7 +407,7 @@
             contents.forEach(function(content) {
                 content.style.display = 'none';
             });
-t
+
             var selectedContent = document.getElementById(language);
             if (selectedContent) {
                 selectedContent.style.display = 'block';
@@ -416,7 +415,7 @@ t
         }
 
         function goBack() {
-            window.location.href = 'registrace.html';
+            window.location.href = 'registrace.html'; 
         }
 
         window.onclick = function(event) {
