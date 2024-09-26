@@ -70,77 +70,6 @@
       color: #aaa;
     }
 
-    .modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      z-index: 1000;
-    }
-
-    .modal.active {
-      display: block;
-    }
-
-    .modal .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .modal .modal-header h2 {
-      margin: 0;
-    }
-
-    .modal .modal-header button {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    .modal .modal-body {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .modal .modal-body input {
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .modal .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .modal .modal-footer button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .modal .modal-footer .save-btn {
-      background-color: #007bff;
-      color: #fff;
-    }
-
-    .modal .modal-footer .cancel-btn {
-      background-color: #ccc;
-    }
-
     @media (max-width: 600px) {
       .container {
         width: 100%;
@@ -155,14 +84,7 @@
         font-size: 14px;
       }
 
-      .input-container {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-      }
-
       .user-info input {
-        width: calc(100% - 40px);
         font-size: 14px;
         padding: 8px;
       }
@@ -173,38 +95,10 @@
         font-size: 18px;
         right: 30px;
       }
-
-      .modal .modal-body input {
-        font-size: 14px;
-        padding: 8px;
-      }
-
-      .modal .modal-footer button {
-        padding: 8px 16px;
-        font-size: 14px;
-      }
-    }
-
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-    }
-
-    .overlay.active {
-      display: block;
     }
   </style>
 </head>
 <body>
-
-  <div id="overlay" class="overlay"></div>
-
   <div class="container">
     <h1>Údaje uživatele</h1>
     <div class="user-info">
@@ -212,7 +106,7 @@
         <strong>Email:</strong>
         <div class="input-container">
           <input type="text" id="userEmail" readonly>
-          <button class="edit-button" id="editEmail">&#9998;</button>
+          <button class="edit-button" id="editPassword" onclick="location.href='zmena_emailu.html'">&#9998;</button>
         </div>
       </label>
 
@@ -220,38 +114,9 @@
         <strong>Heslo:</strong>
         <div class="input-container">
           <input type="text" id="userPassword" readonly>
-          <button class="edit-button" id="editPassword">&#9998;</button>
+          <button class="edit-button" id="editPassword" onclick="location.href='zmenit_heslo.html'">&#9998;</button>
         </div>
       </label>
-    </div>
-  </div>
-
-  <div id="modalEmail" class="modal">
-    <div class="modal-header">
-      <h2>Upravit Email</h2>
-      <button id="closeModalEmail">&times;</button>
-    </div>
-    <div class="modal-body">
-      <input type="text" id="modalEmailInput" placeholder="Nový email">
-    </div>
-    <div class="modal-footer">
-      <button id="saveEmail" class="save-btn">Uložit</button>
-      <button id="cancelEmail" class="cancel-btn">Zrušit</button>
-    </div>
-  </div>
-
-  <div id="modalPassword" class="modal">
-    <div class="modal-header">
-      <h2>Upravit Heslo</h2>
-      <button id="closeModalPassword">&times;</button>
-    </div>
-    <div class="modal-body">
-      <input type="password" id="modalPasswordInput" placeholder="Nové heslo">
-      <input type="password" id="modalPasswordConfirmInput" placeholder="Potvrdit heslo">
-    </div>
-    <div class="modal-footer">
-      <button id="savePassword" class="save-btn">Uložit</button>
-      <button id="cancelPassword" class="cancel-btn">Zrušit</button>
     </div>
   </div>
 
@@ -275,77 +140,7 @@
     const database = firebase.database();
 
     const emailInput = document.getElementById('userEmail');
-    const passwordInput = document.getElementById('userPassword');
     const editEmailButton = document.getElementById('editEmail');
-    const editPasswordButton = document.getElementById('editPassword');
-
-    const modalEmail = document.getElementById('modalEmail');
-    const modalPassword = document.getElementById('modalPassword');
-    const overlay = document.getElementById('overlay');
-
-    const modalEmailInput = document.getElementById('modalEmailInput');
-    const modalPasswordInput = document.getElementById('modalPasswordInput');
-    const modalPasswordConfirmInput = document.getElementById('modalPasswordConfirmInput');
-
-    const saveEmailButton = document.getElementById('saveEmail');
-    const cancelEmailButton = document.getElementById('cancelEmail');
-    const savePasswordButton = document.getElementById('savePassword');
-    const cancelPasswordButton = document.getElementById('cancelPassword');
-
-    function openModal(modal) {
-      modal.classList.add('active');
-      overlay.classList.add('active');
-    }
-
-    function closeModal(modal) {
-      modal.classList.remove('active');
-      overlay.classList.remove('active');
-    }
-
-    editEmailButton.addEventListener('click', () => {
-      modalEmailInput.value = emailInput.value;
-      openModal(modalEmail);
-    });
-
-    editPasswordButton.addEventListener('click', () => {
-      modalPasswordInput.value = '';
-      modalPasswordConfirmInput.value = '';
-      openModal(modalPassword);
-    });
-
-    saveEmailButton.addEventListener('click', () => {
-      const newEmail = modalEmailInput.value;
-      if (newEmail) {
-        const user = auth.currentUser;
-        user.updateEmail(newEmail).then(() => {
-          emailInput.value = newEmail;
-          closeModal(modalEmail);
-        }).catch(error => {
-          console.error('Chyba při aktualizaci emailu:', error);
-        });
-      }
-    });
-
-    savePasswordButton.addEventListener('click', () => {
-      const newPassword = modalPasswordInput.value;
-      const confirmPassword = modalPasswordConfirmInput.value;
-      if (newPassword && newPassword === confirmPassword) {
-        const user = auth.currentUser;
-        user.updatePassword(newPassword).then(() => {
-          closeModal(modalPassword);
-        }).catch(error => {
-          console.error('Chyba při aktualizaci hesla:', error);
-        });
-      } else {
-        console.error('Hesla se neshodují.');
-      }
-    });
-
-    cancelEmailButton.addEventListener('click', () => closeModal(modalEmail));
-    document.getElementById('closeModalEmail').addEventListener('click', () => closeModal(modalEmail));
-
-    cancelPasswordButton.addEventListener('click', () => closeModal(modalPassword));
-    document.getElementById('closeModalPassword').addEventListener('click', () => closeModal(modalPassword));
 
     auth.onAuthStateChanged(user => {
       if (user) {
