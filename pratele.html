@@ -51,6 +51,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         .friend span {
             font-size: 16px;
@@ -58,10 +59,36 @@
         }
         .friend-options {
             cursor: pointer;
+            position: relative;
         }
         .friend-options img {
             width: 20px;
             height: 20px;
+        }
+        .friend-menu {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: 30px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            z-index: 100;
+            width: 150px;
+        }
+        .friend-menu a {
+            display: block;
+            padding: 10px;
+            font-size: 14px;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .friend-menu a:hover {
+            background-color: #f0f0f0;
+        }
+        .friend-menu a:last-child {
+            border-bottom: none;
         }
         h2 {
             text-align: center;
@@ -138,8 +165,12 @@
                                                 friendDiv.className = 'friend';
                                                 friendDiv.innerHTML = `
                                                     <span>${friendName}</span>
-                                                    <div class="friend-options">
+                                                    <div class="friend-options" onclick="toggleMenu(this)">
                                                         <img src="https://img.icons8.com/ios-filled/50/000000/ellipsis.png" alt="Options">
+                                                        <div class="friend-menu">
+                                                            <a href="#" onclick="openProfile('${friendId}')">Otevřít profil uživatele</a>
+                                                            <a href="#" onclick="removeFriend('${friendId}')">Odebrat z přátel</a>
+                                                        </div>
                                                     </div>`;
                                                 friendsListElement.appendChild(friendDiv);
                                             })
@@ -161,11 +192,35 @@
             });
         }
 
+        function toggleMenu(element) {
+            const menu = element.querySelector('.friend-menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function openProfile(friendId) {
+            // Zde můžete přidat logiku pro otevření profilu uživatele
+            alert('Otevírám profil uživatele: ' + friendId);
+        }
+
+        function removeFriend(friendId) {
+            // Zde můžete přidat logiku pro odstranění uživatele z přátel
+            alert('Odebírám z přátel: ' + friendId);
+        }
+
         function goBack() {
             window.location.href = 'profil.html';
         }
 
         document.addEventListener('DOMContentLoaded', loadFriends);
+
+        // Skrýt menu při kliknutí mimo něj
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.friend-options')) {
+                document.querySelectorAll('.friend-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+            }
+        });
     </script>
 </body>
 </html>
