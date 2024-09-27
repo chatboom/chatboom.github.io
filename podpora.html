@@ -22,6 +22,7 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             width: 90%;
             max-width: 600px;
+            position: relative;
         }
         h1 {
             text-align: center;
@@ -63,9 +64,14 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            font-size: 24px;
+            font-size: 18px; /* Zvýšený text pro "Zpět" */
             color: #007bff;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .back-btn i {
+            margin-right: 5px; /* Mezera mezi šipkou a textem */
         }
         .back-btn:hover {
             color: #0056b3;
@@ -73,6 +79,7 @@
     </style>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Přidání Font Awesome -->
 </head>
 <body>
     <div class="back-btn" onclick="goBack()">
@@ -132,6 +139,6 @@
             console.error('Error adding data: ', error);
         });
     });
-</script>
+    </script>
 </body>
 </html>
