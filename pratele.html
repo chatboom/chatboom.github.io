@@ -17,11 +17,11 @@
         }
         .friends-container {
             background: #ffffff;
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             width: 90%;
-            max-width: 600px;
+            max-width: 400px;
             box-sizing: border-box;
             position: relative; 
         }
@@ -43,15 +43,40 @@
             color: #333;
         }
         .friend {
-            background-color: #ffffff; 
+            background-color: #f9f9f9;
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         .friend span {
             font-size: 16px;
             color: #333;
+        }
+        .friend-options {
+            cursor: pointer;
+        }
+        .friend-options img {
+            width: 20px;
+            height: 20px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) {
+            .friends-container {
+                padding: 1rem;
+                max-width: 100%;
+            }
+            h2 {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -111,7 +136,11 @@
 
                                                 const friendDiv = document.createElement('div');
                                                 friendDiv.className = 'friend';
-                                                friendDiv.innerHTML = `<span>${friendName}</span>`;
+                                                friendDiv.innerHTML = `
+                                                    <span>${friendName}</span>
+                                                    <div class="friend-options">
+                                                        <img src="https://img.icons8.com/ios-filled/50/000000/ellipsis.png" alt="Options">
+                                                    </div>`;
                                                 friendsListElement.appendChild(friendDiv);
                                             })
                                             .catch(error => {
@@ -137,12 +166,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', loadFriends);
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.addEventListener('contextmenu', function(event) {
-                event.preventDefault();
-            });
-        });
     </script>
 </body>
 </html>
