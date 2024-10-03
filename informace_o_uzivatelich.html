@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatBoom</title>
     <style>
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden; 
-}
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden; 
+        }
 
         .user-list {
             list-style-type: none;
@@ -82,35 +82,34 @@ html, body {
         }
 
         .search-container {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-}
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
 
-.search-container input {
-    padding: 12px 20px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    width: 100%;
-    max-width: 400px;
-    box-sizing: border-box;
-    font-size: 16px;
-    outline: none;
-    transition: border-color 0.3s ease;
-}
+        .search-container input {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
 
-.search-container input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-
+        .search-container input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
     </style>
 </head>
 <body>
     <div id="access-code-container" class="access-code-container">
         <div class="access-code-table">
-            <h2>Zadejte přístupový kód</h2>
+            <h2>Zadejte jméno administrátora a přístupový kód</h2>
+            <input type="text" id="admin-name-input" placeholder="Administrátor/Administrátorka">
             <input type="text" id="access-code-input" placeholder="Přístupový kód">
             <button onclick="checkAccessCode()">Potvrdit</button>
             <div class="error-message" id="error-message"></div>
@@ -146,20 +145,31 @@ html, body {
         };
         firebase.initializeApp(firebaseConfig);
 
-        // Správný přístupový kód
-        const ACCESS_CODE = '7682364653';
+        // Administrátorská jména a kódy
+        const ADMIN_CODES = {
+            'Danek': '7682364653',
+        };
 
         function checkAccessCode() {
-            const input = document.getElementById('access-code-input').value;
-            const errorMessage = document.getElementById('error-message');
-            if (input === ACCESS_CODE) {
-                document.getElementById('access-code-container').style.display = 'none';
-                document.getElementById('user-list-container').classList.remove('hidden');
-                loadUsers();
-            } else {
-                errorMessage.textContent = 'Nesprávný přístupový kód!';
-            }
-        }
+    const adminName = document.getElementById('admin-name-input').value;
+    const inputCode = document.getElementById('access-code-input').value;
+    const errorMessage = document.getElementById('error-message');
+
+    if (adminName === '' || inputCode === '') {
+        errorMessage.textContent = 'Nejdříve musíte vyplnit potřebné údaje k přístupu k informacím!';
+        return;
+    }
+
+    if (ADMIN_CODES[adminName] === undefined) {
+        errorMessage.textContent = 'Tento administrator zde není!';
+    } else if (ADMIN_CODES[adminName] === inputCode) {
+        document.getElementById('access-code-container').style.display = 'none';
+        document.getElementById('user-list-container').classList.remove('hidden');
+        loadUsers();
+    } else {
+        errorMessage.textContent = 'Tento kód je nesprávný!';
+    }
+}
 
         function loadUsers() {
             const userList = document.getElementById('user-list');
@@ -214,14 +224,14 @@ html, body {
             });
         });
 
-document.getElementById('search-input').addEventListener('input', function() {
-    const filter = this.value.toLowerCase();
-    const userItems = document.querySelectorAll('#user-list li');
-    userItems.forEach(function(item) {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(filter) ? '' : 'none';
-    });
-});
+        document.getElementById('search-input').addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            const userItems = document.querySelectorAll('#user-list li');
+            userItems.forEach(function(item) {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
 
     </script>
 </body>
