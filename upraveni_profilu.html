@@ -118,12 +118,11 @@
             <label for="bio">Bio:</label>
             <textarea id="bio" name="bio" rows="4" placeholder="Napište něco o sobě..."></textarea>
 
-            <button id="saveButton" onclick="saveProfile()">Uložit</button>
+            <button type="button" id="saveButton">Uložit</button>
 
         </form>
 
         <div class="info">
-            <p><a href="informace_o_zabezpeceni.html" style="color: blue; text-decoration: none;">Informace o zabezpečení</a></p>
             <p><a href="ucet.html" style="color: blue; text-decoration: none;">Zobrazit informace o účtu </a></p>
         </div>
         
@@ -161,6 +160,7 @@
         });
 
         const bioField = document.getElementById('bio');
+        const genderSelect = document.getElementById('gender');
         const saveButton = document.getElementById('saveButton');
 
         bioField.addEventListener('input', function () {
@@ -171,9 +171,13 @@
             }
         });
 
-        function saveProfile() {
-            const bio = document.getElementById('bio').value;
-            const gender = document.getElementById('gender').value;
+        genderSelect.addEventListener('change', function () {
+            saveButton.style.display = 'block';
+        });
+
+        saveButton.addEventListener('click', function () {
+            const bio = bioField.value;
+            const gender = genderSelect.value;
 
             auth.onAuthStateChanged((user) => {
                 if (user) {
@@ -185,12 +189,13 @@
                         gender: gender
                     }).then(() => {
                         alert('Profil byl uložen.');
+                        saveButton.style.display = 'none';
                     }).catch((error) => {
                         console.error('Chyba při ukládání: ', error);
                     });
                 }
             });
-        }
+        });
     </script>
 </body>
 </html>
