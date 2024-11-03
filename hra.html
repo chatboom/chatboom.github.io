@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realistické Město v 3D pomocí Three.js</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .wave {
+            display: none;
+            width: 10px;
+            height: 10px;
+            background: green;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <img id="chatIcon" class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAAf8/9hAAAAE0lEQVR42mP8/5+gJ6A1QMoEAAAABJRU5ErkJggg==" alt="Chat" />
+        <img id="micIcon" class="icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAYAAAAf8/9hAAAAFklEQVR42mP8/8/w39AIQ9gC2gDgAAAABJRU5ErkJggg==" alt="Microphone" />
+        <div id="waveIndicator" class="wave"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Základní nastavení scény
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Přidání světla
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 10, 7).normalize();
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040)); // Měkké ambientní světlo
+
+        // Přidání platformy (silnice)
+        const roadGeometry = new THREE.PlaneGeometry(50, 50);
+        const roadMaterial = new THREE.MeshBasicMaterial({ color: 0x7d7d7d });
+        const road = new THREE.Mesh(roadGeometry, roadMaterial);
+        road.rotation.x = -Math.PI / 2;
+        scene.add(road);
+
+        // Funkce pro vytvoření barevné budovy
+        function createBuilding(x, y, z, width, height, depth, color) {
+            const geometry = new THREE.BoxGeometry(width, height, depth);
+            const material = new THREE.MeshLambertMaterial({ color: color });
+            const building = new THREE.Mesh(geometry, material);
+            building.position.set(x, height / 2, z);
+            scene.add(building);
+        }
+
+        // Vytvoření několika budov s různými barvami
+        createBuilding(5, 0, -10, 2, 5, 2, 0xff0000); // Červená budova
+        createBuilding(-5, 0, -10, 3, 10, 3, 0x00ff00); // Zelená budova
+        createBuilding(10, 0, -5, 1, 3, 1, 0x0000ff); // Modrá budova
+        createBuilding(-10, 0, -5, 4, 8, 4, 0xffff00); // Žlutá budova
+        createBuilding(0, 0, -20, 3, 6, 3, 0xff00ff); // Růžová budova
+
+        // Přidání stromu
+        function createTree(x, y, z) {
+            const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 8);
+            const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // Hnědá barva
+            const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+            trunk.position.set(x, 0.5, z);
+            scene.add(trunk);
+
+            const foliageGeometry = new THREE.SphereGeometry(0.8, 8, 8);
+            const foliageMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 }); // Zelená barva
+            const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
+            foliage.position.set(x, 1.5, z);
+            scene.add(foliage);
+        }
+
+        // Vytvoření několika stromů
+        createTree(3, 0, -8);
+        createTree(-4, 0, -12);
+        createTree(8, 0, -15);
+        createTree(-8, 0, -18);
+
+        // Nastavení počáteční pozice kamery
+        camera.position.set(0, 1.6, 15); // výška kamery (oči hráče) je cca 1.6
+
+        // Otočení kamery
+        let yaw = 0; // Otočení vlevo/vpravo
+        let pitch = 0; // Otočení nahoru/dolů
+        const mouseSensitivity = 0.1; // citlivost myši
+        let isLocked = false; // Pro zamčení kurzoru
+
+        // Pohybové proměnné
+        const keys = { w: false, s: false, a: false, d: false, space: false };
+        let velocity = new THREE.Vector3();
+
+        // Funkce pro pohyb na základě kláves
+        function handleKeyDown(event) {
+            if (event.key === "w") keys.w = true;
+            if (event.key === "s") keys.s = true;
+            if (event.key === "a") keys.a = true;
+            if (event.key === "d") keys.d = true;
+            if (event.key === " ") keys.space = true;
+        }
+
+        function handleKeyUp(event) {
+            if (event.key === "w") keys.w = false;
+            if (event.key === "s") keys.s = false;
+            if (event.key === "a") keys.a = false;
+            if (event.key === "d") keys.d = false;
+            if (event.key === " ") keys.space = false;
+        }
+
+        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("keyup", handleKeyUp);
+
+        // Funkce pro zamknutí kurzoru
+        function lockPointer() {
+            document.body.requestPointerLock();
+            isLocked = true;
+        }
+
+        document.addEventListener('click', lockPointer); // Zamkne kurzor po kliknutí
+
+        // Otočení kamery pomocí myši
+        document.addEventListener("mousemove", (event) => {
+            if (isLocked) {
+                yaw -= event.movementX * mouseSensitivity;
+                pitch -= event.movementY * mouseSensitivity;
+
+                // Omezit pitch (otáčení nahoru/dolů)
+                pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitch));
+
+                // Aktualizace směru pohledu kamery
+                camera.rotation.set(pitch, yaw, 0);
+            }
+        });
+
+        let lastTime = Date.now(); // pro měření času mezi snímky
+
+        // Proměnné pro mikrofon
+        let micEnabled = false;
+        let audioContext;
+        let microphone;
+        const waveIndicator = document.getElementById('waveIndicator');
+        const gainNode = new GainNode(new AudioContext(), { gain: 0 }); // Hlasitost na 0 pro sebe
+
+        // Funkce pro zapnutí/vypnutí mikrofonu
+        async function toggleMicrophone() {
+            if (micEnabled) {
+                micEnabled = false;
+                waveIndicator.style.display = 'none'; // Skrýt vlny
+                if (microphone) {
+                    microphone.disconnect();
+                    microphone = null;
+                }
+            } else {
+                micEnabled = true;
+                waveIndicator.style.display = 'block'; // Zobrazit vlny
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    microphone = audioContext.createMediaStreamSource(stream);
+                    microphone.connect(gainNode); // Připojení mikrofonu k GainNode
+                    gainNode.connect(audioContext.destination); // Odeslání zvuku jinam
+                } catch (err) {
+                    console.error("Chyba s mikrofonem: ", err);
+                }
+            }
+        }
+
+        document.getElementById('micIcon').addEventListener('click', toggleMicrophone);
+
+        // Hlavní animační smyčka
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Aktualizace pohybu
+            const deltaTime = (Date.now() - lastTime) / 1000; // Čas mezi snímky
+            lastTime = Date.now();
+
+            // Pohyb hráče
+            velocity.set(0, 0, 0);
+            if (keys.w) velocity.z -= 1;
+            if (keys.s) velocity.z += 1;
+            if (keys.a) velocity.x -= 1;
+            if (keys.d) velocity.x += 1;
+
+            // Normalizace pohybu
+            if (velocity.length() > 1) velocity.normalize();
+
+            // Ovládání vertikálního pohybu
+            if (keys.space) velocity.y += 1;
+
+            // Aktualizace pozice kamery
+            camera.position.add(velocity.clone().multiplyScalar(deltaTime * 5)); // Rychlost pohybu 5
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
