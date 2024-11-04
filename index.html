@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
-<head>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChatBoom</title>
@@ -156,45 +156,46 @@
         </div>
     </div>
     <script>
-        // Registrace Service Worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('Service Worker registrován s rozsahem:', registration.scope);
-            })
-            .catch(error => {
-                console.error('Registrace Service Workeru selhala:', error);
+        // Registrace Service Workeru
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch((error) => {
+                    console.error('Service Worker registration failed:', error);
+                });
+        }
+
+        let deferredPrompt;
+
+        // Událost před zobrazením výzvy k instalaci
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Vytvoření a zobrazení tlačítka pro instalaci
+            const installButton = document.createElement('button');
+            installButton.innerText = 'Přidat na plochu';
+            installButton.classList.add('rounded-button', 'install-button'); // Přidej novou třídu pro styly
+            document.body.appendChild(installButton); // Přidání tlačítka přímo do body
+
+            // Událost při kliknutí na tlačítko
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Uživatel přijal instalaci');
+                    } else {
+                        console.log('Uživatel odmítl instalaci');
+                    }
+                    deferredPrompt = null;
+                    installButton.remove(); // Odstraní tlačítko po výběru
+                });
             });
-    });
-}
-
-// Zpracování události beforeinstallprompt
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); // Zabrání zobrazení mini informační lišty
-    deferredPrompt = e; // Uloží událost pro pozdější použití
-
-    const installButton = document.createElement('button');
-    installButton.innerText = 'Přidat na plochu';
-    document.body.appendChild(installButton); // Zobrazí tlačítko
-
-    installButton.addEventListener('click', () => {
-        deferredPrompt.prompt(); // Zobrazí instalační výzvu
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                console.log('Uživatel přijal instalaci');
-            } else {
-                console.log('Uživatel odmítl instalaci');
-            }
-            deferredPrompt = null;
-            installButton.remove(); // Odstraní tlačítko po výběru
         });
-    });
-});
-
     </script>
 
-    
+
 </body>
 </html>
