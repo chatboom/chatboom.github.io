@@ -1,7 +1,7 @@
 {
     "name": "ChatBoom",
     "short_name": "ChatB",
-    "description": "tato aplikace slouží k četování mezi uživately.",
+    "description": "Tato aplikace slouží k četování mezi uživately.",
     "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#ffffff",
